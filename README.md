@@ -42,18 +42,17 @@ This is RED HAT we can do anything
 
     1. One button Red Hat Installer
     2. Guide customers to success!
-    3. Increase margin by reducing time on site for non paid POC 
+    3. Increase margin by reducing time on site for non paid Basic POC 
     4. Standardize a base deployment between consultants/architects
     5. Setup in a known state to reduce support instance/time
     6. Reduce TtP (Time to Productivity) for customers
     7. Reduce recreate support times in the lab for customer troubleshooting
     8. Reduce support instances related to instalation and configuration of products 
 
-
+-
 CREDITS
 -This is based off of Mojo doc https://mojo.redhat.com/docs/DOC-1030365 by Rich Jerrido
--This script was written by Shadd Gallegos Shadd@RedHat.com of Dave 
-Johnson's SA Team with contributions from Red Hatters (In no particular order) 
+-This script was written by Shadd Gallegos Shadd@RedHat.com of Dave Johnson's SA Team with contributions from Red Hatters (In no particular order) 
 
  -Jimmy Conner
  -Orcun Atakan
@@ -62,7 +61,7 @@ Johnson's SA Team with contributions from Red Hatters (In no particular order)
  -Sebastian Hetze
  -Uzoma Nwosu
  -James Mills
-
+-
 WHAT IT IS -- This is just an idea and A work in progress
 WHAT IT DOES -- Automated menu written in bash using dialog and/or xdialog display menu
 
@@ -71,11 +70,11 @@ WHAT IT DOES -- Automated menu written in bash using dialog and/or xdialog displ
 Ansible Tower setup  --> Ansible Tower 
 
 Self Documenting menuized script that prompts users to success For Satellite and Ansible things
-
+-
 #---------------------------------------------------------------------------------
-
+- 
 SCRIPT REQUIREMENTS:
-
+-
 packages that will to be installed by the installer script to run properly
 
 https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
@@ -94,7 +93,7 @@ https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
   2. Hardware requirements may vary per your org needs, however whether 
     it is a KVM or physical environment the Satellite will require 1 node with:
 
-   Min Storage 220 GB
+   Min Storage 240 GB
     Directory  Recommended
     /   Rest of drive
     /boot   1024MB
@@ -177,5 +176,3 @@ https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
    http://www.ansible.com
     https://www.ansible.com/tower-trial
    http://docs.ansible.com/ansible-tower/latest/html/quickinstall/index.html"
-
-# RedHatToolsInstaller
