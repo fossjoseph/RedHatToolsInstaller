@@ -31,7 +31,7 @@ echo " "
 echo " "
 echo " "
 echo "
-                                     P.O.C Satellite 6.X RHEL 7.X KVM or RHEL 7 Physical Host 
+                                     P.O.C Satellite 6.X RHEL 7.X KVM or RHEL 7.X Physical Host 
                                          THIS SCRIPT CONTAINS NO CONFIDENTIAL INFORMATION
 
                            This script is designed to set up a basic standalone Satellite 6.X system
@@ -704,64 +704,64 @@ Please goto your system with a browser and connect to https://"$EXTERNALIP"/kate
 echo " "
 echo "*******************************************************************************************************"
 
-echo " "
-echo "*********************************************************"
-echo "Red Hat Enterprise Linux 6 Server (Kickstart):"
-echo "*********************************************************"
-hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='6.8' --name 'Red Hat Enterprise Linux 6 Server (Kickstart)' 
-time hammer repository synchronize --organization $ORG --product 'Red Hat Enterprise Linux Server'  --name  'Red Hat Enterprise Linux 6 Server Kickstart x86_64 6.8' 2>/dev/null
-echo " "
-echo "*********************************************************"
-echo "Red Hat Enterprise Linux 6 Server (RPMs):"
-echo "*********************************************************"
-hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='6Server' --name 'Red Hat Enterprise Linux 6 Server (RPMs)'
-time hammer repository synchronize --organization $ORG --product 'Red Hat Enterprise Linux Server'  --name  'Red Hat Enterprise Linux 6 Server RPMs x86_64 6Server' 2>/dev/null
-echo " "
-echo "*********************************************************"
-echo "Red Hat Satellite Tools 6.2 (for RHEL 6 Server) (RPMs):"
-echo "*********************************************************"
-hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --name 'Red Hat Satellite Tools 6.2 (for RHEL 6 Server) (RPMs)'
-time hammer repository synchronize --organization $ORG --product 'Red Hat Enterprise Linux Server'  --name  'Red Hat Satellite Tools 6.2 for RHEL 6 Server RPMs x86_64' 2>/dev/null
-echo " "
-echo "*********************************************************"
-echo "Red Hat Software Collections RPMs for Red Hat Enterprise Linux 6 Server:"
-echo "*********************************************************"
-hammer repository-set enable --organization $ORG --product 'Red Hat Software Collections for RHEL Server' --basearch='x86_64' --releasever='6Server' --name 'Red Hat Software Collections RPMs for Red Hat Enterprise Linux 6 Server'
-time hammer repository synchronize --organization $ORG --product 'Red Hat Software Collections for RHEL Server'  --name  'Red Hat Software Collections RPMs for Red Hat Enterprise Linux 6 Server x86_64 6Server' 2>/dev/null 
-echo " "
-echo "*********************************************************"
-echo "Red Hat Enterprise Linux 6 Server - Extras (RPMs):"
-echo "*********************************************************"
-hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --name 'Red Hat Enterprise Linux 6 Server - Extras (RPMs)'
-time hammer repository synchronize --organization $ORG --product 'Red Hat Enterprise Linux Server'  --name  'Red Hat Enterprise Linux 6 Server - Extras RPMs x86_64 6Server' 2>/dev/null
-echo " "
-echo "*********************************************************"
-echo "Red Hat Enterprise Linux 6 Server - Optional (RPMs):"
-echo "*********************************************************"
-hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='6Server' --name 'Red Hat Enterprise Linux 6 Server - Optional (RPMs)'
-time hammer repository synchronize --organization $ORG --product 'Red Hat Enterprise Linux Server'  --name  'Red Hat Enterprise Linux 6 Server - Optional RPMs x86_64 6Server' 2>/dev/null
-echo " "
-echo "*********************************************************"
-echo "Red Hat Enterprise Linux 6 Server - Supplementary (RPMs):"
-echo "*********************************************************"
-hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='6Server' --name 'Red Hat Enterprise Linux 6 Server - Supplementary (RPMs)'
-time hammer repository synchronize --organization $ORG --product 'Red Hat Enterprise Linux Server'  --name  'Red Hat Enterprise Linux 6 Server - Supplementary RPMs x86_64 6Server' 2>/dev/null
-echo " "
-echo "*********************************************************"
-echo "Red Hat Enterprise Linux 6 Server - RH Common (RPMs):"
-echo "*********************************************************"
-hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='6Server' --name 'Red Hat Enterprise Linux 6 Server - RH Common (RPMs)'
-time hammer repository synchronize --organization $ORG --product 'Red Hat Enterprise Linux Server'  --name  'Red Hat Enterprise Linux 6 Server - RH Common RPMs x86_64 6Server' 2>/dev/null
+#echo " "
+#echo "*********************************************************"
+#echo "Red Hat Enterprise Linux 6 Server (Kickstart):"
+#echo "*********************************************************"
+#hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='6.8' --name 'Red Hat Enterprise Linux 6 Server (Kickstart)' 
+#time hammer repository synchronize --organization $ORG --product 'Red Hat Enterprise Linux Server'  --name  'Red Hat Enterprise Linux 6 Server Kickstart x86_64 6.8' 2>/dev/null
+#echo " "
+#echo "*********************************************************"
+#echo "Red Hat Enterprise Linux 6 Server (RPMs):"
+#echo "*********************************************************"
+#hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='6Server' --name 'Red Hat Enterprise Linux 6 Server (RPMs)'
+#time hammer repository synchronize --organization $ORG --product 'Red Hat Enterprise Linux Server'  --name  'Red Hat Enterprise Linux 6 Server RPMs x86_64 6Server' 2>/dev/null
+#echo " "
+#echo "*********************************************************"
+#echo "Red Hat Satellite Tools 6.2 (for RHEL 6 Server) (RPMs):"
+#echo "*********************************************************"
+#hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --name 'Red Hat Satellite Tools 6.2 (for RHEL 6 Server) (RPMs)'
+#time hammer repository synchronize --organization $ORG --product 'Red Hat Enterprise Linux Server'  --name  'Red Hat Satellite Tools 6.2 for RHEL 6 Server RPMs x86_64' 2>/dev/null
+#echo " "
+#echo "*********************************************************"
+#echo "Red Hat Software Collections RPMs for Red Hat Enterprise Linux 6 Server:"
+#echo "*********************************************************"
+#hammer repository-set enable --organization $ORG --product 'Red Hat Software Collections for RHEL Server' --basearch='x86_64' --releasever='6Server' --name 'Red Hat Software Collections RPMs for Red Hat Enterprise Linux 6 Server'
+#time hammer repository synchronize --organization $ORG --product 'Red Hat Software Collections for RHEL Server'  --name  'Red Hat Software Collections RPMs for Red Hat Enterprise Linux 6 Server x86_64 6Server' 2>/dev/null 
+#echo " "
+#echo "*********************************************************"
+#echo "Red Hat Enterprise Linux 6 Server - Extras (RPMs):"
+#echo "*********************************************************"
+#hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --name 'Red Hat Enterprise Linux 6 Server - Extras (RPMs)'
+#time hammer repository synchronize --organization $ORG --product 'Red Hat Enterprise Linux Server'  --name  'Red Hat Enterprise Linux 6 Server - Extras RPMs x86_64 6Server' 2>/dev/null
+#echo " "
+#echo "*********************************************************"
+#echo "Red Hat Enterprise Linux 6 Server - Optional (RPMs):"
+#echo "*********************************************************"
+#hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='6Server' --name 'Red Hat Enterprise Linux 6 Server - Optional (RPMs)'
+#time hammer repository synchronize --organization $ORG --product 'Red Hat Enterprise Linux Server'  --name  'Red Hat Enterprise Linux 6 Server - Optional RPMs x86_64 6Server' 2>/dev/null
+#echo " "
+#echo "*********************************************************"
+#echo "Red Hat Enterprise Linux 6 Server - Supplementary (RPMs):"
+#echo "*********************************************************"
+#hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='6Server' --name 'Red Hat Enterprise Linux 6 Server - Supplementary (RPMs)'
+#time hammer repository synchronize --organization $ORG --product 'Red Hat Enterprise Linux Server'  --name  'Red Hat Enterprise Linux 6 Server - Supplementary RPMs x86_64 6Server' 2>/dev/null
+#echo " "
+#echo "*********************************************************"
+#echo "Red Hat Enterprise Linux 6 Server - RH Common (RPMs):"
+#echo "*********************************************************"
+#hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='6Server' --name 'Red Hat Enterprise Linux 6 Server - RH Common (RPMs)'
+#time hammer repository synchronize --organization $ORG --product 'Red Hat Enterprise Linux Server'  --name  'Red Hat Enterprise Linux 6 Server - RH Common RPMs x86_64 6Server' 2>/dev/null
 
-echo " "
-echo "*********************************************************"
-echo "EPEL 6 packages:"
-echo "*********************************************************"
-wget -q https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-6 -O /root/RPM-GPG-KEY-EPEL-6
-hammer gpg create --key /root/RPM-GPG-KEY-EPEL-6  --name 'GPG-EPEL-6' --organization $ORG
-hammer product create --name='Extra Packages for Enterprise Linux 6' --organization $ORG
-hammer repository create --name='Extra Packages for Enterprise Linux 6' --organization $ORG --product='Extra Packages for Enterprise Linux 6' --content-type=yum --publish-via-http=true --url=http://dl.fedoraproject.org/pub/epel/6/x86_64/  --checksum-type=sha256 --gpg-key=GPG-EPEL-6
-time hammer repository synchronize --organization $ORG --product 'Extra Packages for Enterprise Linux 6'  --name  'Extra Packages for Enterprise Linux 6' 2>/dev/null
+#echo " "
+#echo "*********************************************************"
+#echo "EPEL 6 packages:"
+#echo "*********************************************************"
+#wget -q https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-6 -O /root/RPM-GPG-KEY-EPEL-6
+#hammer gpg create --key /root/RPM-GPG-KEY-EPEL-6  --name 'GPG-EPEL-6' --organization $ORG
+#hammer product create --name='Extra Packages for Enterprise Linux 6' --organization $ORG
+#hammer repository create --name='Extra Packages for Enterprise Linux 6' --organization $ORG --product='Extra Packages for Enterprise Linux 6' --content-type=yum --publish-via-http=true --url=http://dl.fedoraproject.org/pub/epel/6/x86_64/  --checksum-type=sha256 --gpg-key=GPG-EPEL-6
+#time hammer repository synchronize --organization $ORG --product 'Extra Packages for Enterprise Linux 6'  --name  'Extra Packages for Enterprise Linux 6' 2>/dev/null
 
 echo " "
 echo "*********************************************************"
@@ -852,20 +852,14 @@ hammer product create --name='Puppet Forge' --organization $ORG
 hammer repository create --name='Puppet Forge' --organization $ORG --product='Puppet Forge' --content-type puppet --publish-via-http=true --url=https://forge.puppetlabs.com
 time hammer repository synchronize --organization $ORG --product 'Puppet Forge'  --name  'Puppet Forge' 2>/dev/null
 
-
-
-katello-service restart
-foreman-rake katello:reindex
+#katello-service restart
+#foreman-rake katello:reindex
 
 #echo " "
 #echo "*********************************************************"
 #echo "Sync all repositories:"
 #echo "*********************************************************"
-
 #for i in $(hammer --csv repository list --organization $ORG  | awk -F, {'print $1'} | grep -vi '^ID'); do hammer repository synchronize --id ${i} --organization $ORG --async; done
-
-
-
 }
 
 #-----------------------------------------------------------------------------------------------------------------------
@@ -877,7 +871,7 @@ sleep 2
 source /root/.bashrc
 SUBNAME=$(hammer subnet list |awk -F "|" {'print $2'} |grep -v "-"|grep -v NAME |sed 's/ //g')
 MEDID1=$(hammer --csv medium list | grep 'Red_Hat_Enterprise_Linux_7_Server_Kickstart_x86_64_7_3' | awk -F, {'print $1'})
-MEDID2=$(hammer --csv medium list | grep 'Red_Hat_Enterprise_Linux_6_Server_Kickstart_x86_64_6_8' | awk -F, {'print $1'})
+#MEDID2=$(hammer --csv medium list | grep 'Red_Hat_Enterprise_Linux_6_Server_Kickstart_x86_64_6_8' | awk -F, {'print $1'})
 
 echo "if $programname == "systemd" and ($msg contains "Starting Session" or $msg contains "Started Session" or $msg contains "Created slice" or $msg contains "Starting user-") then stop" >> /etc/rsyslog.d/ignore-systemd-session-slice.conf
 ausearch -c 'celery' --raw | audit2allow -M my-celery
@@ -895,7 +889,7 @@ echo "*********************************************************"
 echo "Associate media to location:"
 echo "*********************************************************"
 hammer location add-medium --medium-id $MEDID1 --name $LOCATION
-hammer location add-medium --medium-id $MEDID2 --name $LOCATION
+#hammer location add-medium --medium-id $MEDID2 --name $LOCATION
 
 echo " "
 echo "*********************************************************"
@@ -944,8 +938,8 @@ echo " "
 echo "Daily Sync Plan - Red Hat Enterprise Linux Server"
 hammer product set-sync-plan --name 'Red Hat Enterprise Linux Server' --organization $ORG --sync-plan 'Daily Sync'
 sleep 10
-echo "Daily Sync Plan - Extra Packages for Enterprise Linux 6"
-hammer product set-sync-plan --name 'Extra Packages for Enterprise Linux 6' --organization $ORG --sync-plan 'Daily Sync'
+#echo "Daily Sync Plan - Extra Packages for Enterprise Linux 6"
+#hammer product set-sync-plan --name 'Extra Packages for Enterprise Linux 6' --organization $ORG --sync-plan 'Daily Sync'
 sleep 10
 echo "Daily Sync Plan - Extra Packages for Enterprise Linux 7"
 hammer product set-sync-plan --name 'Extra Packages for Enterprise Linux 7' --organization $ORG --sync-plan 'Daily Sync'
@@ -1489,6 +1483,7 @@ $DIALOG --infobox "
 
 #---------------------------------Menu----------------------------------------
 HNAME=$(hostname)
+mkdir -p FILES/TMP
 TMPd=FILES/TMP
 while true		
 	do
@@ -1516,9 +1511,9 @@ while true
 			stage2
 			configure_repos
 			stage3
-			Kickstart
+			#Kickstart
 			stage4
-			satsum
+			#satsum
 			
 
 		exit
