@@ -53,19 +53,19 @@ This is RED HAT we can do anything
 CREDITS
 -This is based off of Mojo doc https://mojo.redhat.com/docs/DOC-1030365 by Rich Jerrido
 -This script was written by Shadd Gallegos Shadd@RedHat.com of Dave Johnson's SA Team with contributions from Red Hatters (In no particular order) 
-
- -Jimmy Conner
- -Orcun Atakan
- -Eric McLeroy
- -Kevin Holmes
- -Sebastian Hetze
- -Uzoma Nwosu
- -James Mills
+-
+ Jimmy Conner
+ Orcun Atakan
+ Eric McLeroy
+ Kevin Holmes
+ Sebastian Hetze
+ Uzoma Nwosu
+ James Mills
 -
 WHAT IT IS -- This is just an idea and A work in progress
 WHAT IT DOES -- Automated menu written in bash using dialog and/or xdialog display menu
-
--The Satellite setup will provide -> DHCP, TFTP, and  Satellite
+-
+The Satellite setup will provide -> DHCP, TFTP, and  Satellite
 
 Ansible Tower setup  --> Ansible Tower 
 
