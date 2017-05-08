@@ -1534,6 +1534,6 @@ esac
 done
 # cleanup tempfile
 clear
-rm FILES/$TmpFi
+rm -rf FILES/TMP
 
 exit 0
