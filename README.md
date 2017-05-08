@@ -1,21 +1,22 @@
 # RedHatToolsInstaller
 #---------------------------------------------------------------------------------
 -
-P.O.C Satellite 6.X Ansible Tower RHEL 7.X KVM or RHEL 7 Physical Host  THIS SCRIPT CONTAINS NO CONFIDENTIAL INFORMATION  Licensed under GPL
+License provided GPL
 -
+P.O.C Satellite 6.X RHEL 7.X KVM or RHEL 7 Physical Host THIS SCRIPT CONTAINS NO CONFIDENTIAL INFORMATION
 This script is designed to set up a basic standalone Satellite 6.X system
 -
-Disclaimer: This script was written for education, evaluation, and/or testing  purposes and is not officially supported by anyone.
- -
-...SHOULD NOT BE USED ON A CURRENT PRODUCTION SYSTEM AS THE SETUP OF LISTED PRODUCTS MAY CHANGE THE ENVIRONMENT - SO USE A CLEAN SERVER - USE AT YOUR OWN RISK - NO WARRENTY IS IMPLIED...
+Disclaimer: This script was written for education, evaluation, and/or testing
+purposes and is not officially supported by anyone. No warranty implied!
+-     
+...SHOULD NOT BE USED ON A CURRENT PRODUCTION SYSTEM - USE AT YOUR OWN RISK...
 -
-  However the if you have an issue with the products installed and have a valid License please contact Red Hat at:
-  
-  RED HAT Inc..
-  1-888-REDHAT-1 or 1-919-754-3700, then select the Menu Prompt for Customer Service
-  Spanish: 1-888-REDHAT-1 Option 5 or 1-919-754-3700 Option 5
-  Fax: 919-754-3701 (General Corporate Fax)
-  Email address: customerservice@redhat.com
+However the if you have an issue with the products installed and have a valid License please contact Red Hat at:
+   -RED HAT Inc..
+    1-888-REDHAT-1 or 1-919-754-3700, then select the Menu Prompt for Customer Service
+    Spanish: 1-888-REDHAT-1 Option 5 or 1-919-754-3700 Option 5
+    Fax: 919-754-3701 (General Corporate Fax)
+    Email address: customerservice@redhat.com "
   
 #---------------------------------------------------------------------------------
 
