@@ -1,13 +1,14 @@
 # RedHatToolsInstaller
 #---------------------------------------------------------------------------------
- P.O.C Satellite 6.X Ansible Tower RHEL 7.X KVM or RHEL 7 Physical Host  THIS SCRIPT CONTAINS NO CONFIDENTIAL INFORMATION  Licensed under GPL
-
- This script is designed to set up a basic standalone Satellite 6.X system
-
- Disclaimer: This script was written for education, evaluation, and/or testing  purposes and is not officially supported by anyone.
- 
- ...SHOULD NOT BE USED ON A CURRENT PRODUCTION SYSTEM AS THE SETUP OF LISTED PRODUCTS MAY CHANGE THE ENVIRONMENT - SO USE A CLEAN SERVER - USE AT YOUR OWN RISK - NO WARRENTY IS IMPLIED...
-
+-
+P.O.C Satellite 6.X Ansible Tower RHEL 7.X KVM or RHEL 7 Physical Host  THIS SCRIPT CONTAINS NO CONFIDENTIAL INFORMATION  Licensed under GPL
+-
+This script is designed to set up a basic standalone Satellite 6.X system
+-
+Disclaimer: This script was written for education, evaluation, and/or testing  purposes and is not officially supported by anyone.
+ -
+...SHOULD NOT BE USED ON A CURRENT PRODUCTION SYSTEM AS THE SETUP OF LISTED PRODUCTS MAY CHANGE THE ENVIRONMENT - SO USE A CLEAN SERVER - USE AT YOUR OWN RISK - NO WARRENTY IS IMPLIED...
+-
   However the if you have an issue with the products installed and have a valid License please contact Red Hat at:
   
   RED HAT Inc..
