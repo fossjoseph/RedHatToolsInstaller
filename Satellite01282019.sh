@@ -620,7 +620,7 @@ echo "*********************************************************"
 echo "INSTALLING DEPENDENCIES"
 echo "*********************************************************"
 echo -ne "\e[8;40;170t"
-yum-config manager --enable epel
+yum-config-manager --enable epel
 sleep 5
 yum install -y screen yum-utils vim gcc gcc-c++ git rh-nodejs8-npm make automake kernel-devel ruby-devel libvirt-client bind dhcp tftp 
 sleep 5
