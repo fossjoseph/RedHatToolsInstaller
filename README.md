@@ -9,6 +9,7 @@ DISCLAIMER:
 **THIS SCRIPT IS NOT SUPPORTED AND THERE IS NO IMPLIED WARRANTY - USE AT OWN RISK!**
 -
 I can set up a full satellite for a P.O.C in 4 hours with
+
     • 4 CPU 
       
     • 22 GB ram 
@@ -21,9 +22,11 @@ I can set up a full satellite for a P.O.C in 4 hours with
         ◦ eth1 external - conectiom to Red Hat CDN
 -    
 OS:
-  RHEL 7.6^
+
+    • RHEL 7.6^
 -
 Provides: 
+
     • tftp
       
     • dhcp
@@ -42,6 +45,7 @@ Provides:
 I believe all products should have an "installer" that guides endusers to success. 
 
 What this does is:
+
     • reduces TtP (time to productivity)
       
     • reduction in deployment cost
@@ -68,9 +72,11 @@ The script does use the epel to install components needed to run the script and 
     • Anyone that wants to make the Red Hat experiance an even better one 
 -
 *ANY ISSUES?:
+
 kind of -> what i mean by that is because it does use some of the epel components it does step outside of the red hat soe (standard operating enviroment) but you can remove those after the fact if you want.
 
 I wanted to get this script out for people to use, so you will need to take a close look at the content-views section of the script. 
+
     • You will need to decide naming convention for your content views. Some endusers do it by product (rhel5,rhel6,rhel7) some users do it by a product (docker,webservers,security, customer name,ect…)
       
     • You then will need to decide which repos you want to add for the content views
