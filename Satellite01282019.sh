@@ -1877,7 +1877,6 @@ echo "DOMID=$(hammer --csv domain list |grep -v Id |grep -v Name |awk -F "," {'p
 echo "SUBNETID=$(hammer --csv subnet list |awk -F "," {'print $1'}| grep -v Id)" >> /root/.bashrc
 echo "CVID=$(hammer --csv content-view list --organization $ORG |grep 'RHEL 7' |awk -F "," {'print $1'})" >>  /root/.bashrc
 }
-VARSETUP2
 #-----------------------------------
 function PARTITION_OS_PXE_TEMPLATE {
 #-----------------------------------
