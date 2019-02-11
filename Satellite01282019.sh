@@ -64,28 +64,36 @@ exit
 fi
 
 #--------------------------required packages for script to run----------------------------
-
+#------------------
+function SCRIPT {
+#------------------
 echo "*************************************************************"
 echo " Script configuration requirements installing for this server"
 echo "*************************************************************"
 setenforce 0
 HNAME=$(hostname)
-domainname $(hostname -d)
+domainname="$(hostname -d)"
 subscription-manager register --auto-attach
 subscription-manager attach --pool=`subscription-manager list --available --matches 'Red Hat Satellite Infrastructure Subscription' --pool-only`
-rm -fr /var/cache/yum/*
-yum clean all 
+echo " "
+echo "*********************************************************"
+echo "SET REPOS ENABLING SCRIPT TO RUN"
+echo "*********************************************************"
 subscription-manager repos --disable "*" || exit 1
 subscription-manager repos --enable=rhel-7-server-rpms || exit 1
 subscription-manager repos --enable=rhel-7-server-extras-rpms || exit 1
 subscription-manager repos --enable=rhel-7-server-optional-rpms || exit 1
 subscription-manager repos --enable=rhel-7-server-rpms|| exit 1
+yum -q list installed epel-release-latest-7 &>/dev/null && echo "epel-release-latest-7 is installed" || yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm --skip-broken
 yum-config-manager --enable epel
 yum-config-manager --save --setopt=*.skip_if_unavailable=true
 rm -fr /var/cache/yum/*
 yum clean all
+echo " "
+echo "*********************************************************"
+echo "INSTALLING PACKAGES ENABLING SCRIPT TO RUN"
+echo "*********************************************************"
 yum -q list installed yum-utils &>/dev/null && echo "yum-utils is installed" || yum install -y yum-util* --skip-broken
-yum -q list installed epel-release-latest-7 &>/dev/null && echo "epel-release-latest-7 is installed" || yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm --skip-broken
 yum -q list installed gtk2-devel &>/dev/null && echo "gtk2-devel is installed" || yum install -y gtk2-devel --skip-broken
 yum -q list installed wget &>/dev/null && echo "wget is installed" || yum install -y wget --skip-broken
 yum -q list installed firewalld &>/dev/null && echo "firewalld is installed" || yum install -y firewalld --skip-broken
@@ -97,6 +105,10 @@ yum -q list installed perl &>/dev/null && echo "perl is installed" || yum instal
 yum -q list installed dialog &>/dev/null && echo "dialog is installed" || yum install -y *dialog* --skip-broken
 yum -q list installed xdialog &>/dev/null && echo "xdialog is installed" || yum install -y xdialog --skip-broken
 yum install -y dconf*
+echo " "
+}
+SCRIPT
+
 #--------------------------Define Env----------------------------
 
 #configures dialog command for proper environment
@@ -335,6 +347,7 @@ function VARIABLES1 {
 echo "*********************************************************"
 echo "COLLECT VARIABLES FOR SAT 6.X"
 echo "*********************************************************"
+cp -p /root/.bashrc /root/.bashrc.bak
 export INTERNAL=$(ip -o link | head -n 2 | tail -n 1 | awk '{print $2}' | sed s/:// )
 export EXTERNAL=$(ip route show | sed -e 's/^default via [0-9.]* dev \(\w\+\).*/\1/' | head -1)
 export INTERNALIP=$(ifconfig "$INTERNAL" | grep "inet" | awk -F ' ' '{print $2}' |grep -v f |awk -F . '{print $1"."$2"."$3"."$4}')
@@ -361,8 +374,10 @@ echo 'what is your domain name Example:'$(hostname -d)''
 read DOM
 echo 'DOM='$DOM'' >> /root/.bashrc
 echo "*********************************************************"
-echo "ADMIN PASSWORD"
+echo "ADMIN PASSWORD - WRITE OR REMEMBER YOU WILL BE PROMPTED FOR 
+USER: admin AND THIS PASSWORD WHEN WE IMPORT THE MANIFEST"
 echo "*********************************************************"
+sleep 5
 echo 'ADMIN=admin'  >> /root/.bashrc
 echo 'What will the password be for your admin user?'
 read  ADMIN_PASSWORD
@@ -602,7 +617,6 @@ echo "*********************************************************"
 echo "SET REPOS FOR INSTALLING AND UPDATING SATELLITE 6.4"
 echo "*********************************************************"
 echo -ne "\e[8;40;170t"
-rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm || true
 subscription-manager repos --disable '*'
 yum-config-manager --disable epel
 subscription-manager repos --enable=rhel-7-server-rpms || exit 1
@@ -617,13 +631,16 @@ rm -rf /var/cache/yum
 function INSTALLDEPS {
 #------------------------------
 echo "*********************************************************"
-echo "INSTALLING DEPENDENCIES"
+echo "INSTALLING DEPENDENCIES FOR SATELLITE OPERATING ENVIRONMENT"
 echo "*********************************************************"
 echo -ne "\e[8;40;170t"
 yum-config-manager --enable epel
 sleep 5
 yum install -y screen yum-utils vim gcc gcc-c++ git rh-nodejs8-npm make automake kernel-devel ruby-devel libvirt-client bind dhcp tftp 
 sleep 5
+echo "*********************************************************"
+echo "INSTALLING DEPENDENCIES FOR CONTENT VIEW AUTO PUBLISH"
+echo "*********************************************************"
 yum -y install python-pip rubygem-builder
 yum-config manager --disable epel
 pip install --upgrade pip
@@ -642,7 +659,7 @@ echo "*********************************************************"
 echo "GENERATE USERS AND SYSTEM KEYS FOR REQUIRED USERS"
 echo "*********************************************************"
 echo "*********************************************************"
-echo "ADMIN"
+echo "SETTING UP ADMIN"
 echo "*********************************************************"
 useradd admin --group admin -m -p $ADMIN
 mkdir -p /home/admin/.ssh
@@ -650,7 +667,7 @@ mkdir -p /home/admin/git
 chown -R admin:admin /home/admin
 sudo -u admin ssh-keygen -f /home/admin/.ssh/id_rsa -N ''
 echo "*********************************************************"
-echo "FOREMAN-PROXY"
+echo "SETTING UP FOREMAN-PROXY"
 echo "*********************************************************"
 useradd -M foreman-proxy
 usermod -L foreman-proxy
@@ -695,7 +712,7 @@ mkdir -p /root/.hammer
 function INSTALLNSAT {
 #  --------------------------------------
 echo "*********************************************************"
-echo "INSTALL SATELLITE"
+echo "INSTALLING SATELLITE"
 echo "*********************************************************"
 echo -ne "\e[8;40;170t"
 source /root/.bashrc
@@ -712,13 +729,8 @@ yum -q list installed satellite &>/dev/null && echo "satellite is installed" || 
 yum -q list installed puppetserver &>/dev/null && echo "puppetserver is installed" || time yum install puppetserver -y --skip-broken
 yum -q list installed puppet-agent-oauth &>/dev/null && echo "puppet-agent-oauth is installed" || time yum install puppet-agent-oauth -y --skip-broken
 yum -q list installed puppet-agent &>/dev/null && echo "puppet-agent is installed" || time yum install puppet-agent -y --skip-broken
-
-
 }
 #---END OF SAT 6.X INSTALL SCRIPT---
-
-#Reboot again here !!
-#init 6
 
 #---START OF SAT 6.X CONFIGURE SCRIPT---
 #  --------------------------------------
@@ -729,7 +741,10 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "CONFIGURING SATELLITE"
 echo "*********************************************************"
-
+echo " "
+echo "*********************************************************"
+echo "CONFIGURING SATELLITE BASE"
+echo "*********************************************************"
 satellite-installer --scenario satellite -v \
 --foreman-admin-password=$ADMIN_PASSWORD \
 --foreman-admin-username=$ADMIN \
@@ -739,24 +754,66 @@ satellite-installer --scenario satellite -v \
 --foreman-proxy-dns-managed=true \
 --foreman-proxy-dns-provider=nsupdate \
 --foreman-proxy-dns-server="127.0.0.1" \
---foreman-proxy-dns-tsig-principal="foreman-proxy $(hostname)@$DOM" \
---foreman-proxy-dns-tsig-keytab=/etc/foreman-proxy/dns.key \
 --foreman-proxy-dns-interface $SAT_INTERFACE \
 --foreman-proxy-dns-zone=$DOM \
 --foreman-proxy-dns-forwarders $DNS \
---foreman-proxy-dns-reverse $DNS_REV \
+--foreman-proxy-dns-tsig-principal="foreman-proxy $(hostname)@$DOM" \
+--foreman-proxy-dns-tsig-keytab=/etc/foreman-proxy/dns.key \
+--foreman-proxy-dns-reverse $DNS_REV 
+echo " "
+echo "*********************************************************"
+echo "CONFIGURING SATELLITE DHCP"
+echo "*********************************************************"
+source /root/.bashrc
+satellite-installer --scenario satellite -v \
 --foreman-proxy-dhcp true \
---foreman-proxy-dhcp-server $INTERNALIP \
+--foreman-proxy-dhcp-server=$INTERNALIP \
 --foreman-proxy-dhcp-interface=$SAT_INTERFACE \
 --foreman-proxy-dhcp-range="$DHCP_RANGE" \
 --foreman-proxy-dhcp-gateway=$DHCP_GW \
---foreman-proxy-dhcp-nameservers $DHCP_DNS \
+--foreman-proxy-dhcp-nameservers=$DHCP_DNS
+echo " "
+echo "*********************************************************"
+echo "CONFIGURING SATELLITE TFTP"
+echo "*********************************************************"
+source /root/.bashrc
+satellite-installer --scenario satellite -v \
 --foreman-proxy-tftp true \
---foreman-proxy-tftp-servername=$(hostname) \
---enable-foreman-plugin-openscap
+--foreman-proxy-tftp-servername="$(hostname)"
+echo " "
+echo "*********************************************************"
+echo "CONFIGURING ALL SATELLITE PLUGINS"
+echo "*********************************************************"
+yum groupinstall -y 'Red Hat Satellite'
+yum -q list installed puppet-foreman_scap_client &>/dev/null && echo "puppet-foreman_scap_client is installed" || yum install -y puppet-foreman_scap_client* --skip-broken
+yum -q list installed foreman-discovery-image &>/dev/null && echo "foreman-discovery-image is installed" || yum install -y foreman-discovery-image* --skip-broken
 
+source /root/.bashrc
+satellite-installer --scenario satellite -v \
+--foreman-proxy-plugin-discovery-install-images true \
+--enable-foreman-plugin-discovery \
+--foreman-plugin-tasks-automatic-cleanup true \
+--foreman-proxy-content-enable-ostree true \
+--enable-foreman-plugin-docker \
+--enable-foreman-plugin-hooks \
+--enable-foreman-plugin-openscap \
+--enable-foreman-plugin-templates \
+--enable-foreman-plugin-tasks \
+--enable-foreman-compute-ec2 \
+--enable-foreman-compute-gce \
+--enable-foreman-compute-libvirt \
+--enable-foreman-compute-openstack \
+--enable-foreman-compute-ovirt \
+--enable-foreman-compute-rackspace \
+--enable-foreman-compute-vmware \
+--enable-foreman-plugin-bootdisk
+echo " "
+echo "*********************************************************"
+echo "CONFIGURING SATELLITE CACHE"
+echo "*********************************************************"
 foreman-rake apipie:cache:index --trace
 }
+
 #------------------------------
 function HAMMERCONF {
 #------------------------------
@@ -787,32 +844,53 @@ sed -i 's/#:password/:password/g' /etc/hammer/cli.modules.d/foreman.yml
 #  --------------------------------------
 function CONFIG2 {
 #  --------------------------------------
+MANAFEST1="$(ls -t manifest*)"
+MANAFEST2="$(ls -t manifest*)"
 source /root/.bashrc
 echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "UPLOAD THE SATELLITE MANIFEST"
-echo "The Satellite Manifest can be in the Red Hat customer portal at https://access.redhat.com/management/subscription_allocations:"
+echo "      The Satellite Manifest can be found in the Red Hat customer portal 
+      at https://access.redhat.com/management/subscription_allocations:"
 echo "*********************************************************"
 firefox https://access.redhat.com/management/subscription_allocations -y &
+echo ' '
+echo "*********************************************************"
+echo 'Pulling up the url so you can build and export the manifest (just in case).
+This must be saved into the /home/admin/Downloads directory'
+echo "*********************************************************"
+echo ' '
+read -p "Press [Enter] to continue"
+echo ' '
+echo ' '
+echo "*********************************************************"
+echo 'If you have put your manafest into /home/admin/Downloads/'
+echo "*********************************************************"
 read -p "Press [Enter] to continue"
 sleep 5
-echo ' '
-echo ' '
-echo 'what is the full path to your Satellite Manifest? Example: /root/manifest*.zip'
-read SATMAN 
-time hammer subscription upload --organization $ORG --file $SATMAN
-sleep 20
-#time hammer subscription refresh-manifest --organization $ORG
-#sleep 20
-#for i in $(hammer capsule list |awk -F '|' '{print $1}' |grep -v ID|grep -v -) ; do hammer capsule refresh-features --id=$i ; done 
+echo "*********************************************************"
+echo 'WHEN PROMPTED PLEASE ENTER YOUR SATELLITE ADMIN USERNAME AND PASSWORD'
+echo "*********************************************************"
+sleep 5
+chown -R admin:admin /home/admin
+source /root/.bashrc
+for i in $(find /home/admin/Downloads/ |grep manifest* ); do sudo -u admin hammer subscription upload --file $i --organization $ORG ; done  || exit 1
+hammer subscription refresh-manifest --organization $ORG
+echo "*********************************************************"
+echo 'REFRESHING THE CAPSULE CONTENT'
+echo "*********************************************************"
+for i in $(hammer capsule list |awk -F '|' '{print $1}' |grep -v ID|grep -v -) ; do hammer capsule refresh-features --id=$i ; done 
+sleep 5
+echo "*********************************************************"
+echo 'SETTING SATELLITE EVN SETTINGS'
+echo "*********************************************************"
 hammer settings set --name default_download_policy --value on_demand
 hammer settings set --name default_organization  --value $ORG
 hammer settings set --name default_location  --value $LOC
 hammer settings set --name discovery_organization  --value $ORG
 hammer settings set --name discovery_organization  --value $ORG
 hammer settings set --name root_pass --value $NODEPASS
-yum install -y puppet-foreman_scap_client
-yum install -y foreman-discovery-image
+
 mkdir -p /etc/puppet/environments/production/modules
 }
 #-------------------------------
@@ -826,9 +904,8 @@ echo "*********************************************************"
 echo 'if $programname == "systemd" and ($msg contains "Starting Session" or $msg contains "Started Session" or $msg contains "Created slice" or $msg contains "Starting user-" or $msg contains "Starting User Slice of" or $msg contains "Removed session" or $msg contains "Removed slice User Slice of" or $msg contains "Stopping User Slice of") then stop' > /etc/rsyslog.d/ignore-systemd-session-slice.conf
 systemctl restart rsyslog 
 }
-echo "*********************************************************"
-echo "Configure Repositories"
-echo "*********************************************************"
+
+
 #NOTE: Jenkins, CentOS-7  Puppet Forge, Icinga, and Maven are examples of setting up a custom repository
 #---START OF REPO CONFIGURE AND SYNC SCRIPT---
 source /root/.bashrc
@@ -888,11 +965,31 @@ QMESSAGEMAVEN="Would you like to download Maven custom content"
 QMESSAGEICINGA="Would you like to download Icinga custom content"
 QMESSAGECENTOS7="Would you like to download CentOS-7 custom content"
 
-YMESSAGE="Adding avalable content"
+YMESSAGE="Adding avalable content. This step will take the longest,
+(Depending on your network) 
+So grab a cup of coffee, go to lunch, or just let it run until tomorrow"
 NMESSAGE="Skipping avalable content"
 FMESSAGE="PLEASE ENTER Y or N"
 COUNTDOWN=15
-DEFAULTVALUE=n
+DEFAULTVALUE=y
+RHEL5DEFAULTVALUE=n
+RHEL6DEFAULTVALUE=n
+RHEL7DEFAULTVALUE=y
+
+#-------------------------------
+function REQUESTMSG {
+#-------------------------------
+echo "*********************************************************"
+echo "Configuring Repositories"
+echo "*********************************************************"
+echo "*********************************************************"
+echo "BY DEFAULT IF YOU JUST LET THIS SCRIPT RUN YOU WILL 
+ONLY SYNC THE  CORE RHEL 7 (KICKSTART, 7SERVER, OPTIONAL, EXTRAS,
+ SAT 6.4 TOOLS, SUPPLAMENTRY, AND RH COMMON ) THE PROGRESS 
+ TO THIS STEP CAN BE TRACKED AT $(hostname)/katello/sync_management :"
+echo "*********************************************************"
+firefox $(hostname)/katello/sync_management &
+}
 #-------------------------------
 function REQUEST5 {
 #-------------------------------
@@ -902,18 +999,34 @@ echo "*********************************************************"
 echo "RHEL 5 STANDARD REPOS:"
 echo "*********************************************************"
 read -n1 -t$COUNTDOWN -p "$QMESSAGE5 ? Y/N " INPUT
-INPUT=${INPUT:-$DEFAULTVALUE}
+INPUT=${INPUT:-$RHEL5DEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
 hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='5.11' --name 'Red Hat Enterprise Linux 5 Server (Kickstart)'
 hammer repository update --organization $ORG --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 5 Server (Kickstart)' --download-policy immediate
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 5 Server Kickstart x86_64 5.11' 2>/dev/null
+
 hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='5Server' --name 'Red Hat Enterprise Linux 5 Server (RPMs)'
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 5 Server (RPMs)' 2>/dev/null
+
 hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --name 'Red Hat Satellite Tools 6.4 (for RHEL 5 Server) (RPMs)'
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Satellite Tools 6.4 (for RHEL 5 Server) (RPMs)' 2>/dev/null
+
 hammer repository-set enable --organization $ORG --product 'Red Hat Software Collections for RHEL Server' --basearch='x86_64' --releasever='5Server' --name 'Red Hat Software Collections RPMs for Red Hat Enterprise Linux 5 Server'
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat Software Collections for RHEL Server' --name 'Red Hat Software Collections RPMs for Red Hat Enterprise Linux 5 Server' 2>/dev/null
+
 hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --name 'Red Hat Enterprise Linux 5 Server - Extras (RPMs)'
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 5 Server - Extras (RPMs)' 2>/dev/null
+
 hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='5Server' --name 'Red Hat Enterprise Linux 5 Server - Optional (RPMs)'
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 5 Server - Optional (RPMs)' 2>/dev/null
+
 hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='5Server' --name 'Red Hat Enterprise Linux 5 Server - Supplementary (RPMs)'
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 5 Server - Supplementary (RPMs)' 2>/dev/null
+
 hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='5Server' --name 'Red Hat Enterprise Linux 5 Server - RH Common (RPMs)'
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 5 Server - RH Common (RPMs)' 2>/dev/null
+
 wget -q https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-5 /root/RPM-GPG-KEY-EPEL-5
 sleep 10
 hammer gpg create --key /root/RPM-GPG-KEY-EPEL-5 --name 'GPG-EPEL-5' --organization $ORG
@@ -921,6 +1034,8 @@ sleep 10
 hammer product create --name='Extra Packages for Enterprise Linux 5' --organization $ORG
 sleep 10
 hammer repository create --name='Extra Packages for Enterprise Linux 5' --organization $ORG --product='Extra Packages for Enterprise Linux 5' --content-type=yum --publish-via-http=true --url=https://archives.fedoraproject.org/pub/archive/epel/5/x86_64/ --checksum-type=sha256 --gpg-key=GPG-EPEL-5
+time hammer repository synchronize --organization "$ORG" --product 'Extra Packages for Enterprise Linux 5' --name 'Extra Packages for Enterprise Linux 5' 2>/dev/null
+
 #COMMANDEXECUTION
 elif [ "$INPUT" = "n" -o "$INPUT" = "N" ] ;then
 echo -e "\n$NMESSAGE\n"
@@ -939,19 +1054,34 @@ echo "*********************************************************"
 echo "RHEL 6 STANDARD REPOS:"
 echo "*********************************************************"
 read -n1 -t$COUNTDOWN -p "$QMESSAGE6 ? Y/N " INPUT
-INPUT=${INPUT:-$DEFAULTVALUE}
+INPUT=${INPUT:-$RHEL6DEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
 hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='6.10' --name 'Red Hat Enterprise Linux 6 Server (Kickstart)' 
 hammer repository update --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='6.10' --name 'Red Hat Enterprise Linux 6 Server (Kickstart)' --download-policy immediate
-hammer repository update --organization $ORG --product
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 6 Server (Kickstart)' 2>/dev/null
+
 hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='6Server' --name 'Red Hat Enterprise Linux 6 Server (RPMs)'
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 6 Server (RPMs)' 2>/dev/null
+
 hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --name 'Red Hat Satellite Tools 6.4 (for RHEL 6 Server) (RPMs)'
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Satellite Tools 6.4 (for RHEL 6 Server) (RPMs)' 2>/dev/null
+
 hammer repository-set enable --organization $ORG --product 'Red Hat Software Collections for RHEL Server' --basearch='x86_64' --releasever='6Server' --name 'Red Hat Software Collections RPMs for Red Hat Enterprise Linux 6 Server'
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat Software Collections for RHEL Server' --name 'Red Hat Software Collections RPMs for Red Hat Enterprise Linux 6 Server' 2>/dev/null
+
 hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --name 'Red Hat Enterprise Linux 6 Server - Extras (RPMs)'
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 6 Server - Extras (RPMs)' 2>/dev/null
+
 hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='6Server' --name 'Red Hat Enterprise Linux 6 Server - Optional (RPMs)'
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 6 Server - Optional (RPMs)' 2>/dev/null
+
 hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='6Server' --name 'Red Hat Enterprise Linux 6 Server - Supplementary (RPMs)'
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 6 Server - Supplementary (RPMs)' 2>/dev/null
+
 hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='6Server' --name 'Red Hat Enterprise Linux 6 Server - RH Common (RPMs)'
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 6 Server - RH Common (RPMs)' 2>/dev/null
+
 wget -q https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-6 -O /root/RPM-GPG-KEY-EPEL-6
 sleep 10
 hammer gpg create --key /root/RPM-GPG-KEY-EPEL-6 --name 'GPG-EPEL-6' --organization $ORG
@@ -959,6 +1089,8 @@ sleep 10
 hammer product create --name='Extra Packages for Enterprise Linux 6' --organization $ORG
 sleep 10
 hammer repository create --name='Extra Packages for Enterprise Linux 6' --organization $ORG --product='Extra Packages for Enterprise Linux 6' --content-type=yum --publish-via-http=true --url=http://dl.fedoraproject.org/pub/epel/6/x86_64/ --checksum-type=sha256 --gpg-key=GPG-EPEL-6
+time hammer repository synchronize --organization "$ORG" --product 'Extra Packages for Enterprise Linux 6' --name 'Extra Packages for Enterprise Linux 6' 2>/dev/null
+
 #COMMANDEXECUTION
 elif [ "$INPUT" = "n" -o "$INPUT" = "N" ] ;then
 echo -e "\n$NMESSAGE\n"
@@ -977,20 +1109,40 @@ echo "*********************************************************"
 echo "RHEL 7 STANDARD REPOS:"
 echo "*********************************************************"
 read -n1 -t$COUNTDOWN -p "$QMESSAGE7 ? Y/N " INPUT
-INPUT=${INPUT:-$DEFAULTVALUE}
+INPUT=${INPUT:-$RHEL7DEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
 hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='7.6' --name 'Red Hat Enterprise Linux 7 Server (Kickstart)' 
 hammer repository update --organization $ORG --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 7 Server Kickstart x86_64 7.6' --download-policy immediate
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 7 Server Kickstart x86_64 7.6' 2>/dev/null
+
 hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Enterprise Linux 7 Server (RPMs)'
-hammer repository-set enable --organization $ORG --product 'Red Hat Software Collections for RHEL Server' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Software Collections RPMs for Red Hat Enterprise Linux 7 Server' 
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 7 Server (RPMs)' 2>/dev/null
+
+hammer repository-set enable --organization $ORG --product 'Red Hat Software Collections for RHEL Server' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Software Collections RPMs for Red Hat Enterprise Linux 7 Server'
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Software Collections RPMs for Red Hat Enterprise Linux 7 Server' 2>/dev/null
+
 hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --name 'Red Hat Enterprise Linux 7 Server - Extras (RPMs)'
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 7 Server - Extras (RPMs)' 2>/dev/null
+
 hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Enterprise Linux 7 Server - Optional (RPMs)'
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 7 Server - Optional (RPMs)' 2>/dev/null
+
 hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Enterprise Linux 7 Server - RH Common (RPMs)'
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 7 Server - RH Common (RPMs)' 2>/dev/null
+
 hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Enterprise Linux 7 Server - Supplementary (RPMs)'
-hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Ceph Storage Tools 1.3 for Red Hat Enterprise Linux 7 Server (RPMs)'
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 7 Server - Supplementary (RPMs)' 2>/dev/null
+
+hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Ceph Storage Tools 3 for Red Hat Enterprise Linux 7 Server (RPMs)'
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Ceph Storage Tools 3 for Red Hat Enterprise Linux 7 Server (RPMs)' 2>/dev/null
+
 hammer repository-set enable --organization $ORG --product 'Oracle Java for RHEL Server' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Enterprise Linux 7 Server - Oracle Java (RPMs)'
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 7 Server - Oracle Java (RPMs)' 2>/dev/null
+
 hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --name 'Red Hat Satellite Tools 6.4 (for RHEL 7 Server) (RPMs)'
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Satellite Tools 6.4 (for RHEL 7 Server) (RPMs)' 2>/dev/null
+
 wget -q https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7 -O /root/RPM-GPG-KEY-EPEL-7
 wget -q https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7Server -O /root/RPM-GPG-KEY-EPEL-7Server
 sleep 10
@@ -1001,7 +1153,11 @@ hammer product create --name='Extra Packages for Enterprise Linux 7' --organizat
 hammer product create --name='Extra Packages for Enterprise Linux 7Server' --organization $ORG
 sleep 10
 hammer repository create --name='Extra Packages for Enterprise Linux 7' --organization $ORG --product='Extra Packages for Enterprise Linux 7' --content-type yum --publish-via-http=true --url=https://dl.fedoraproject.org/pub/epel/7/x86_64/
+time hammer repository synchronize --organization "$ORG" --product 'Extra Packages for Enterprise Linux 7' --name 'Extra Packages for Enterprise Linux 7' 2>/dev/null
+
 hammer repository create --name='Extra Packages for Enterprise Linux 7Server' --organization $ORG --product='Extra Packages for Enterprise Linux 7Server' --content-type yum --publish-via-http=true --url=https://dl.fedoraproject.org/pub/epel/7Server/x86_64/
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Extra Packages for Enterprise Linux 7Server' 2>/dev/null
+
 #COMMANDEXECUTION
 elif [ "$INPUT" = "n" -o "$INPUT" = "N" ] ;then
 echo -e "\n$NMESSAGE\n"
@@ -1024,6 +1180,8 @@ INPUT=${INPUT:-$DEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
 hammer repository-set enable --organization $ORG --product 'Red Hat Software Collections for RHEL Server' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Software Collections RPMs for Red Hat Enterprise Linux 7 Server x86_64 7Server'
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat Software Collections for RHEL Server' --name 'Red Hat Software Collections RPMs for Red Hat Enterprise Linux 7 Server x86_64 7Server' 2>/dev/null
+
 #COMMANDEXECUTION
 elif [ "$INPUT" = "n" -o "$INPUT" = "N" ] ;then
 echo -e "\n$NMESSAGE\n"
@@ -1046,6 +1204,8 @@ INPUT=${INPUT:-$DEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
 hammer repository-set enable --organization $ORG --product 'JBoss Enterprise Application Platform' --basearch='x86_64' --releasever='7Server' --name 'JBoss Enterprise Application Platform 7 (RHEL 7 Server) (RPMs)'
+time hammer repository synchronize --organization "$ORG" --product 'JBoss Enterprise Application Platform' --name 'JBoss Enterprise Application Platform 7 (RHEL 7 Server) (RPMs)' 2>/dev/null
+
 #COMMANDEXECUTION
 elif [ "$INPUT" = "n" -o "$INPUT" = "N" ] ;then
 echo -e "\n$NMESSAGE\n"
@@ -1068,6 +1228,8 @@ INPUT=${INPUT:-$DEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
 hammer repository-set enable --organization $ORG --product 'Red Hat Virtualization' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Virtualization 4 Management Agents for RHEL 7 (RPMs)'
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat Virtualization' --name 'Red Hat Virtualization 4 Management Agents for RHEL 7 (RPMs)' 2>/dev/null
+
 #COMMANDEXECUTION
 elif [ "$INPUT" = "n" -o "$INPUT" = "N" ] ;then
 echo -e "\n$NMESSAGE\n"
@@ -1090,6 +1252,8 @@ INPUT=${INPUT:-$DEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
 hammer repository-set enable --organization $ORG --product 'Red Hat Satellite' --basearch='x86_64' --name 'Red Hat Satellite 6.4 (for RHEL 7 Server) (RPMs)'
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat Satellite' --name 'Red Hat Satellite 6.4 (for RHEL 7 Server) (RPMs)' 2>/dev/null
+
 #COMMANDEXECUTION
 elif [ "$INPUT" = "n" -o "$INPUT" = "N" ] ;then
 echo -e "\n$NMESSAGE\n"
@@ -1112,6 +1276,8 @@ INPUT=${INPUT:-$DEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
 hammer repository-set enable --organization $ORG --product 'Red Hat OpenShift Container Platform' --basearch='x86_64' --name 'Red Hat OpenShift Container Platform 3.10 (RPMs)'
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat OpenShift Container Platform' --name 'Red Hat OpenShift Container Platform 3.10 (RPMs)' 2>/dev/null
+
 #COMMANDEXECUTION
 elif [ "$INPUT" = "n" -o "$INPUT" = "N" ] ;then
 echo -e "\n$NMESSAGE\n"
@@ -1133,11 +1299,21 @@ read -n1 -t$COUNTDOWN -p "$QMESSAGECEPH ? Y/N " INPUT
 INPUT=${INPUT:-$DEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
-hammer repository-set enable --organization $ORG --product 'Red Hat Ceph Storage' --basearch='x86_64' --name 'Red Hat Ceph Storage 3 for Red Hat Enterprise Linux 7 Server (FILEs) '
+hammer repository-set enable --organization $ORG --product 'Red Hat Ceph Storage' --basearch='x86_64' --name 'Red Hat Ceph Storage 3 for Red Hat Enterprise Linux 7 Server (FILEs)'
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat Ceph Storage' --name 'Red Hat Ceph Storage 3 for Red Hat Enterprise Linux 7 Server (FILEs)' 2>/dev/null
+
 hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Ceph Storage Tools 3 for Red Hat Enterprise Linux 7 Server (RPMs)'
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Ceph Storage Tools 3 for Red Hat Enterprise Linux 7 Server (RPMs)' 2>/dev/null
+
 hammer repository-set enable --organization $ORG --product 'Red Hat Ceph Storage MON' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Ceph Storage MON 3 for Red Hat Enterprise Linux 7 Server (RPMs)'
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat Ceph Storage MON' --name 'Red Hat Ceph Storage MON 3 for Red Hat Enterprise Linux 7 Server (RPMs)' 2>/dev/null
+
 hammer repository-set enable --organization $ORG --product 'Red Hat Ceph Storage MON' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Ceph Storage 3 Text-Only Advisories for Red Hat Enterprise Linux 7 Server (RPMs)'
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat Ceph Storage MON' --name 'Red Hat Ceph Storage 3 Text-Only Advisories for Red Hat Enterprise Linux 7 Server (RPMs)' 2>/dev/null
+
 hammer repository-set enable --organization $ORG --product 'Red Hat Ceph Storage OSD ' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Ceph Storage OSD 3 for Red Hat Enterprise Linux 7 Server (RPMs)'
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat Ceph Storage OSD' --name 'Red Hat Ceph Storage OSD 3 for Red Hat Enterprise Linux 7 Server (RPMs)' 2>/dev/null
+
 #COMMANDEXECUTION
 elif [ "$INPUT" = "n" -o "$INPUT" = "N" ] ;then
 echo -e "\n$NMESSAGE\n"
@@ -1160,6 +1336,8 @@ INPUT=${INPUT:-$DEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
 hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Storage Native Client for RHEL 7 (RPMs)'
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Storage Native Client for RHEL 7 (RPMs)' 2>/dev/null
+
 #COMMANDEXECUTION
 elif [ "$INPUT" = "n" -o "$INPUT" = "N" ] ;then
 echo -e "\n$NMESSAGE\n"
@@ -1182,6 +1360,8 @@ INPUT=${INPUT:-$DEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
 hammer repository-set enable --organization $ORG --product 'Red Hat Ceph Storage' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Ceph Storage Installer 1.3 for Red Hat Enterprise Linux 7 Server (RPMs)'
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat Ceph Storage' --name 'Red Hat Ceph Storage Installer 1.3 for Red Hat Enterprise Linux 7 Server (RPMs)' 2>/dev/null
+
 #COMMANDEXECUTION
 elif [ "$INPUT" = "n" -o "$INPUT" = "N" ] ;then
 echo -e "\n$NMESSAGE\n"
@@ -1204,6 +1384,8 @@ INPUT=${INPUT:-$DEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
 hammer repository-set enable --organization $ORG --product 'Red Hat OpenStack' --basearch='x86_64' --releasever='7Server' --name 'Red Hat OpenStack Platform 13 for RHEL 7 (RPMs)'
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat OpenStack' --name 'Red Hat OpenStack Platform 13 for RHEL 7 (RPMs)' 2>/dev/null
+
 #COMMANDEXECUTION
 elif [ "$INPUT" = "n" -o "$INPUT" = "N" ] ;then
 echo -e "\n$NMESSAGE\n"
@@ -1226,6 +1408,8 @@ NPUT=${INPUT:-$DEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
 hammer repository-set enable --organization $ORG --product 'Red Hat OpenStack' --basearch='x86_64' --releasever='7Server' --name 'Red Hat OpenStack Platform 13 Operational Tools for RHEL 7 (RPMs)'
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat OpenStack' --name 'Red Hat OpenStack Platform 13 Operational Tools for RHEL 7 (RPMs)' 2>/dev/null
+
 #COMMANDEXECUTION
 elif [ "$INPUT" = "n" -o "$INPUT" = "N" ] ;then
 echo -e "\n$NMESSAGE\n"
@@ -1248,6 +1432,8 @@ INPUT=${INPUT:-$DEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
 hammer repository-set enable --organization $ORG --product 'Red Hat OpenStack' --basearch='x86_64' --releasever='7Server' --name 'Red Hat OpenStack Platform 13 director for RHEL 7 (RPMs)'
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat OpenStack' --name 'Red Hat OpenStack Platform 13 director for RHEL 7 (RPMs)' 2>/dev/null
+
 #COMMANDEXECUTION
 elif [ "$INPUT" = "n" -o "$INPUT" = "N" ] ;then
 echo -e "\n$NMESSAGE\n"
@@ -1270,6 +1456,8 @@ INPUT=${INPUT:-$DEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
 hammer repository-set enable --organization $ORG --product 'Red Hat Virtualization Host' --basearch='x86_64' --name 'Red Hat Virtualization Host 7 (RPMs)'
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat Virtualization Host' --name 'Red Hat Virtualization Host 7 (RPMs)' 2>/dev/null
+
 #COMMANDEXECUTION
 elif [ "$INPUT" = "n" -o "$INPUT" = "N" ] ;then
 echo -e "\n$NMESSAGE\n"
@@ -1292,6 +1480,8 @@ INPUT=${INPUT:-$DEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
 hammer repository-set enable --organization $ORG --product 'Red Hat Virtualization' --basearch='x86_64' --name 'Red Hat Virtualization Manager 4.2 (RHEL 7 Server) (RPMs)'
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat Virtualization' --name 'Red Hat Virtualization Manager 4.2 (RHEL 7 Server) (RPMs)' 2>/dev/null
+
 #COMMANDEXECUTION
 elif [ "$INPUT" = "n" -o "$INPUT" = "N" ] ;then
 echo -e "\n$NMESSAGE\n"
@@ -1314,6 +1504,8 @@ INPUT=${INPUT:-$DEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
 hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Atomic Host' --basearch='x86_64' --name 'Red Hat Enterprise Linux Atomic Host (RPMs)'
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Atomic Host' --name 'Red Hat Enterprise Linux Atomic Host (RPMs)' 2>/dev/null
+
 #COMMANDEXECUTION
 elif [ "$INPUT" = "n" -o "$INPUT" = "N" ] ;then
 echo -e "\n$NMESSAGE\n"
@@ -1336,7 +1528,9 @@ INPUT=${INPUT:-$DEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
 hammer product create --name='Ansible-Tower' --organization $ORG
-hammer repository create --name='Ansible-Tower' --organization $ORG --product='Ansible-Tower' --content-type yum --publish-via-http=true --url=http://releases.ansible.com/ansible-tower/rpm/epel-7-x86_64/ 
+hammer repository create --name='Ansible-Tower' --organization $ORG --product='Ansible-Tower' --content-type yum --publish-via-http=true --url=http://releases.ansible.com/ansible-tower/rpm/epel-7-x86_64/
+time hammer repository synchronize --organization "$ORG" --product 'Ansible-Tower' --name 'Ansible-Tower' 2>/dev/null
+
 #COMMANDEXECUTION
 elif [ "$INPUT" = "n" -o "$INPUT" = "N" ] ;then
 echo -e "\n$NMESSAGE\n"
@@ -1359,7 +1553,9 @@ INPUT=${INPUT:-$DEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
 hammer product create --name='Puppet Forge' --organization $ORG
-hammer repository create --name='Puppet Forge' --organization $ORG --product='Puppet Forge' --content-type puppet --publish-via-http=true --url=https://forge.puppetlabs.com 
+hammer repository create --name='Puppet Forge' --organization $ORG --product='Puppet Forge' --content-type puppet --publish-via-http=true --url=https://forge.puppetlabs.com
+time hammer repository synchronize --organization "$ORG" --product 'Puppet Forge' --name 'Puppet Forge' 2>/dev/null
+
 #COMMANDEXECUTION
 elif [ "$INPUT" = "n" -o "$INPUT" = "N" ] ;then
 echo -e "\n$NMESSAGE\n"
@@ -1385,6 +1581,8 @@ wget http://pkg.jenkins.io/redhat-stable/jenkins.io.key
 hammer gpg create --organization $ORG --name GPG-JENKINS --key jenkins.io.key
 hammer product create --name='JENKINS' --organization $ORG
 hammer repository create  --organization $ORG --name='JENKINS' --product=$ORG --gpg-key='GPG-JENKINS' --content-type='yum' --publish-via-http=true --url=https://pkg.jenkins.io/redhat/ --download-policy immediate
+time hammer repository synchronize --organization "$ORG" --product 'JENKINS' --name 'JENKINS' 2>/dev/null
+
 #COMMANDEXECUTION
 elif [ "$INPUT" = "n" -o "$INPUT" = "N" ] ;then
 echo -e "\n$NMESSAGE\n"
@@ -1408,6 +1606,8 @@ if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
 hammer product create --name='Maven' --organization $ORG
 hammer repository create  --organization $ORG --name='Maven 7Server' --product='Maven' --content-type='yum' --publish-via-http=true --url=https://repos.fedorapeople.org/repos/dchen/apache-maven/epel-7Server/x86_64/ --download-policy immediate
+time hammer repository synchronize --organization "$ORG" --product 'Maven 7Server' --name 'Maven 7Server' 2>/dev/null
+
 #COMMANDEXECUTION
 elif [ "$INPUT" = "n" -o "$INPUT" = "N" ] ;then
 echo -e "\n$NMESSAGE\n"
@@ -1433,6 +1633,8 @@ wget http://packages.icinga.org/icinga.key
 hammer gpg create --organization $ORG --name GPG-ICINGA --key icinga.key
 hammer product create --name='Icinga' --organization $ORG
 hammer repository create  --organization $ORG --name='Icinga 7Server' --product='Icinga' --content-type='yum' --gpg-key='GPG-ICINGA' --publish-via-http=true --url=http://packages.icinga.org/epel/7Server/release --download-policy immediate
+time hammer repository synchronize --organization "$ORG" --product 'Icinga 7Server' --name 'Icinga 7Server' 2>/dev/null
+
 #COMMANDEXECUTION
 elif [ "$INPUT" = "n" -o "$INPUT" = "N" ] ;then
 echo -e "\n$NMESSAGE\n"
@@ -1459,16 +1661,38 @@ wget http://mirror.centos.org/centos/RPM-GPG-KEY-CentOS-7
 hammer gpg create --organization $ORG --name RPM-GPG-KEY-CentOS-7 --key RPM-GPG-KEY-CentOS-7
 hammer product create --name='CentOS-7' --organization $ORG
 hammer repository create  --organization $ORG --name='CentOS-7 (Kickstart)' --product='CentOS-7' --content-type='yum' --gpg-key='RPM-GPG-KEY-CentOS-7' --publish-via-http=true --url=http://mirror.centos.org/centos/7.6.1810/os/x86_64/ --download-policy immediate --checksum-type=sha256
+time hammer repository synchronize --organization "$ORG" --product 'CentOS-7' --name 'CentOS-7 (Kickstart)' 2>/dev/null
+
 hammer repository create  --organization $ORG --name='CentOS-7 CentOSplus' --product='CentOS-7' --content-type='yum' --gpg-key='RPM-GPG-KEY-CentOS-7' --publish-via-http=true --url=http://mirror.centos.org/centos/7.6.1810/centosplus/x86_64/ --checksum-type=sha256
+time hammer repository synchronize --organization "$ORG" --product 'CentOS-7' --name 'CentOS-7 CentOSplus' 2>/dev/null
+
 hammer repository create  --organization $ORG --name='CentOS-7 DotNET' --product='CentOS-7' --content-type='yum' --gpg-key='RPM-GPG-KEY-CentOS-7' --publish-via-http=true --url=http://mirror.centos.org/centos/7.6.1810/dotnet/x86_64/ --checksum-type=sha256
+time hammer repository synchronize --organization "$ORG" --product 'CentOS-7' --name 'CentOS-7 DotNET' 2>/dev/null
+
 hammer repository create  --organization $ORG --name='CentOS-7 Extras' --product='CentOS-7' --content-type='yum' --gpg-key='RPM-GPG-KEY-CentOS-7' --publish-via-http=true --url=http://mirror.centos.org/centos/7.6.1810/extras/x86_64/ --checksum-type=sha256
+time hammer repository synchronize --organization "$ORG" --product 'CentOS-7' --name 'CentOS-7 Extras' 2>/dev/null
+
 hammer repository create  --organization $ORG --name='CentOS-7 Fasttrack' --product='CentOS-7' --content-type='yum' --gpg-key='RPM-GPG-KEY-CentOS-7' --publish-via-http=true --url=http://mirror.centos.org/centos/7.6.1810/fasttrack/x86_64/ --checksum-type=sha256
+time hammer repository synchronize --organization "$ORG" --product 'CentOS-7' --name 'CentOS-7 Fasttrack' 2>/dev/null
+
 hammer repository create  --organization $ORG --name='CentOS-7 ISO' --product='CentOS-7' --content-type='yum' --gpg-key='RPM-GPG-KEY-CentOS-7' --publish-via-http=true --url=http://centos.host-engine.com/7.6.1810/isos/x86_64/CentOS-7-x86_64-DVD-1810.iso --checksum-type=sha256
+time hammer repository synchronize --organization "$ORG" --product 'CentOS-7' --name 'CentOS-7 ISO' 2>/dev/null
+
 hammer repository create  --organization $ORG --name='CentOS-7 Openshift-Origin' --product='CentOS-7' --content-type='yum' --gpg-key='RPM-GPG-KEY-CentOS-7' --publish-via-http=true --url=http://mirror.centos.org/centos/7.6.1810/paas/x86_64/openshift-origin/ --checksum-type=sha256
+time hammer repository synchronize --organization "$ORG" --product 'CentOS-7' --name 'CentOS-7 Openshift-Origin' 2>/dev/null
+
 hammer repository create  --organization $ORG --name='CentOS-7 OpsTools' --product='CentOS-7' --content-type='yum' --gpg-key='RPM-GPG-KEY-CentOS-7' --publish-via-http=true --url=http://mirror.centos.org/centos/7.6.1810/opstools/x86_64/ --checksum-type=sha256
+time hammer repository synchronize --organization "$ORG" --product 'CentOS-7' --name 'CentOS-7 OpsTools' 2>/dev/null
+
 hammer repository create  --organization $ORG --name='CentOS-7 Gluster 5' --product='CentOS-7' --content-type='yum' --gpg-key='RPM-GPG-KEY-CentOS-7' --publish-via-http=true --url=http://mirror.centos.org/centos/7.6.1810/storage/x86_64/gluster-5/ --checksum-type=sha256
+time hammer repository synchronize --organization "$ORG" --product 'CentOS-7' --name 'CentOS-7 Gluster 5' 2>/dev/null
+
 hammer repository create  --organization $ORG --name='CentOS-7 Ceph-Luminous' --product='CentOS-7' --content-type='yum' --gpg-key='RPM-GPG-KEY-CentOS-7' --publish-via-http=true --url=http://mirror.centos.org/centos/7.6.1810/storage/x86_64/ceph-luminous/ --checksum-type=sha256
+time hammer repository synchronize --organization "$ORG" --product 'CentOS-7' --name 'CentOS-7 Ceph-Luminous' 2>/dev/null
+
 hammer repository create  --organization $ORG --name='CentOS-7 Updates' --product='CentOS-7' --content-type='yum' --gpg-key='RPM-GPG-KEY-CentOS-7' --publish-via-http=true --url=http://mirror.centos.org/centos/7.6.1810/updates/x86_64/ --checksum-type=sha256
+time hammer repository synchronize --organization "$ORG" --product 'CentOS-7' --name 'CentOS-7 Updates' 2>/dev/null
+
 #COMMANDEXECUTION
 elif [ "$INPUT" = "n" -o "$INPUT" = "N" ] ;then
 echo -e "\n$NMESSAGE\n"
@@ -1487,7 +1711,8 @@ echo "*********************************************************"
 echo "SYNC ALL REPOSITORIES (WAIT FOR THIS TO COMPLETE BEFORE CONTINUING):"
 echo "*********************************************************"
 for i in $(hammer --csv repository list --organization $ORG | awk -F, {'print $1'} | grep -vi '^ID'); do hammer repository synchronize --id ${i} --organization $ORG --async; done
-firefox https://127.0.0.1/katello/sync_management -y &
+sleep 5
+firefox https://$(hostname)/katello/sync_management &
 }
 #-------------------------------
 function CREATESUBNET {
@@ -1641,7 +1866,6 @@ echo "***********************************************"
 hammer content-view create --organization $ORG --name 'RHEL7-Hypervisor' --label 'RHEL7-Hypervisor' --description ''
 hammer content-view add-repository --organization $ORG --name 'RHEL7-Hypervisor' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server'
 hammer content-view add-repository --organization $ORG --name 'RHEL7-Hypervisor' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Satellite Tools 6.4 for RHEL 7 Server RPMs x86_64'
-#hammer content-view add-repository --organization $ORG --name 'RHEL7-Hypervisor' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Satellite Tools 6.4 - Puppet 4 for RHEL 7 Server RPMs x86_64'
 hammer content-view add-repository --organization $ORG --name 'RHEL7-Hypervisor' --product 'Red Hat Virtualization' --repository 'Red Hat Virtualization 4 Management Agents for RHEL 7 RPMs x86_64 7Server'
 hammer content-view puppet-module add --organization $ORG --content-view 'RHEL7-Hypervisor' --author puppetlabs --name stdlib
 hammer content-view puppet-module add --organization $ORG --content-view 'RHEL7-Hypervisor' --author puppetlabs --name concat
@@ -1854,6 +2078,11 @@ hammer medium create --path=http://repos/${ORG}/Library/content/dist/rhel/server
 #----------------------------------
 function VARSETUP2 {
 #----------------------------------
+echo "*********************************************************"
+echo "CREATING THE NEXT SET OF VARIABLES. THIS WILL REQUIRE A 
+REBOOT WHEN COMPLETE. PLEASE RERUN THE SCRIPT AND CHOOSE - 
+ 2. COMPLETE THE INSTALL SATELLITE 6.4 PART 2:"
+echo "*********************************************************"
 source /root/.bashrc
 echo -ne "\e[8;40;170t"
 
@@ -1866,7 +2095,7 @@ echo "SUBNETID=$(hammer --csv subnet list |awk -F "," {'print $1'}| grep -v Id)"
 echo "OSID1=$(hammer os list |grep -i "RedHat 7.6"  |awk -F "|" {'print $1'})" >> /root/.bashrc
 echo "OSID2=$(hammer os list |grep -i "CentOS 7.6"  |awk -F "|" {'print $1'})" >> /root/.bashrc
 echo "PROXYID=$(hammer --csv proxy list |awk -F "," {'print $1'} |grep -v Id)" >> /root/.bashrc
-echo "PARTID=$(hammer --csv partition-table list | grep "Kickstart default" | cut -d, -f1)" >> /root/.bashrc
+echo "PARTID=$(hammer --csv partition-table list | grep "Kickstart default" | grep -i -v thin |cut -d, -f1)" >> /root/.bashrc
 echo "PXEID=$(hammer --csv template list --per-page=1000 | grep "Kickstart default PXELinux" | cut -d, -f1)" >> /root/.bashrc
 echo "SATID=$(hammer --csv template list --per-page=1000 | grep ",Kickstart default,provision" | grep "Kickstart default" | cut -d, -f1)" >> /root/.bashrc
 echo "ORGID=$(hammer --csv organization list|awk -F "," {'print $1'}|grep -v Id)" >> /root/.bashrc
@@ -1928,6 +2157,7 @@ echo "*********************************************************"
 echo "ASSOCIATE OS TO TEMPLATE"
 echo "*********************************************************"
 hammer template add-operatingsystem --operatingsystem-id 1 --id 1
+
 }
 
 #NOTE You can remove or dissasociate templates Remove is perm (Destricutve) dissasociate you can re associate if you need 
@@ -2034,6 +2264,9 @@ subscription-manager repos --enable=rhel-7-server-rpms
 subscription-manager repos --enable=rhel-server-rhscl-7-rpms
 subscription-manager repos --enable=rhel-7-server-satellite-6.4-rpms
 subscription-manager repos --enable=rhel-7-server-satellite-maintenance-6-rpms
+foreman-rake foreman_tasks:cleanup TASK_SEARCH='label = Actions::Katello::Repository::Sync' STATES='paused,pending,stopped' VERBOSE=true
+foreman-rake katello:delete_orphaned_content --trace
+foreman-rake katello:reindex --trace
 katello-service stop
 katello-selinux-disable
 setenforce 0
@@ -2041,6 +2274,7 @@ yum upgrade -y; yum update -y --skip-broken
 satellite-installer -v --scenario satellite --upgrade
 foreman-rake apipie:cache:index --trace
 hammer template build-pxe-default
+for i in $(hammer capsule list |awk -F '|' '{print $1}' |grep -v ID|grep -v -) ; do hammer capsule refresh-features --id=$i ; done 
 }
 #-------------------------------
 function INSIGHTS {
@@ -2056,8 +2290,7 @@ function CLEANUP {
 rm -rf /home/admin/FILES
 rm -rf /root/FILES
 rm -rf /tmp/*
-mv -f /etc/.bashrc.bak /etc/.bashrc
-init 6
+mv -f /root/.bashrc.bak /root/.bashrc
 }
 
 #-----------------------------------------------------------------------------------------------------------------------
@@ -2191,16 +2424,12 @@ sh setup.sh
 function dMainMenu {
 #-----------------------
 $DIALOG --stdout --title "Red Hat Sat 6 P.O.C. - RHEL 7.X" --menu "********** Red Hat Tools Menu ********* \n Please choose [1 -> 10]?" 30 90 10 \
-1 "Satellite - Prep the system and install Satellite 6.x rpm and Dependencies" \
-2 "Satellite - Configure the Satellite scenerio Satellite-Installer" \
-3 "Satellite - Choose and Sync Repositories RHEL5, RHEL6, RHEL7, and CUSTOM" \
-4 "Satellite - Configure Part 1 sync plan, content view, subnet, hostgroups ect" \
-5 "Satellite - Get second variable set" \
-6 "Satellite - Part 2 Complete the Configureation Sat 6.X" \
-7 "Satellite - Upgrade Sat 6.X" \
-8 "Ansible Tower - Install" \
-9 "Post install clean up" \
-10 "EXIT"
+1 "INSTALL SATELLITE 6.4" \
+2 "UPGRADE/UPDATE THE SATELLITE 6.X" \
+3 "SYNC ALL ACTIVATED REPOSITORIES" \
+4 "LATEST ANSIBLE TOWER INSTALL" \
+5 "POST INSTALL CLEANUP" \
+6 "EXIT"
 }
 
 #----------------------
@@ -2252,8 +2481,8 @@ RC=$?
 [[ $RC -ne 0 ]] && break
 Flag=$(cat $TmpFi)
 case $Flag in
-1) dMsgBx "Satellite - Prep the system and install Satellite 6.x rpm and Dependencies" \
-NETWORK
+1) dMsgBx "INSTALL SATELLITE 6.4" \
+sleep 10
 VARIABLES1
 IPA
 CAPSULE
@@ -2264,14 +2493,14 @@ INSTALLREPOS
 INSTALLDEPS
 GENERALSETUP
 INSTALLNSAT
-;;
-2) dMsgBx "Satellite - Configure the Satellite scenerio Satellite-Installer" \
+sleep 10
 CONFSAT
+sleep 10
 HAMMERCONF
 CONFIG2
 STOPSPAMMINGVARLOG
-;;
-3) dMsgBx "Satellite - Choose and Sync Repositories RHEL5, RHEL6, RHEL7, CUSTOM" \
+REQUESTMSG
+sleep 10
 REQUEST5
 REQUEST6
 REQUEST7
@@ -2295,9 +2524,7 @@ REQUESTJENKINS
 REQUESTMAVEN
 REQUESTICINGA
 REQUESTCENTOS7
-SYNC
-;;
-4) dMsgBx "Satellite - Configure Part 1 sync plan, content view, subnet, hostgroups ect" \
+sleep 10
 CREATESUBNET
 ENVIRONMENTS
 DAILYSYNC
@@ -2309,30 +2536,28 @@ KEYSFORENV
 KEYSTOHOST
 SUBTOKEYS
 MEDIUM
-;;
-5) dMsgBx "Satellite - Get second variable set" \
 VARSETUP2
-;;
-6) dMsgBx "Satellite - Part 2 Complete the Configureation Sat 6.X" \
+sleep 5
 PARTITION_OS_PXE_TEMPLATE
 HOSTGROUPS
 ADD_OS_TO_TEMPLATE
 ;;
-7) dMsgBx "Satellite - Upgrade Sat 6.X" \
+2) dMsgBx "UPGRADE/UPDATE THE SATELLITE 6.X" \
 SATUPDATE
 INSIGHTS
-CLEANUP
 ;;
-8) dMsgBx "Ansible Tower - Install" \
+3) dMsgBx "SYNC ALL ACTIVATED REPOSITORIES" \
+SYNC
+;;
+4) dMsgBx "LATEST ANSIBLE TOWER INSTALL" \
 ANSIBLETOWER
-CLEANUP
 ;;
-9)  dMsgBx "Post install clean up" \
+5)  dMsgBx "POST INSTALL CLEANUP" \
 #REMOVEUNSUPPORTED
 DISASSOCIATE_TEMPLATES
 CLEANUP
 ;;
-10) dMsgBx "*** Exiting Thank you ***"
+6) dMsgBx "*** EXITING - THANK YOU ***"
 break
 ;;
 esac
