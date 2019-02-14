@@ -1,5 +1,7 @@
 #REDHATTOOLSINSTALLER
+
 This code is meant to inspire!
+
 Setting up Satellite 6.4^
 
 DISCLAIMER:
