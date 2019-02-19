@@ -70,9 +70,17 @@ function SCRIPT {
 echo "*************************************************************"
 echo " Script configuration requirements installing for this server"
 echo "*************************************************************"
+echo "*********************************************************"
+echo "SET SELINUX TO PERMISSIVE FOR THE INSTALL AND CONFIG OF SATELLITE"
+echo "*********************************************************"
+sed -i 's/SELINUX=enforcing/SELINUX=permissive/g' /etc/selinux/config
 setenforce 0
+service firewalld stop
+chkconfig firewalld off
 HNAME=$(hostname)
 domainname="$(hostname -d)"
+service firewalld stop
+setenforce 0
 subscription-manager register --auto-attach
 subscription-manager attach --pool=`subscription-manager list --available --matches 'Red Hat Satellite Infrastructure Subscription' --pool-only`
 echo " "
@@ -597,6 +605,8 @@ fi
 # If this is the case, you need to make sure to set this to false for all subsequent Satellite instances.
 echo 'FIRST_SATELLITE=false ' >> /root/.bashrc
 echo ' '
+echo 'In another terminal please check/correct any variables in /root/.bashrc
+that are nopt needed or are wrong'
 read -p "Press [Enter] to continue"
 #init 6
 }
@@ -693,20 +703,14 @@ echo "*********************************************************"
 cd /home/admin/git
 git clone https://github.com/RedHatSatellite/katello-cvmanager.git
 cd 
-echo "*********************************************************"
-echo "SET SELINUX TO PERMISSIVE FOR THE INSTALL AND CONFIG OF SATELLITE"
-echo "*********************************************************"
-sed -i 's/SELINUX=enforcing/SELINUX=permissive/g' /etc/selinux/config
-setenforce 0
+mkdir -p /root/.hammer
+
+
 echo "*********************************************************"
 echo "SETTING ADMIN USER TO NO PASSWORD FOR SUDO"
 echo "*********************************************************"
 echo 'admin ALL = NOPASSWD: ALL' >> /etc/sudoers
-echo "*********************************************************"
-echo "ADDING REQUIRED DIRECTORIES"
-echo "*********************************************************"
-mkdir -p /root/Downloads
-mkdir -p /root/.hammer
+
 }
 #  --------------------------------------
 function INSTALLNSAT {
@@ -787,6 +791,7 @@ echo "*********************************************************"
 yum groupinstall -y 'Red Hat Satellite'
 yum -q list installed puppet-foreman_scap_client &>/dev/null && echo "puppet-foreman_scap_client is installed" || yum install -y puppet-foreman_scap_client* --skip-broken
 yum -q list installed foreman-discovery-image &>/dev/null && echo "foreman-discovery-image is installed" || yum install -y foreman-discovery-image* --skip-broken
+yum -q list installed rubygem-smart_proxy_discovery &>/dev/null && echo "rubygem-smart_proxy_discovery is installed" || yum install -y rubygem-smart_proxy_discovery* --skip-broken 
 
 source /root/.bashrc
 satellite-installer --scenario satellite -v \
@@ -812,8 +817,26 @@ echo "*********************************************************"
 echo "CONFIGURING SATELLITE CACHE"
 echo "*********************************************************"
 foreman-rake apipie:cache:index --trace
+echo " "
+echo "*********************************************************"
+echo "DHCP SATELLITE"
+echo "*********************************************************"
+echo " "
+read -n1 -p "Would like to use the DHCP server provided by Satellite?" INPUT
+INPUT=${INPUT:-$DEFAULTVALUE}
+if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
+echo "DHCPD ENABLED"
+#COMMANDEXECUTION
+elif [ "$INPUT" = "n" -o "$INPUT" = "N" ] ;then
+echo "DHCPD DISABLED"
+chkconfig dhcpd off
+service dhcpd stop
+#COMMANDEXECUTION
+else
+echo -e "\n$FMESSAGE\n"
+REQUEST
+fi
 }
-
 #------------------------------
 function HAMMERCONF {
 #------------------------------
@@ -844,8 +867,6 @@ sed -i 's/#:password/:password/g' /etc/hammer/cli.modules.d/foreman.yml
 #  --------------------------------------
 function CONFIG2 {
 #  --------------------------------------
-MANAFEST1="$(ls -t manifest*)"
-MANAFEST2="$(ls -t manifest*)"
 source /root/.bashrc
 echo -ne "\e[8;40;170t"
 echo "*********************************************************"
@@ -966,8 +987,7 @@ QMESSAGEICINGA="Would you like to download Icinga custom content"
 QMESSAGECENTOS7="Would you like to download CentOS-7 custom content"
 
 YMESSAGE="Adding avalable content. This step will take the longest,
-(Depending on your network) 
-So grab a cup of coffee, go to lunch, or just let it run until tomorrow"
+(Depending on your network)"
 NMESSAGE="Skipping avalable content"
 FMESSAGE="PLEASE ENTER Y or N"
 COUNTDOWN=15
@@ -975,6 +995,7 @@ DEFAULTVALUE=y
 RHEL5DEFAULTVALUE=n
 RHEL6DEFAULTVALUE=n
 RHEL7DEFAULTVALUE=y
+PUPPETDEFAULTVALUE=y
 
 #-------------------------------
 function REQUESTMSG {
@@ -1057,7 +1078,7 @@ read -n1 -t$COUNTDOWN -p "$QMESSAGE6 ? Y/N " INPUT
 INPUT=${INPUT:-$RHEL6DEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
-hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='6.10' --name 'Red Hat Enterprise Linux 6 Server (Kickstart)' 
+hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='6Server' --name 'Red Hat Enterprise Linux 6 Server (Kickstart)'
 hammer repository update --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='6.10' --name 'Red Hat Enterprise Linux 6 Server (Kickstart)' --download-policy immediate
 time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 6 Server (Kickstart)' 2>/dev/null
 
@@ -1067,20 +1088,23 @@ time hammer repository synchronize --organization "$ORG" --product 'Red Hat Ente
 hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --name 'Red Hat Satellite Tools 6.4 (for RHEL 6 Server) (RPMs)'
 time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Satellite Tools 6.4 (for RHEL 6 Server) (RPMs)' 2>/dev/null
 
-hammer repository-set enable --organization $ORG --product 'Red Hat Software Collections for RHEL Server' --basearch='x86_64' --releasever='6Server' --name 'Red Hat Software Collections RPMs for Red Hat Enterprise Linux 6 Server'
-time hammer repository synchronize --organization "$ORG" --product 'Red Hat Software Collections for RHEL Server' --name 'Red Hat Software Collections RPMs for Red Hat Enterprise Linux 6 Server' 2>/dev/null
+hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='6Server' --name 'Red Hat Enterprise Linux 6 Server - Optional (RPMs)'
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 6 Server - Optional (RPMs)' 2>/dev/null
 
 hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --name 'Red Hat Enterprise Linux 6 Server - Extras (RPMs)'
 time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 6 Server - Extras (RPMs)' 2>/dev/null
 
-hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='6Server' --name 'Red Hat Enterprise Linux 6 Server - Optional (RPMs)'
-time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 6 Server - Optional (RPMs)' 2>/dev/null
+hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='6Server' --name 'Red Hat Enterprise Linux 6 Server - RH Common (RPMs)'
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 6 Server - RH Common (RPMs)' 2>/dev/null
 
 hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='6Server' --name 'Red Hat Enterprise Linux 6 Server - Supplementary (RPMs)'
 time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 6 Server - Supplementary (RPMs)' 2>/dev/null
 
-hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='6Server' --name 'Red Hat Enterprise Linux 6 Server - RH Common (RPMs)'
-time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 6 Server - RH Common (RPMs)' 2>/dev/null
+hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='6Server' --name 'RHN Tools for Red Hat Enterprise Linux 6 Server (RPMs)'
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'RHN Tools for Red Hat Enterprise Linux 6 Server (RPMs)' 2>/dev/null
+
+hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='6Server' --name 'Red Hat Enterprise Linux 6 Server (ISOs)'
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 6 Server (ISOs)' 2>/dev/null
 
 wget -q https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-6 -O /root/RPM-GPG-KEY-EPEL-6
 sleep 10
@@ -1112,37 +1136,23 @@ read -n1 -t$COUNTDOWN -p "$QMESSAGE7 ? Y/N " INPUT
 INPUT=${INPUT:-$RHEL7DEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
-hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='7.6' --name 'Red Hat Enterprise Linux 7 Server (Kickstart)' 
-hammer repository update --organization $ORG --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 7 Server Kickstart x86_64 7.6' --download-policy immediate
+hammer repository-set enable --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='7.6' --name 'Red Hat Enterprise Linux 7 Server (Kickstart)' 
+hammer repository update --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 7 Server Kickstart x86_64 7.6' --download-policy immediate
 time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 7 Server Kickstart x86_64 7.6' 2>/dev/null
-
-hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Enterprise Linux 7 Server (RPMs)'
-time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 7 Server (RPMs)' 2>/dev/null
-
-hammer repository-set enable --organization $ORG --product 'Red Hat Software Collections for RHEL Server' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Software Collections RPMs for Red Hat Enterprise Linux 7 Server'
-time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Software Collections RPMs for Red Hat Enterprise Linux 7 Server' 2>/dev/null
-
-hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --name 'Red Hat Enterprise Linux 7 Server - Extras (RPMs)'
-time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 7 Server - Extras (RPMs)' 2>/dev/null
-
-hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Enterprise Linux 7 Server - Optional (RPMs)'
-time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 7 Server - Optional (RPMs)' 2>/dev/null
-
-hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Enterprise Linux 7 Server - RH Common (RPMs)'
-time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 7 Server - RH Common (RPMs)' 2>/dev/null
-
-hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Enterprise Linux 7 Server - Supplementary (RPMs)'
-time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 7 Server - Supplementary (RPMs)' 2>/dev/null
-
-hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Ceph Storage Tools 3 for Red Hat Enterprise Linux 7 Server (RPMs)'
-time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Ceph Storage Tools 3 for Red Hat Enterprise Linux 7 Server (RPMs)' 2>/dev/null
-
-hammer repository-set enable --organization $ORG --product 'Oracle Java for RHEL Server' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Enterprise Linux 7 Server - Oracle Java (RPMs)'
-time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 7 Server - Oracle Java (RPMs)' 2>/dev/null
-
-hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --name 'Red Hat Satellite Tools 6.4 (for RHEL 7 Server) (RPMs)'
-time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Satellite Tools 6.4 (for RHEL 7 Server) (RPMs)' 2>/dev/null
-
+hammer repository-set enable --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Enterprise Linux 7 Server (RPMs)'
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server' 2>/dev/null
+hammer repository-set enable --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Enterprise Linux 7 Server - Supplementary (RPMs)'
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 7 Server - Supplementary RPMs x86_64 7Server' 2>/dev/null
+hammer repository-set enable --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Enterprise Linux 7 Server - Optional (RPMs)'
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 7 Server - Optional RPMs x86_64 7Server' 2>/dev/null
+hammer repository-set enable --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --name 'Red Hat Enterprise Linux 7 Server - Extras (RPMs)'
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 7 Server - Extras RPMs x86_64' 2>/dev/null
+hammer repository-set enable --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --name 'Red Hat Satellite Tools 6.4 (for RHEL 7 Server) (RPMs)'
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Satellite Tools 6.4 for RHEL 7 Server RPMs x86_64'
+hammer repository-set enable --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Enterprise Linux 7 Server - RH Common (RPMs)'
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 7 Server - RH Common RPMs x86_64 7Server' 2>/dev/null
+hammer repository-set enable --organization "$ORG" --product 'Red Hat Software Collections (for RHEL Server)' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Software Collections RPMs for Red Hat Enterprise Linux 7 Server'
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat Software Collections (for RHEL Server)' --name 'Red Hat Software Collections RPMs for Red Hat Enterprise Linux 7 Server x86_64 7Server' 2>/dev/null
 wget -q https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7 -O /root/RPM-GPG-KEY-EPEL-7
 wget -q https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7Server -O /root/RPM-GPG-KEY-EPEL-7Server
 sleep 10
@@ -1154,34 +1164,8 @@ hammer product create --name='Extra Packages for Enterprise Linux 7Server' --org
 sleep 10
 hammer repository create --name='Extra Packages for Enterprise Linux 7' --organization $ORG --product='Extra Packages for Enterprise Linux 7' --content-type yum --publish-via-http=true --url=https://dl.fedoraproject.org/pub/epel/7/x86_64/
 time hammer repository synchronize --organization "$ORG" --product 'Extra Packages for Enterprise Linux 7' --name 'Extra Packages for Enterprise Linux 7' 2>/dev/null
-
 hammer repository create --name='Extra Packages for Enterprise Linux 7Server' --organization $ORG --product='Extra Packages for Enterprise Linux 7Server' --content-type yum --publish-via-http=true --url=https://dl.fedoraproject.org/pub/epel/7Server/x86_64/
 time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Extra Packages for Enterprise Linux 7Server' 2>/dev/null
-
-#COMMANDEXECUTION
-elif [ "$INPUT" = "n" -o "$INPUT" = "N" ] ;then
-echo -e "\n$NMESSAGE\n"
-#COMMANDEXECUTION
-else
-echo -e "\n$FMESSAGE\n"
-REQUEST
-fi
-}
-#-------------------------------
-function REQUESTRHSCL {
-#-------------------------------
-source /root/.bashrc
-echo -ne "\e[8;40;170t"
-echo "*********************************************************"
-echo "RED HAT SOFTWARE COLLECTIONS RPMS FOR RED HAT ENTERPRISE LINUX 7 SERVER:"
-echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGERHSCL ? Y/N " INPUT
-INPUT=${INPUT:-$DEFAULTVALUE}
-if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
-echo -e "\n$YMESSAGE\n"
-hammer repository-set enable --organization $ORG --product 'Red Hat Software Collections for RHEL Server' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Software Collections RPMs for Red Hat Enterprise Linux 7 Server x86_64 7Server'
-time hammer repository synchronize --organization "$ORG" --product 'Red Hat Software Collections for RHEL Server' --name 'Red Hat Software Collections RPMs for Red Hat Enterprise Linux 7 Server x86_64 7Server' 2>/dev/null
-
 #COMMANDEXECUTION
 elif [ "$INPUT" = "n" -o "$INPUT" = "N" ] ;then
 echo -e "\n$NMESSAGE\n"
@@ -1205,7 +1189,6 @@ if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
 hammer repository-set enable --organization $ORG --product 'JBoss Enterprise Application Platform' --basearch='x86_64' --releasever='7Server' --name 'JBoss Enterprise Application Platform 7 (RHEL 7 Server) (RPMs)'
 time hammer repository synchronize --organization "$ORG" --product 'JBoss Enterprise Application Platform' --name 'JBoss Enterprise Application Platform 7 (RHEL 7 Server) (RPMs)' 2>/dev/null
-
 #COMMANDEXECUTION
 elif [ "$INPUT" = "n" -o "$INPUT" = "N" ] ;then
 echo -e "\n$NMESSAGE\n"
@@ -1229,7 +1212,6 @@ if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
 hammer repository-set enable --organization $ORG --product 'Red Hat Virtualization' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Virtualization 4 Management Agents for RHEL 7 (RPMs)'
 time hammer repository synchronize --organization "$ORG" --product 'Red Hat Virtualization' --name 'Red Hat Virtualization 4 Management Agents for RHEL 7 (RPMs)' 2>/dev/null
-
 #COMMANDEXECUTION
 elif [ "$INPUT" = "n" -o "$INPUT" = "N" ] ;then
 echo -e "\n$NMESSAGE\n"
@@ -1253,7 +1235,6 @@ if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
 hammer repository-set enable --organization $ORG --product 'Red Hat Satellite' --basearch='x86_64' --name 'Red Hat Satellite 6.4 (for RHEL 7 Server) (RPMs)'
 time hammer repository synchronize --organization "$ORG" --product 'Red Hat Satellite' --name 'Red Hat Satellite 6.4 (for RHEL 7 Server) (RPMs)' 2>/dev/null
-
 #COMMANDEXECUTION
 elif [ "$INPUT" = "n" -o "$INPUT" = "N" ] ;then
 echo -e "\n$NMESSAGE\n"
@@ -1277,7 +1258,6 @@ if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
 hammer repository-set enable --organization $ORG --product 'Red Hat OpenShift Container Platform' --basearch='x86_64' --name 'Red Hat OpenShift Container Platform 3.10 (RPMs)'
 time hammer repository synchronize --organization "$ORG" --product 'Red Hat OpenShift Container Platform' --name 'Red Hat OpenShift Container Platform 3.10 (RPMs)' 2>/dev/null
-
 #COMMANDEXECUTION
 elif [ "$INPUT" = "n" -o "$INPUT" = "N" ] ;then
 echo -e "\n$NMESSAGE\n"
@@ -1305,14 +1285,14 @@ time hammer repository synchronize --organization "$ORG" --product 'Red Hat Ceph
 hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Ceph Storage Tools 3 for Red Hat Enterprise Linux 7 Server (RPMs)'
 time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Ceph Storage Tools 3 for Red Hat Enterprise Linux 7 Server (RPMs)' 2>/dev/null
 
-hammer repository-set enable --organization $ORG --product 'Red Hat Ceph Storage MON' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Ceph Storage MON 3 for Red Hat Enterprise Linux 7 Server (RPMs)'
-time hammer repository synchronize --organization "$ORG" --product 'Red Hat Ceph Storage MON' --name 'Red Hat Ceph Storage MON 3 for Red Hat Enterprise Linux 7 Server (RPMs)' 2>/dev/null
+hammer repository-set enable --organization $ORG --product 'Red Hat Ceph Storage' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Ceph Storage MON 3 for Red Hat Enterprise Linux 7 Server (RPMs)'
+time hammer repository synchronize --organization "$ORG" --product ' Red Hat Ceph Storage ' --name 'Red Hat Ceph Storage MON 3 for Red Hat Enterprise Linux 7 Server (RPMs)' 2>/dev/null
 
-hammer repository-set enable --organization $ORG --product 'Red Hat Ceph Storage MON' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Ceph Storage 3 Text-Only Advisories for Red Hat Enterprise Linux 7 Server (RPMs)'
-time hammer repository synchronize --organization "$ORG" --product 'Red Hat Ceph Storage MON' --name 'Red Hat Ceph Storage 3 Text-Only Advisories for Red Hat Enterprise Linux 7 Server (RPMs)' 2>/dev/null
+hammer repository-set enable --organization $ORG --product 'Red Hat Ceph Storage' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Ceph Storage 3 Text-Only Advisories for Red Hat Enterprise Linux 7 Server (RPMs)'
+time hammer repository synchronize --organization "$ORG" --product ' Red Hat Ceph Storage' --name 'Red Hat Ceph Storage 3 Text-Only Advisories for Red Hat Enterprise Linux 7 Server (RPMs)' 2>/dev/null
 
-hammer repository-set enable --organization $ORG --product 'Red Hat Ceph Storage OSD ' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Ceph Storage OSD 3 for Red Hat Enterprise Linux 7 Server (RPMs)'
-time hammer repository synchronize --organization "$ORG" --product 'Red Hat Ceph Storage OSD' --name 'Red Hat Ceph Storage OSD 3 for Red Hat Enterprise Linux 7 Server (RPMs)' 2>/dev/null
+hammer repository-set enable --organization $ORG --product 'Red Hat Ceph Storage' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Ceph Storage OSD 3 for Red Hat Enterprise Linux 7 Server (RPMs)'
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat Ceph Storage' --name 'Red Hat Ceph Storage OSD 3 for Red Hat Enterprise Linux 7 Server (RPMs)' 2>/dev/null
 
 #COMMANDEXECUTION
 elif [ "$INPUT" = "n" -o "$INPUT" = "N" ] ;then
@@ -1549,7 +1529,7 @@ echo "*********************************************************"
 echo "PUPPET FORGE:"
 echo "*********************************************************"
 read -n1 -t$COUNTDOWN -p "$QMESSAGEPUPPET ? Y/N " INPUT
-INPUT=${INPUT:-$DEFAULTVALUE}
+INPUT=${INPUT:-$PUPPETDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
 hammer product create --name='Puppet Forge' --organization $ORG
@@ -1944,7 +1924,7 @@ time hammer content-view version promote --organization $ORG --content-view 'RHE
 echo '#-------------------------------'
 echo 'RHEL6 CONTENT VIEW'
 echo '#-------------------------------'
-hammer content-view create --organization $ORG --name 'RHEL6_Base' --label 'RHEL6_Base' --description 'Core Build for RHEL 6'
+hammer content-view create --organization $ORG --name 'RHEL6' --label 'RHEL6' --description 'Core Build for RHEL 6'
 hammer content-view add-repository --organization $ORG --name 'RHEL6_Base' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Enterprise Linux 6 Server RPMs x86_64 6Server'
 hammer content-view add-repository --organization $ORG --name 'RHEL6_Base' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Satellite Tools 6.4 for RHEL 6 Server RPMs x86_64'
 hammer content-view puppet-module add --organization $ORG --content-view 'RHEL6_Base' --author puppetlabs --name stdlib
