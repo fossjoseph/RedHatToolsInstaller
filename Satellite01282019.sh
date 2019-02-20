@@ -91,9 +91,9 @@ subscription-manager repos --disable "*" || exit 1
 subscription-manager repos --enable=rhel-7-server-rpms || exit 1
 subscription-manager repos --enable=rhel-7-server-extras-rpms || exit 1
 subscription-manager repos --enable=rhel-7-server-optional-rpms || exit 1
-subscription-manager repos --enable=rhel-7-server-rpms|| exit 1
+subscription-manager repos --enable=rhel-7-server-rpms || exit 1
 yum -q list installed epel-release-latest-7 &>/dev/null && echo "epel-release-latest-7 is installed" || yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm --skip-broken
-yum-config-manager --enable epel
+yum-config-manager --enable epel  || exit 1
 yum-config-manager --save --setopt=*.skip_if_unavailable=true
 rm -fr /var/cache/yum/*
 yum clean all
@@ -111,7 +111,9 @@ yum -q list installed yum &>/dev/null && echo "yum is installed" || yum install 
 yum -q list installed lynx &>/dev/null && echo "lynx is installed" || yum install -y lynx --skip-broken
 yum -q list installed perl &>/dev/null && echo "perl is installed" || yum install -y perl --skip-broken
 yum -q list installed dialog &>/dev/null && echo "dialog is installed" || yum install -y *dialog* --skip-broken
-yum -q list installed xdialog &>/dev/null && echo "xdialog is installed" || yum install -y xdialog --skip-broken
+yum -q list installed xdialog &>/dev/null && echo "xdialog is installed" || yum localinstall -y xdialog --skip-broken
+yum -q list installed firefox &>/dev/null && echo "firefox is installed" || yum localinstall -y firefox --skip-broken
+
 yum install -y dconf*
 echo " "
 }
@@ -381,6 +383,7 @@ echo "*********************************************************"
 echo 'what is your domain name Example:'$(hostname -d)''
 read DOM
 echo 'DOM='$DOM'' >> /root/.bashrc
+      domainname -d $DOM
 echo "*********************************************************"
 echo "ADMIN PASSWORD - WRITE OR REMEMBER YOU WILL BE PROMPTED FOR 
 USER: admin AND THIS PASSWORD WHEN WE IMPORT THE MANIFEST"
@@ -665,6 +668,8 @@ echo 'GENERAL SETUP'
 echo "*********************************************************"
 echo -ne "\e[8;40;170t"
 source /root/.bashrc
+echo " "
+
 echo "*********************************************************"
 echo "GENERATE USERS AND SYSTEM KEYS FOR REQUIRED USERS"
 echo "*********************************************************"
@@ -676,6 +681,8 @@ mkdir -p /home/admin/.ssh
 mkdir -p /home/admin/git
 chown -R admin:admin /home/admin
 sudo -u admin ssh-keygen -f /home/admin/.ssh/id_rsa -N ''
+echo " "
+
 echo "*********************************************************"
 echo "SETTING UP FOREMAN-PROXY"
 echo "*********************************************************"
@@ -684,19 +691,27 @@ usermod -L foreman-proxy
 mkdir -p /usr/share/foreman-proxy/.ssh
 sudo -u foreman-proxy ssh-keygen -f /usr/share/foreman-proxy/.ssh/id_rsa_foreman_proxy -N ''
 chown -R foreman-proxy:foreman-proxy /usr/share/foreman-proxy
+echo " "
+
 echo "*********************************************************"
 echo "ROOT"
 echo "*********************************************************"
 ssh-keygen -f /root/.ssh/id_rsa -t rsa -N ''
+echo " "
+
 echo "*********************************************************"
 echo “SET DOMAIN”
 echo "*********************************************************"
 echo 'inet.ipv4.ip_forward=1' >> /etc/sysctl.conf
 echo "kernel.domainname=$DOM" >> /etc/sysctl.conf
+echo " "
+
 echo "*********************************************************"
 echo "GENERATE /ETC/HOSTS"
 echo "*********************************************************"
 echo "${SAT_IP} $(hostname)" >>/etc/hosts
+echo " "
+
 echo "*********************************************************"
 echo "ADDING KATELLO-CVMANAGER TO /HOME/ADMIN/GIT "
 echo "*********************************************************"
@@ -704,13 +719,36 @@ cd /home/admin/git
 git clone https://github.com/RedHatSatellite/katello-cvmanager.git
 cd 
 mkdir -p /root/.hammer
-
+echo " "
 
 echo "*********************************************************"
 echo "SETTING ADMIN USER TO NO PASSWORD FOR SUDO"
 echo "*********************************************************"
 echo 'admin ALL = NOPASSWD: ALL' >> /etc/sudoers
+echo " "
+#  --------------------------------------
+function SYSCHECK {
+#  --------------------------------------
+echo "*********************************************************"
+echo "CHECKING ALL REQUIREMENTS HAVE BEEN MET"
+echo "*********************************************************"
+hostname -f 
+if [ $? -eq 0 ]; then
+    echo 'The FQDN is as expected $(hostname)'
+else
+    echo "The FQDN is not defined please correct and try again"
+    exit
+fi
 
+getent passwd admin > /dev/null 2&>1
+if [ $? -eq 0 ]; then
+    echo "yes the admin user exists"
+else
+    echo "No, the user does not exist
+    The user does not exist please create a admin user
+    and try again."
+    exit
+fi
 }
 #  --------------------------------------
 function INSTALLNSAT {
@@ -864,17 +902,12 @@ EOF
 sed -i 's/example/redhat/g' /etc/hammer/cli.modules.d/foreman.yml
 sed -i 's/#:password/:password/g' /etc/hammer/cli.modules.d/foreman.yml
 }
+
 #  --------------------------------------
 function CONFIG2 {
 #  --------------------------------------
 source /root/.bashrc
 echo -ne "\e[8;40;170t"
-echo "*********************************************************"
-echo "UPLOAD THE SATELLITE MANIFEST"
-echo "      The Satellite Manifest can be found in the Red Hat customer portal 
-      at https://access.redhat.com/management/subscription_allocations:"
-echo "*********************************************************"
-firefox https://access.redhat.com/management/subscription_allocations -y &
 echo ' '
 echo "*********************************************************"
 echo 'Pulling up the url so you can build and export the manifest (just in case).
@@ -998,7 +1031,7 @@ RHEL7DEFAULTVALUE=y
 PUPPETDEFAULTVALUE=y
 
 #-------------------------------
-function REQUESTMSG {
+function REQUESTSYNCMGT {
 #-------------------------------
 echo "*********************************************************"
 echo "Configuring Repositories"
@@ -1009,7 +1042,13 @@ ONLY SYNC THE  CORE RHEL 7 (KICKSTART, 7SERVER, OPTIONAL, EXTRAS,
  SAT 6.4 TOOLS, SUPPLAMENTRY, AND RH COMMON ) THE PROGRESS 
  TO THIS STEP CAN BE TRACKED AT $(hostname)/katello/sync_management :"
 echo "*********************************************************"
-firefox $(hostname)/katello/sync_management &
+if ! xset q &>/dev/null; then
+    echo "No X server at \$DISPLAY [$DISPLAY]" >&2
+    echo 'In a system browser please goto the URL to view progress https://$(hostname)/katello/sync_management'
+    sleep 10
+else 
+    firefox https://$(hostname)/katello/sync_management &
+fi
 }
 #-------------------------------
 function REQUEST5 {
@@ -1692,7 +1731,19 @@ echo "SYNC ALL REPOSITORIES (WAIT FOR THIS TO COMPLETE BEFORE CONTINUING):"
 echo "*********************************************************"
 for i in $(hammer --csv repository list --organization $ORG | awk -F, {'print $1'} | grep -vi '^ID'); do hammer repository synchronize --id ${i} --organization $ORG --async; done
 sleep 5
-firefox https://$(hostname)/katello/sync_management &
+echo " "
+}
+#-------------------------------
+function SYNCMSG {
+#------------------------------
+if ! xset q &>/dev/null; then
+    echo "No X server at \$DISPLAY [$DISPLAY]" >&2
+    echo 'In a system browser please goto the URL to view progress https://$(hostname)/katello/sync_management'
+    sleep 10
+else 
+    firefox https://$(hostname)/katello/sync_management &
+fi
+echo " "
 }
 #-------------------------------
 function CREATESUBNET {
@@ -1740,6 +1791,7 @@ echo "PRODUCTION_CentOS_7"
 hammer lifecycle-environment create --name='PROD_CentOS_7' --prior='TEST_CentOS_7' --organization $ORG
 echo " "
 hammer lifecycle-environment list --organization $ORG
+echo " "
 }
 #-------------------------------
 function DAILYSYNC {
@@ -1753,6 +1805,8 @@ echo "*********************************************************"
 hammer sync-plan create --name 'Daily_Sync' --description 'Daily Synchronization Plan' --organization $ORG --interval daily --sync-date $(date +"%Y-%m-%d")" 00:00:00" --enabled no
 hammer sync-plan create --name 'Weekly_Sync' --description 'Weekly Synchronization Plan' --organization $ORG --interval weekly --sync-date $(date +"%Y-%m-%d")" 00:00:00" --enabled yes
 hammer sync-plan list --organization $ORG
+echo " "
+
 }
 #-------------------------------
 function SYNCPLANCOMPONENTS {
@@ -2137,7 +2191,6 @@ echo "*********************************************************"
 echo "ASSOCIATE OS TO TEMPLATE"
 echo "*********************************************************"
 hammer template add-operatingsystem --operatingsystem-id 1 --id 1
-
 }
 
 #NOTE You can remove or dissasociate templates Remove is perm (Destricutve) dissasociate you can re associate if you need 
@@ -2472,6 +2525,7 @@ RHVORLIBVIRT
 INSTALLREPOS
 INSTALLDEPS
 GENERALSETUP
+SYSCHECK
 INSTALLNSAT
 sleep 10
 CONFSAT
@@ -2480,6 +2534,7 @@ HAMMERCONF
 CONFIG2
 STOPSPAMMINGVARLOG
 REQUESTMSG
+REQUESTSYNCMGT
 sleep 10
 REQUEST5
 REQUEST6
