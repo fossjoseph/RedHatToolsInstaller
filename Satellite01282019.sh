@@ -2260,7 +2260,7 @@ sh setup.sh
 #-----------------------
 function dMainMenu {
 #-----------------------
-$DIALOG --stdout --title "Red Hat Sat 6 P.O.C. - RHEL 7.X" --menu "********** Red Hat Tools Menu ********* \n Please choose [1 -> 10]?" 30 90 10 \
+$DIALOG --stdout --title "Red Hat Sat 6 P.O.C. - RHEL 7.X" --menu "********** Red Hat Tools Menu ********* \n Please choose [1 -> 6]?" 30 90 10 \
 1 "INSTALL SATELLITE 6.4" \
 2 "UPGRADE/UPDATE THE SATELLITE 6.X" \
 3 "SYNC ALL ACTIVATED REPOSITORIES" \
