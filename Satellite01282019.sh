@@ -84,6 +84,7 @@ setenforce 0
 echo "*********************************************************"
 echo "REGESTERING SATELLITE"
 echo "*********************************************************"
+
 subscription-manager register --auto-attach
 subscription-manager attach --pool=`subscription-manager list --available --matches 'Red Hat Satellite Infrastructure Subscription' --pool-only`
 echo " "
@@ -195,7 +196,6 @@ echo "*********************************************************"
 echo 'what is your domain name Example:'$(hostname -d)''
 read DOM
 echo 'DOM='$DOM'' >> /root/.bashrc
-      domainname -d $DOM
 echo "*********************************************************"
 echo "ADMIN PASSWORD - WRITE OR REMEMBER YOU WILL BE PROMPTED FOR 
 USER: admin AND THIS PASSWORD WHEN WE IMPORT THE MANIFEST"
@@ -241,9 +241,6 @@ echo "FINDING SAT IP"
 echo "*********************************************************"
 echo 'SAT_IP='$(ifconfig "$INTERNAL" | grep "inet" | awk -F ' ' '{print $2}' |grep -v f |awk -F . '{print $1"."$2"."$3"."$4}')'' >> /root/.bashrc
 echo "*********************************************************"
-echo "FINDING SAT DOMAIN"
-echo "*********************************************************"
-echo 'DOM='$(hostname -d)'' >> /root/.bashrc
 echo "*********************************************************"
 echo "SETTING RELM"
 echo "*********************************************************"
