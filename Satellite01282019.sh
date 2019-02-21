@@ -681,12 +681,16 @@ echo "*********************************************************"
 echo "DHCP SATELLITE"
 echo "*********************************************************"
 echo " "
-read -n1 -p "Would like to use the DHCP server provided by Satellite?" INPUT
-INPUT=${INPUT:-$DEFAULTVALUE}
+DEFAULTDHCP=y
+COUNTDOWN=15
+read -n1 -p "Would like to use the DHCP server provided by Satellite? y/n " INPUT
+INPUT=${INPUT:-$DEFAULTDHCP}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
+echo " "
 echo "DHCPD ENABLED"
 #COMMANDEXECUTION
 elif [ "$INPUT" = "n" -o "$INPUT" = "N" ] ;then
+echo " "
 echo "DHCPD DISABLED"
 chkconfig dhcpd off
 service dhcpd stop
@@ -838,14 +842,14 @@ QMESSAGEPUPPET="Would you like to download Puppet Forge custom content"
 QMESSAGEJENKINS="Would you like to download JENKINS custom content"
 QMESSAGEMAVEN="Would you like to download Maven custom content"
 QMESSAGEICINGA="Would you like to download Icinga custom content"
-QMESSAGECENTOS7="Would you like to download CentOS-7 custom content"
+QMESSAGEICENTOS7="Would you like to download CentOS-7 custom content"
 
 YMESSAGE="Adding avalable content. This step will take the longest,
 (Depending on your network)"
 NMESSAGE="Skipping avalable content"
 FMESSAGE="PLEASE ENTER Y or N"
 COUNTDOWN=15
-DEFAULTVALUE=y
+DEFAULTVALUE=n
 RHEL5DEFAULTVALUE=n
 RHEL6DEFAULTVALUE=n
 RHEL7DEFAULTVALUE=y
@@ -1692,6 +1696,11 @@ hammer content-view create --organization $ORG --name 'RHEL 7' --label RHEL7 --d
 hammer content-view add-repository --organization $ORG --name 'RHEL 7' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server'
 hammer content-view add-repository --organization $ORG --name 'RHEL 7' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Enterprise Linux 7 Server Kickstart x86_64 7.6'
 hammer content-view add-repository --organization $ORG --name 'RHEL 7' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Satellite Tools 6.4 for RHEL 7 Server RPMs x86_64'
+hammer content-view add-repository --organization $ORG --name 'RHEL 7' --product 'Red Hat Software Collections for RHEL Server' --repository 'Red Hat Software Collections RPMs for Red Hat Enterprise Linux 7 Server x86_64 7Server'
+hammer content-view add-repository --organization $ORG --name 'RHEL 7' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Enterprise Linux 7 Server - Supplementary RPMs x86_64 7Server'
+hammer content-view add-repository --organization $ORG --name 'RHEL 7' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Enterprise Linux 7 Server - RH Common RPMs x86_64 7Server'
+hammer content-view add-repository --organization $ORG --name 'RHEL 7' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Enterprise Linux 7 Server - Optional RPMs x86_64 7Server'
+hammer content-view add-repository --organization $ORG --name 'RHEL 7' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Enterprise Linux 7 Server - Extras RPMs x86_64'
 hammer content-view puppet-module add --organization $ORG --content-view 'RHEL 7' --author puppetlabs --name stdlib
 hammer content-view puppet-module add --organization $ORG --content-view 'RHEL 7' --author puppetlabs --name concat
 hammer content-view puppet-module add --organization $ORG --content-view 'RHEL 7' --author puppetlabs --name ntp
