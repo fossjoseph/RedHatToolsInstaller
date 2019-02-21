@@ -84,7 +84,6 @@ setenforce 0
 echo "*********************************************************"
 echo "REGESTERING SATELLITE"
 echo "*********************************************************"
-
 subscription-manager register --auto-attach
 subscription-manager attach --pool=`subscription-manager list --available --matches 'Red Hat Satellite Infrastructure Subscription' --pool-only`
 echo " "
@@ -127,8 +126,7 @@ if [ $? -eq 0 ]; then
 else
     echo "Installing requirements to run script please stand by"
     SCRIPT
-    exit
-sleep 5
+    sleep 5
 echo " "
 fi
 
