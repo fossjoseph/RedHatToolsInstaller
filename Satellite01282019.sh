@@ -78,9 +78,13 @@ setenforce 0
 service firewalld stop
 chkconfig firewalld off
 HNAME=$(hostname)
-domainname="$(hostname -d)"
+DOM="$(hostname -d)"
 service firewalld stop
 setenforce 0
+echo "*********************************************************"
+echo "REGESTERING SATELLITE"
+echo "*********************************************************"
+
 subscription-manager register --auto-attach
 subscription-manager attach --pool=`subscription-manager list --available --matches 'Red Hat Satellite Infrastructure Subscription' --pool-only`
 echo " "
@@ -113,11 +117,21 @@ yum -q list installed perl &>/dev/null && echo "perl is installed" || yum instal
 yum -q list installed dialog &>/dev/null && echo "dialog is installed" || yum install -y *dialog* --skip-broken
 yum -q list installed xdialog &>/dev/null && echo "xdialog is installed" || yum localinstall -y xdialog --skip-broken
 yum -q list installed firefox &>/dev/null && echo "firefox is installed" || yum localinstall -y firefox --skip-broken
-
 yum install -y dconf*
+touch ./SCRIPT
 echo " "
 }
-SCRIPT
+ls ./SCRIPT
+if [ $? -eq 0 ]; then
+    echo 'The requirements to run this script have been met, proceeding'
+else
+    echo "Installing requirements to run script please stand by"
+    SCRIPT
+    exit
+sleep 5
+echo " "
+fi
+
 
 #--------------------------Define Env----------------------------
 
@@ -495,6 +509,7 @@ echo " "
 echo "*********************************************************"
 echo “SET DOMAIN”
 echo "*********************************************************"
+cp /etc/sysctl.conf /etc/sysctl.conf.bak
 echo 'inet.ipv4.ip_forward=1' >> /etc/sysctl.conf
 echo "kernel.domainname=$DOM" >> /etc/sysctl.conf
 echo " "
@@ -502,6 +517,7 @@ echo " "
 echo "*********************************************************"
 echo "GENERATE /ETC/HOSTS"
 echo "*********************************************************"
+cp /etc/hosts /etc/hosts.bak
 echo "${SAT_IP} $(hostname)" >>/etc/hosts
 echo " "
 
@@ -517,6 +533,7 @@ echo " "
 echo "*********************************************************"
 echo "SETTING ADMIN USER TO NO PASSWORD FOR SUDO"
 echo "*********************************************************"
+cp /etc/sudoers /etc/sudoers.bak
 echo 'admin ALL = NOPASSWD: ALL' >> /etc/sudoers
 echo " "
 }
@@ -535,6 +552,11 @@ if [ $? -eq 0 ]; then
     echo 'The FQDN is as expected $(hostname)'
 else
     echo "The FQDN is not defined please correct and try again"
+    mv /root/.bashrc.bak /root/.bashrc
+    mv /etc/sudoers.bak /etc/sudoers
+    mv /etc/hosts.bak /etc/hosts
+    mv /etc/sysctl.conf.bak /etc/sysctl.conf
+    sleep 10
     exit
 sleep 5
 echo " "
@@ -1917,9 +1939,7 @@ hammer medium create --path=http://repos/${ORG}/Library/content/dist/rhel/server
 function VARSETUP2 {
 #----------------------------------
 echo "*********************************************************"
-echo "CREATING THE NEXT SET OF VARIABLES. THIS WILL REQUIRE A 
-REBOOT WHEN COMPLETE. PLEASE RERUN THE SCRIPT AND CHOOSE - 
- 2. COMPLETE THE INSTALL SATELLITE 6.4 PART 2:"
+echo "CREATING THE NEXT SET OF VARIABLES."
 echo "*********************************************************"
 source /root/.bashrc
 echo -ne "\e[8;40;170t"
@@ -1927,11 +1947,11 @@ echo -ne "\e[8;40;170t"
 ENVIROMENT=$(hammer --csv environment list |awk -F "," {'print $2'}|grep -v Name |grep -v production)
 LEL=$(hammer --csv lifecycle-environment list  |awk -F "," {'print $2'} |grep -v NAME)
 echo "CAID=1" >> /root/.bashrc
-echo "MEDID1=$(hammer --csv medium list |grep 'CentOS 7' |awk -F "," {'print $1'} |grep -v Id)" >> /root/.bashrc
-echo "MEDID2=$(hammer --csv medium list |grep 'RHEL 7.6' |awk -F "," {'print $1'} |grep -v Id)" >> /root/.bashrc
+echo "MEDID1=$(hammer --csv medium list |grep 'RHEL 7.6' |awk -F "," {'print $1'} |grep -v Id)" >> /root/.bashrc
+#echo "MEDID2=$(hammer --csv medium list |grep 'CentOS 7' |awk -F "," {'print $1'} |grep -v Id)" >> /root/.bashrc
 echo "SUBNETID=$(hammer --csv subnet list |awk -F "," {'print $1'}| grep -v Id)" >> /root/.bashrc
 echo "OSID1=$(hammer os list |grep -i "RedHat 7.6"  |awk -F "|" {'print $1'})" >> /root/.bashrc
-echo "OSID2=$(hammer os list |grep -i "CentOS 7.6"  |awk -F "|" {'print $1'})" >> /root/.bashrc
+#echo "OSID2=$(hammer os list |grep -i "CentOS 7.6"  |awk -F "|" {'print $1'})" >> /root/.bashrc
 echo "PROXYID=$(hammer --csv proxy list |awk -F "," {'print $1'} |grep -v Id)" >> /root/.bashrc
 echo "PARTID=$(hammer --csv partition-table list | grep "Kickstart default" | grep -i -v thin |cut -d, -f1)" >> /root/.bashrc
 echo "PXEID=$(hammer --csv template list --per-page=1000 | grep "Kickstart default PXELinux" | cut -d, -f1)" >> /root/.bashrc
@@ -1943,12 +1963,24 @@ echo "ARCHID=$(hammer --csv architecture list|grep x86_64 |awk -F "," {'print $1
 echo "DOMID=$(hammer --csv domain list |grep -v Id |grep -v Name |awk -F "," {'print $1'})"  >> /root/.bashrc
 echo "SUBNETID=$(hammer --csv subnet list |awk -F "," {'print $1'}| grep -v Id)" >> /root/.bashrc
 echo "CVID=$(hammer --csv content-view list --organization $ORG |grep 'RHEL 7' |awk -F "," {'print $1'})" >>  /root/.bashrc
+echo "*********************************************************"
+echo "VERIFY VARIABLES IN /root/.bashrc"
+echo "*********************************************************"
+cat /root/.bashrc
+echo " "
+sleep 5
+read -p "Press [Enter] to continue"
+
+
 }
 #-----------------------------------
 function PARTITION_OS_PXE_TEMPLATE {
 #-----------------------------------
 source /root/.bashrc
 echo -ne "\e[8;40;170t"
+echo "*********************************************************"
+echo "Setting Default Templates."
+echo "*********************************************************"
 for i in $OSID
 do
 hammer partition-table add-operatingsystem --id="${PARTID}" --operatingsystem-id="${i}"
@@ -2094,7 +2126,7 @@ function SATUPDATE {
 #-------------------------------
 echo " "
 echo "*********************************************************"
-echo "Upgrading/Updating Satellite"
+echo "Upgrading/Updating Satellite 6.3 to 6.4"
 echo "*********************************************************"
 echo " "
 subscription-manager repos --disable '*'
@@ -2102,13 +2134,17 @@ subscription-manager repos --enable=rhel-7-server-rpms
 subscription-manager repos --enable=rhel-server-rhscl-7-rpms
 subscription-manager repos --enable=rhel-7-server-satellite-6.4-rpms
 subscription-manager repos --enable=rhel-7-server-satellite-maintenance-6-rpms
+yum-config-manager --setopt=\*.skip_if_unavailable=1 --save \* 
 foreman-rake foreman_tasks:cleanup TASK_SEARCH='label = Actions::Katello::Repository::Sync' STATES='paused,pending,stopped' VERBOSE=true
 foreman-rake katello:delete_orphaned_content --trace
 foreman-rake katello:reindex --trace
 katello-service stop
 katello-selinux-disable
 setenforce 0
-yum upgrade -y; yum update -y --skip-broken
+yum upgrade -y --skip-broken --setopt=protected_multilib=false ; yum update -y --skip-broken --setopt=protected_multilib=false
+yum -q list installed puppetserver &>/dev/null && echo "puppetserver is installed" || time yum install puppetserver -y --skip-broken --setopt=protected_multilib=false
+yum -q list installed puppet-agent-oauth &>/dev/null && echo "puppet-agent-oauth is installed" || time yum install puppet-agent-oauth -y --skip-broken --setopt=protected_multilib=false
+yum -q list installed puppet-agent &>/dev/null && echo "puppet-agent is installed" || time yum install puppet-agent -y --skip-broken --setopt=protected_multilib=false
 satellite-installer -v --scenario satellite --upgrade
 foreman-rake apipie:cache:index --trace
 hammer template build-pxe-default
