@@ -150,9 +150,6 @@ fi
 fi
 #------------------------------------------------------SCRIPT BEGINS-----------------------------------------------------
 #------------------------------------------------------ Functions ------------------------------------------------------
-
-#-----------------------------------------------------------------------------------------------------------------------
-#-----------------------------------------Stage 1 - Install Satellite 6.x-----------------------------------------------
 #-----------------------------------------------------------------------------------------------------------------------
 #-------------------------------
 function VARIABLES1 {
@@ -414,17 +411,9 @@ echo ' '
 echo 'In another terminal please check/correct any variables in /root/.bashrc
 that are nopt needed or are wrong'
 read -p "Press [Enter] to continue"
-#init 6
 }
 #---END OF VARIABLES 1 SCRIPT---
 
-#Reboot your system at this point so that the system will see the variable in /root/.bashrc by default
-#init 6
-#CHECK YOUR VARIABLES!!!
-#vim /root/.bashrc
-#Now that the system is registered and some variables are available you need to configure a couple components so that satellite can be installed 
-
-#sudo su
 #---START OF SAT 6.X INSTALL SCRIPT---
 #------------------------------
 function INSTALLREPOS {
@@ -479,6 +468,7 @@ echo "*********************************************************"
 echo "*********************************************************"
 echo "SETTING UP ADMIN"
 echo "*********************************************************"
+groupadd admin
 useradd admin --group admin -m -p $ADMIN
 mkdir -p /home/admin/.ssh
 mkdir -p /home/admin/git
@@ -536,14 +526,22 @@ function SYSCHECK {
 echo "*********************************************************"
 echo "CHECKING ALL REQUIREMENTS HAVE BEEN MET"
 echo "*********************************************************"
+echo " "
+echo "*********************************************************"
+echo "CHECKING FQDN"
+echo "*********************************************************"
 hostname -f 
 if [ $? -eq 0 ]; then
     echo 'The FQDN is as expected $(hostname)'
 else
     echo "The FQDN is not defined please correct and try again"
     exit
+sleep 5
+echo " "
 fi
-
+echo "*********************************************************"
+echo "CHECKING FOR ADMIN USER"
+echo "*********************************************************"
 getent passwd admin > /dev/null 2&>1
 if [ $? -eq 0 ]; then
     echo "yes the admin user exists"
@@ -552,6 +550,8 @@ else
     The user does not exist please create a admin user
     and try again."
     exit
+sleep 5
+echo " "
 fi
 }
 #  --------------------------------------
@@ -1995,6 +1995,7 @@ echo "*********************************************************"
 echo "ASSOCIATE OS TO TEMPLATE"
 echo "*********************************************************"
 hammer template add-operatingsystem --operatingsystem-id 1 --id 1
+
 }
 
 #NOTE You can remove or dissasociate templates Remove is perm (Destricutve) dissasociate you can re associate if you need 
@@ -2260,7 +2261,7 @@ sh setup.sh
 #-----------------------
 function dMainMenu {
 #-----------------------
-$DIALOG --stdout --title "Red Hat Sat 6 P.O.C. - RHEL 7.X" --menu "********** Red Hat Tools Menu ********* \n Please choose [1 -> 6]?" 30 90 10 \
+$DIALOG --stdout --title "Red Hat Sat 6 P.O.C. - RHEL 7.X" --menu "********** Red Hat Tools Menu ********* \n Please choose [1 -> 10]?" 30 90 10 \
 1 "INSTALL SATELLITE 6.4" \
 2 "UPGRADE/UPDATE THE SATELLITE 6.X" \
 3 "SYNC ALL ACTIVATED REPOSITORIES" \
@@ -2338,7 +2339,6 @@ HAMMERCONF
 CONFIG2
 STOPSPAMMINGVARLOG
 REQUESTMSG
-REQUESTSYNCMGT
 sleep 10
 REQUEST5
 REQUEST6
