@@ -714,7 +714,7 @@ read -p "Press [Enter] to continue"
 sleep 10
 cat > /root/.hammer/cli_config.yml<< EOF
 :foreman:
- :host: 'https://$(hostname)'
+ :host: 'https://$(hostname -f)'
  :username: '$ADMIN'
  :password: '$ADMIN_PASSWORD'
 :log_dir: '/var/log/foreman'
