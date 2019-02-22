@@ -1,4 +1,5 @@
-#REDHATTOOLSINSTALLER
+REDHATTOOLSINSTALLER
+--------------------
 
 This code is meant to inspire!
 
@@ -15,13 +16,18 @@ This tool was built and tested by the team of :
 
 Setting up Satellite 6.4^
 
-DISCLAIMER:
 
-#-->DO NOT RUN THIS SCRIPT ON A CURRENTLY PRODUCTION SYSTEM, THIS IS FOR ONLY NEW BUILD OR TEST SYSTEM YOU CAN RE-PROVISION!<-- 
+<div class="panel panel-warning">
+**DISCLAIMER:**
+{: .panel-heading}
+<div class="panel-body">
 
+DO NOT RUN THIS SCRIPT ON A CURRENTLY PRODUCTION SYSTEM, THIS IS FOR ONLY NEW BUILD OR TEST SYSTEM YOU CAN RE-PROVISION!
 
-#-->THIS SCRIPT IS NOT SUPPORTED AND THERE IS NO IMPLIED WARRANTY - USE AT OWN RISK!<--
+THIS SCRIPT IS NOT SUPPORTED AND THERE IS NO IMPLIED WARRANTY - USE AT OWN RISK!
 
+</div>
+</div>
 
 I can set up a full satellite for a P.O.C in 4 hours with
 
