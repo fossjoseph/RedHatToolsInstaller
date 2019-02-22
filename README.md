@@ -1,3 +1,5 @@
+{::options parse_block_html="true" /}
+
 REDHATTOOLSINSTALLER
 --------------------
 
@@ -18,7 +20,7 @@ Setting up Satellite 6.4^
 
 
 <div class="panel panel-warning">
-**DISCLAIMER:**
+**DISCLAIMER**
 {: .panel-heading}
 <div class="panel-body">
 
