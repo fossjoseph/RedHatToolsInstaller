@@ -1,6 +1,12 @@
 #REDHATTOOLSINSTALLER
 
 This code is meant to inspire!
+This tool was built to aid in the install Red Hat Satellite 6.4 for Proof Of Concept and Education purposes 
+This tool was built and tested by the team of :
+Shadd Gallegos of Red Hat 
+Thomas Murphy schonfeld.com
+Rodrique Heron of Red Hat 
+
 
 Setting up Satellite 6.4^
 
