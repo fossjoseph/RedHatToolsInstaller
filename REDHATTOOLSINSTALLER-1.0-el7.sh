@@ -69,6 +69,8 @@ echo " "
 echo " "
 echo "
 
+
+
                           JUST A REVIEW
                           This is a Proof Of Concept script for the purposes of evaluation
                           and/or training.
@@ -94,13 +96,7 @@ echo "
                            * Lastly this script 
                                "
 
-echo " "
-echo " "
-echo " "
-echo " "
-echo " "
-echo " "
-echo " "
+
 echo " "
 echo " "
 echo " "
@@ -152,7 +148,7 @@ echo " "
 fi
 echo " "
 echo "*********************************************************"
-echo "SET REPOS ENABLING SCRIPT TO RUN"
+echo "SET REPOS ENABLING THE REDHATTOOLSINSTALLER SCRIPT TO RUN"
 echo "*********************************************************"
 subscription-manager repos --disable "*" || exit 1
 subscription-manager repos --enable=rhel-7-server-rpms || exit 1
@@ -178,8 +174,8 @@ yum -q list installed yum &>/dev/null && echo "yum is installed" || yum install 
 yum -q list installed lynx &>/dev/null && echo "lynx is installed" || yum install -y lynx --skip-broken
 yum -q list installed perl &>/dev/null && echo "perl is installed" || yum install -y perl --skip-broken
 yum -q list installed dialog &>/dev/null && echo "dialog is installed" || yum install -y *dialog* --skip-broken
-yum -q list installed xdialog &>/dev/null && echo "xdialog is installed" || yum localinstall -y xdialog --skip-broken
-yum -q list installed firefox &>/dev/null && echo "firefox is installed" || yum localinstall -y firefox --skip-broken
+yum -q list installed xdialog &>/dev/null && echo "xdialog is installed" || yum localinstall -y xdialog-2.3.1-13.el7.centos.x86_64.rpm --skip-broken
+yum -q list installed firefox &>/dev/null && echo "firefox is installed" || install -y firefox --skip-broken
 yum install -y dconf*
 touch ./SCRIPT
 echo " "
@@ -202,7 +198,7 @@ fi
 if [[ -n $DISPLAY ]]
 then
 # Assume script running under X:windows
-DIALOG=`which xdialog`
+DIALOG=`which Xdialog`
 RC=$?
 if [[ $RC != 0 ]]
 then
@@ -211,6 +207,8 @@ RC=$?
 if [[ $RC != 0 ]]
 then
 echo "Error:: Could not locate suitable dialog command: Please install dialog or if running in a desktop install Xdialog."
+subscription-manager unregister
+subscription manager clean
 exit 1
 fi
 fi
@@ -221,6 +219,8 @@ RC=$?
 if [[ $RC != 0 ]]
 then
 echo "Error:: Could not locate suitable dialog command: Please install dialog or if running in a desktop install Xdialog."
+subscription-manager unregister
+subscription manager clean
 exit 1
 fi
 fi
@@ -484,7 +484,16 @@ echo 'In another terminal please check/correct any variables in /root/.bashrc
 that are nopt needed or are wrong'
 read -p "Press [Enter] to continue"
 }
-
+#-------------------------------
+function DEFAULTMSG {
+#-------------------------------
+echo "*********************************************************"
+echo "BY DEFAULT IF YOU JUST LET THIS SCRIPT RUN YOU WILL 
+ONLY SYNC THE  CORE RHEL 7 (KICKSTART, 7SERVER, OPTIONAL, EXTRAS,
+ SAT 6.4 TOOLS, SUPPLAMENTRY, AND RH COMMON ) THE PROGRESS 
+ TO THIS STEP CAN BE TRACKED AT $(hostname)/katello/sync_management :"
+echo "*********************************************************"
+}
 #-------------------------------
 function SYNCREL5 {
 #-------------------------------
@@ -658,6 +667,8 @@ else
     mv /etc/hosts.bak /etc/hosts
     mv /etc/sysctl.conf.bak /etc/sysctl.conf
     rm -f ./SCRIPT
+    subscription-manager unregister
+    subscription manager clean
     sleep 10
     exit
 sleep 5
@@ -1682,7 +1693,7 @@ echo " "
 #-------------------------------
 function PRIDOMAIN {
 #------------------------------
-```hammer domain update --id 1 --organizations $ORG --locations $LOC```
+hammer domain update --id 1 --organizations $ORG --locations $LOC
 }
 #-------------------------------
 function CREATESUBNET {
@@ -2150,6 +2161,11 @@ hammer template add-operatingsystem --operatingsystem-id 1 --id 1
 #-------------------------------
 function SATDONE {
 #-------------------------------
+for i in $(hammer capsule list |awk -F '|' '{print $1}' |grep -v ID|grep -v -) ; do hammer capsule refresh-features --id=$i ; done 
+hammer template build-pxe-default
+foreman-rake foreman_tasks:cleanup TASK_SEARCH='label = Actions::Katello::Repository::Sync' STATES='paused,pending,stopped' VERBOSE=true
+foreman-rake katello:delete_orphaned_content --trace
+foreman-rake katello:reindex --trace
 echo 'YOU HAVE NOW COMPLETED INSTALLING SATELLITE!'
 clear
 }
@@ -2499,6 +2515,7 @@ HAMMERCONF
 CONFIG2
 STOPSPAMMINGVARLOG
 REQUESTSYNCMGT
+DEFAULTMSG
 REQUEST5
 REQUEST6
 REQUEST7
