@@ -3,14 +3,15 @@
 echo -ne "\e[8;40;170t"
 
 
-# This tool is deprecated use REDHATTOOLSINSTALLER-1.0-el7.sh
+# This tool Satellite01282019.sh is deprecated use REDHATTOOLSINSTALLER-1.0-el7.sh
 
 
 
 # Hammer referance to assist in modifing the script can be found at 
 # https://www.gitbook.com/book/abradshaw/getting-started-with-satellite-6-command-line/details
 
-This tool is deprecated use REDHATTOOLSINSTALLER-1.0-el7.sh
+echo 'This tool Satellite01282019.sh is deprecated use REDHATTOOLSINSTALLER-1.0-el7.sh'
+This tool Satellite01282019.sh is deprecated use REDHATTOOLSINSTALLER-1.0-el7.sh
 
 reset
 
