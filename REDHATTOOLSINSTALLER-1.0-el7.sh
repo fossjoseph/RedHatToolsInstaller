@@ -117,6 +117,7 @@ fi
 #------------------
 function SCRIPT {
 #------------------
+echo ""
 echo "*************************************************************"
 echo " Script configuration requirements installing for this server"
 echo "*************************************************************"
@@ -132,11 +133,33 @@ DOM="$(hostname -d)"
 service firewalld stop
 setenforce 0
 mkdir -p /home/admin/Downloads
+echo ""
 echo "*********************************************************"
-echo "REGESTERING SATELLITE"
+echo "UNREGESTERING SYSTEM"
+echo "*********************************************************"
+echo "To ensure the system has proper entitlements and the ability to enable required repos"
+read -p "Press [Enter] to continue"
+subscription-manager unregister
+subscription-manager clean
+echo " "
+echo "*********************************************************"
+echo "REGESTERING SYSTEM"
 echo "*********************************************************"
 subscription-manager register --auto-attach
+echo " "
+echo "*********************************************************"
+echo "NOTE:"
+echo "*********************************************************"
+echo "Attaching to your Satellite subscription using the pool id if the predefined value fails please
+obtain your pool id in another terminal running:
+subscription-manager list --available
+ or 
+subscription-manager list --available --matches 'Red Hat Satellite'
 
+"
+echo " "
+read -p "Press [Enter] 32 digit pool id if prompted "
+echo " "
 subscription-manager attach --pool=`subscription-manager list --available --matches 'Red Hat Satellite Infrastructure Subscription' --pool-only`
 if [ $? -eq 0 ]; then
     echo 'Attaching Red Hat Satellite Infrastructure Subscription'
@@ -154,7 +177,6 @@ subscription-manager repos --disable "*" || exit 1
 subscription-manager repos --enable=rhel-7-server-rpms || exit 1
 subscription-manager repos --enable=rhel-7-server-extras-rpms || exit 1
 subscription-manager repos --enable=rhel-7-server-optional-rpms || exit 1
-subscription-manager repos --enable=rhel-7-server-rpms || exit 1
 yum -q list installed epel-release-latest-7 &>/dev/null && echo "epel-release-latest-7 is installed" || yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm --skip-broken
 yum -q list installed yum-utils &>/dev/null && echo "yum-utils is installed" || yum install -y yum-util* --skip-broken
 yum-config-manager --enable epel 
@@ -173,7 +195,7 @@ yum -q list installed gnome-terminal &>/dev/null && echo "gnome-terminal is inst
 yum -q list installed yum &>/dev/null && echo "yum is installed" || yum install -y yum --skip-broken
 yum -q list installed lynx &>/dev/null && echo "lynx is installed" || yum install -y lynx --skip-broken
 yum -q list installed perl &>/dev/null && echo "perl is installed" || yum install -y perl --skip-broken
-yum -q list installed dialog &>/dev/null && echo "dialog is installed" || yum install -y *dialog* --skip-broken
+yum -q list installed dialog &>/dev/null && echo "dialog is installed" || yum install -y dialog --skip-broken
 yum -q list installed xdialog &>/dev/null && echo "xdialog is installed" || yum localinstall -y xdialog-2.3.1-13.el7.centos.x86_64.rpm --skip-broken
 yum -q list installed firefox &>/dev/null && echo "firefox is installed" || install -y firefox --skip-broken
 yum install -y dconf*
@@ -230,6 +252,7 @@ fi
 #-------------------------------
 function VARIABLES1 {
 #-------------------------------
+echo ""
 echo "*********************************************************"
 echo "COLLECT VARIABLES FOR SAT 6.X"
 echo "*********************************************************"
@@ -240,12 +263,14 @@ export INTERNALIP=$(ifconfig "$INTERNAL" | grep "inet" | awk -F ' ' '{print $2}'
 export INTERNALSUBMASK=$(ifconfig "$INTERNAL" |grep netmask |awk -F " " {'print $4'})
 export INTERNALGATEWAY=$(ip route list type unicast dev $(ip -o link | head -n 2 | tail -n 1 | awk '{print $2;}' | sed s/:$//) |awk -F " " '{print $7}')
 echo "INTERNALIP=$INTERNALIP" >> /root/.bashrc
+echo ""
 echo "*********************************************************"
 echo "ORGANIZATION"
 echo "*********************************************************"
 echo 'What is the name of your Organization?'
 read ORG
 echo 'ORG='$ORG'' >> /root/.bashrc
+echo ""
 echo "*********************************************************"
 echo "LOCATION OF YOUR SATELLITE"
 echo "*********************************************************"
@@ -253,12 +278,14 @@ echo 'LOCATION'
 echo 'What is the location of your Satellite server. Example DENVER'
 read LOC
 echo 'LOC='$LOC'' >> /root/.bashrc
+echo ""
 echo "*********************************************************"
 echo "SETTING DOMAIN"
 echo "*********************************************************"
 echo 'what is your domain name Example:'$(hostname -d)''
 read DOM
 echo 'DOM='$DOM'' >> /root/.bashrc
+echo ""
 echo "*********************************************************"
 echo "ADMIN PASSWORD - WRITE OR REMEMBER YOU WILL BE PROMPTED FOR 
 USER: admin AND THIS PASSWORD WHEN WE IMPORT THE MANIFEST"
@@ -268,12 +295,14 @@ echo 'ADMIN=admin'  >> /root/.bashrc
 echo 'What will the password be for your admin user?'
 read  ADMIN_PASSWORD
 echo 'ADMIN_PASSWORD='$ADMIN_PASSWORD'' >> /root/.bashrc
+echo ""
 echo "*********************************************************"
 echo "NAME OF FIRST SUBNET"
 echo "*********************************************************"
 echo 'What would you like to call your first subnet for systems you are regestering to satellite?'
 read  SUBNET
 echo 'SUBNET_NAME='$SUBNET'' >> /root/.bashrc
+echo ""
 echo "*********************************************************"
 echo "PROVISIONED NODE PREFIX"
 echo "*********************************************************"
@@ -281,6 +310,7 @@ echo "*********************************************************"
 echo 'What would you like the prefix to be for systems you are provisioning with Satellite Example poc- kvm- vm-? enter to skip'
 read  PREFIX
 echo 'HOST_PREFIX='$PREFIX'' >> /root/.bashrc
+echo ""
 echo "*********************************************************"
 echo "NODE PASSWORD"
 echo "*********************************************************"
@@ -291,49 +321,59 @@ for i in $(echo "$PASSWORD" | openssl passwd -apr1 -stdin); do echo NODEPASS=$i 
 
 export "DHCPSTART=$(ifconfig $INTERNAL | grep "inet" | awk -F ' ' '{print $2}' |grep -v f |awk -F . '{print $1"."$2"."$3"."2}')"
 export "DHCPEND=$(ifconfig $INTERNAL | grep "inet" | awk -F ' ' '{print $2}' |grep -v f |awk -F . '{print $1"."$2"."$3"."254}')"
+echo ""
 echo "*********************************************************"
 echo "FINDING NETWORK"
 echo "*********************************************************"
 echo 'INTERNALNETWORK='$(ifconfig "$INTERNAL" | grep "inet" | awk -F ' ' '{print $2}' |grep -v f |awk -F . '{print $1"."$2"."0"."0}')'' >> /root/.bashrc
+echo ""
 echo "*********************************************************"
 echo "FINDING SAT INTERFACE"
 echo "*********************************************************"
 echo 'SAT_INTERFACE='$(ip -o link | head -n 2 | tail -n 1 | awk '{print $2;}' | sed s/:$//)'' >> /root/.bashrc
+echo ""
 echo "*********************************************************"
 echo "FINDING SAT IP"
+echo ""
 echo "*********************************************************"
 echo 'SAT_IP='$(ifconfig "$INTERNAL" | grep "inet" | awk -F ' ' '{print $2}' |grep -v f |awk -F . '{print $1"."$2"."$3"."$4}')'' >> /root/.bashrc
-echo "*********************************************************"
+echo ""
 echo "*********************************************************"
 echo "SETTING RELM"
 echo "*********************************************************"
 echo 'REALM='$(hostname -d)'' >> /root/.bashrc
+echo ""
 echo "*********************************************************"
 echo "SETTING DNS"
 echo "*********************************************************"
 echo 'DNS='$(ip route list type unicast dev $(ip -o link | head -n 2 | tail -n 1 | awk '{print $2;}' | sed s/:$//) |awk -F " " '{print $7}')'' >> /root/.bashrc
 echo 'DNS_REV='$(ifconfig $INTERNAL | grep "inet" | awk -F ' ' '{print $2}' |grep -v f |awk -F . '{print $3"."$2"."$1".""in-addr.arpa"}')'' >> /root/.bashrc
+echo ""
 echo "*********************************************************"
 echo "DNS PTR RECORD"
 echo "*********************************************************"
 'PTR='$(ifconfig "$INTERNAL" | grep "inet" | awk -F ' ' '{print $2}' |grep -v f |awk -F . '{print $4}')''  >> /root/.bashrc
+echo ""
 echo "*********************************************************"
 echo "SETTING SUBNET VARS"
 echo "*********************************************************"
 echo 'SUBNET='$(ifconfig $INTERNAL | grep "inet" | awk -F ' ' '{print $2}' |grep -v f |awk -F . '{print $1"."$2"."0"."0}')'' >> /root/.bashrc
 echo 'SUBNET_MASK='$(ifconfig $INTERNAL |grep netmask |awk -F " " {'print $4'})'' >> /root/.bashrc
+echo ""
 echo "*********************************************************"
 echo "SETTING BGIN AND END IPAM RANGE"
 echo "*********************************************************"
 echo 'SETTING BEGIN AND END IPAM RANGE'
 echo 'SUBNET_IPAM_BEGIN='$DHCPSTART'' >> /root/.bashrc
 echo 'SUBNET_IPAM_END='$DHCPEND'' >> /root/.bashrc
+echo ""
 echo "*********************************************************"
 echo "DHCP"
 echo "*********************************************************"
 echo 'DHCP_RANGE=''"'$DHCPSTART' '$DHCPEND'"''' >> /root/.bashrc
 echo 'DHCP_GW='$(ip route list type unicast dev $(ip -o link | head -n 2 | tail -n 1 | awk '{print $2;}' | sed s/:$//) |awk -F " " '{print $7}')'' >> /root/.bashrc
 echo 'DHCP_DNS='$(ifconfig $INTERNAL | grep "inet" | awk -F ' ' '{print $2}' |grep -v f |awk -F . '{print $1"."$2"."$3"."$4}')'' >> /root/.bashrc
+echo ""
 }
 
 YMESSAGE="Adding to /root/.bashrc vars"
@@ -344,6 +384,7 @@ DEFAULTVALUE=n
 #-------------------------------
 function IPA {
 #-------------------------------
+echo ""
 echo "*********************************************************"
 echo "IPA SERVER"
 echo "*********************************************************"
@@ -373,6 +414,7 @@ fi
 #-------------------------------
 function CAPSULE {
 #-------------------------------
+echo ""
 echo "*********************************************************"
 echo "CAPSULE"
 echo "*********************************************************"
@@ -399,6 +441,7 @@ fi
 #-------------------------------
 function SATLIBVIRT {
 #-------------------------------
+echo ""
 echo "*********************************************************"
 echo "LIBVIRT COMPUTE RESOURCE"
 echo "*********************************************************"
@@ -431,6 +474,7 @@ fi
 #-------------------------------
 function SATRHV {
 #-------------------------------
+echo ""
 echo "*********************************************************"
 echo "RHV COMPUTE RESOURCE"
 echo "*********************************************************"
@@ -468,6 +512,7 @@ fi
 #-------------------------------
 function RHVORLIBVIRT {
 #-------------------------------
+echo ""
 echo "*********************************************************"
 echo "RHV or LIBVIRT=TRUE"
 echo "*********************************************************"
@@ -481,26 +526,29 @@ fi
 echo 'FIRST_SATELLITE=false ' >> /root/.bashrc
 echo ' '
 echo 'In another terminal please check/correct any variables in /root/.bashrc
-that are nopt needed or are wrong'
+that are not needed or are wrong'
 read -p "Press [Enter] to continue"
 }
 #-------------------------------
 function DEFAULTMSG {
 #-------------------------------
+echo ""
 echo "*********************************************************"
 echo "BY DEFAULT IF YOU JUST LET THIS SCRIPT RUN YOU WILL 
-ONLY SYNC THE  CORE RHEL 7 (KICKSTART, 7SERVER, OPTIONAL, EXTRAS,
+ONLY SYNC THE CORE RHEL 7 (KICKSTART, 7SERVER, OPTIONAL, EXTRAS,
  SAT 6.4 TOOLS, SUPPLAMENTRY, AND RH COMMON ) THE PROGRESS 
- TO THIS STEP CAN BE TRACKED AT $(hostname)/katello/sync_management :"
+ TO THIS STEP CAN BE TRACKED AT $(hostname)/katello/sync_management:"
 echo "*********************************************************"
+echo ""
 }
 #-------------------------------
 function SYNCREL5 {
 #-------------------------------
+echo ""
 echo "*********************************************************"
 echo "SYNC RHEL 5?"
 echo "*********************************************************"
-read -n1 -p "Would you like to enable RHEL 5 content " INPUT
+read -n1 -p "Would you like to enable RHEL 5 content  ? Y/N" INPUT
 INPUT=${INPUT:-$RHEL5DEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -518,10 +566,11 @@ fi
 #-------------------------------
 function SYNCREL6 {
 #-------------------------------
+echo ""
 echo "*********************************************************"
 echo "SYNC RHEL 6?"
 echo "*********************************************************"
-read -n1 -p "Would you like to enable RHEL 6 content " INPUT
+read -n1 -p "Would you like to enable RHEL 6 content  ? Y/N" INPUT
 INPUT=${INPUT:-$RHEL6DEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -542,6 +591,7 @@ fi
 #------------------------------
 function INSTALLREPOS {
 #------------------------------
+echo ""
 echo "*********************************************************"
 echo "SET REPOS FOR INSTALLING AND UPDATING SATELLITE 6.4"
 echo "*********************************************************"
@@ -559,14 +609,16 @@ rm -rf /var/cache/yum
 #------------------------------
 function INSTALLDEPS {
 #------------------------------
+echo ""
 echo "*********************************************************"
 echo "INSTALLING DEPENDENCIES FOR SATELLITE OPERATING ENVIRONMENT"
 echo "*********************************************************"
 echo -ne "\e[8;40;170t"
 yum-config-manager --enable epel
 sleep 5
-yum install -y screen yum-utils vim gcc gcc-c++ git rh-nodejs8-npm make automake kernel-devel ruby-devel libvirt-client bind dhcp tftp 
+yum install -y screen yum-utils vim gcc gcc-c++ git rh-nodejs8-npm make automake kernel-devel ruby-devel libvirt-client bind dhcp tftp syslinux* xorg-x11-server-Xorg  xorg-x11-server-common ntp chrony sos
 sleep 5
+echo ""
 echo "*********************************************************"
 echo "INSTALLING DEPENDENCIES FOR CONTENT VIEW AUTO PUBLISH"
 echo "*********************************************************"
@@ -579,6 +631,7 @@ yum upgrade -y; yum update -y
 #----------------------------------
 function GENERALSETUP {
 #----------------------------------
+echo ""
 echo "*********************************************************"
 echo 'GENERAL SETUP'
 echo "*********************************************************"
@@ -589,6 +642,7 @@ echo " "
 echo "*********************************************************"
 echo "GENERATE USERS AND SYSTEM KEYS FOR REQUIRED USERS"
 echo "*********************************************************"
+echo ""
 echo "*********************************************************"
 echo "SETTING UP ADMIN"
 echo "*********************************************************"
@@ -650,6 +704,7 @@ echo " "
 #  --------------------------------------
 function SYSCHECK {
 #  --------------------------------------
+echo " "
 echo "*********************************************************"
 echo "CHECKING ALL REQUIREMENTS HAVE BEEN MET"
 echo "*********************************************************"
@@ -692,12 +747,17 @@ fi
 #  --------------------------------------
 function INSTALLNSAT {
 #  --------------------------------------
+echo " "
 echo "*********************************************************"
 echo "INSTALLING SATELLITE"
 echo "*********************************************************"
+echo " "
 echo -ne "\e[8;40;170t"
 source /root/.bashrc
+echo "Disabling EPEL repos"
 yum-config-manager --disable epel
+echo " "
+echo "Enabling Repos -> RHEL 7, RHSCL 7, Optional, Satellite 6.4, and Satellite Maintenance 6.0"
 subscription-manager repos --enable=rhel-7-server-rpms || exit 1
 subscription-manager repos --enable=rhel-server-rhscl-7-rpms || exit 1
 subscription-manager repos --enable=rhel-7-server-optional-rpms || exit 1
@@ -706,9 +766,13 @@ subscription-manager repos --enable=rhel-7-server-satellite-maintenance-6-rpms |
 yum clean all 
 rm -rf /var/cache/yum
 
+echo "Installing Satellite 6.4"
 yum -q list installed satellite &>/dev/null && echo "satellite is installed" || time yum install satellite -y --skip-broken
+echo "Installing puppetserver"
 yum -q list installed puppetserver &>/dev/null && echo "puppetserver is installed" || time yum install puppetserver -y --skip-broken
+echo "Installing puppet-agent-oauth"
 yum -q list installed puppet-agent-oauth &>/dev/null && echo "puppet-agent-oauth is installed" || time yum install puppet-agent-oauth -y --skip-broken
+echo "Installing puppet-agent"
 yum -q list installed puppet-agent &>/dev/null && echo "puppet-agent is installed" || time yum install puppet-agent -y --skip-broken
 }
 #---END OF SAT 6.X INSTALL SCRIPT---
@@ -717,6 +781,7 @@ yum -q list installed puppet-agent &>/dev/null && echo "puppet-agent is installe
 #  --------------------------------------
 function CONFSAT {
 #  --------------------------------------
+echo " "
 source /root/.bashrc
 echo -ne "\e[8;40;170t"
 echo "*********************************************************"
@@ -740,7 +805,8 @@ satellite-installer --scenario satellite -v \
 --foreman-proxy-dns-forwarders $DNS \
 --foreman-proxy-dns-tsig-principal="foreman-proxy $(hostname)@$DOM" \
 --foreman-proxy-dns-tsig-keytab=/etc/foreman-proxy/dns.key \
---foreman-proxy-dns-reverse $DNS_REV 
+--foreman-proxy-dns-listen-on both \
+--foreman-proxy-dns-reverse $DNS_REV
 echo " "
 echo "*********************************************************"
 echo "CONFIGURING SATELLITE DHCP"
@@ -752,7 +818,10 @@ satellite-installer --scenario satellite -v \
 --foreman-proxy-dhcp-interface=$SAT_INTERFACE \
 --foreman-proxy-dhcp-range="$DHCP_RANGE" \
 --foreman-proxy-dhcp-gateway=$DHCP_GW \
---foreman-proxy-dhcp-nameservers=$DHCP_DNS
+--foreman-proxy-dhcp-nameservers=$DHCP_DNS \
+--foreman-proxy-dhcp-listen-on both \
+--foreman-proxy-dhcp-search-domains=$DOM
+
 echo " "
 echo "*********************************************************"
 echo "CONFIGURING SATELLITE TFTP"
@@ -760,7 +829,8 @@ echo "*********************************************************"
 source /root/.bashrc
 satellite-installer --scenario satellite -v \
 --foreman-proxy-tftp true \
---foreman-proxy-tftp-servername="$(hostname)"
+--foreman-proxy-tftp-listen-on both \
+--foreman-proxy-tftp-servername=$SAT_IP
 echo " "
 echo "*********************************************************"
 echo "CONFIGURING ALL SATELLITE PLUGINS"
@@ -788,7 +858,15 @@ satellite-installer --scenario satellite -v \
 --enable-foreman-compute-ovirt \
 --enable-foreman-compute-rackspace \
 --enable-foreman-compute-vmware \
---enable-foreman-plugin-bootdisk
+--enable-foreman-plugin-bootdisk \
+--foreman-proxy-http true \
+--foreman-proxy-ssl=true \
+--foreman-proxy-templates-listen-on both \
+--foreman-proxy-puppet-listen-on both \
+--foreman-proxy-templates=true
+
+
+
 echo " "
 echo "*********************************************************"
 echo "ENABLE DEB"
@@ -1120,23 +1198,58 @@ read -n1 -t$COUNTDOWN -p "$QMESSAGE7 ? Y/N " INPUT
 INPUT=${INPUT:-$RHEL7DEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
+echo "*********************************************************"
+echo "Red Hat Enterprise Linux 7 Server (Kickstart):"
+echo "*********************************************************"
 hammer repository-set enable --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='7.6' --name 'Red Hat Enterprise Linux 7 Server (Kickstart)' 
 hammer repository update --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 7 Server Kickstart x86_64 7.6' --download-policy immediate
 time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 7 Server Kickstart x86_64 7.6' 2>/dev/null
+sleep 10
+echo "*********************************************************"
+echo "Red Hat Enterprise Linux 7 Server (RPMs):"
+echo "*********************************************************"
 hammer repository-set enable --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Enterprise Linux 7 Server (RPMs)'
 time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server' 2>/dev/null
+sleep 10
+echo "*********************************************************"
+echo "Red Hat Enterprise Linux 7 Server - Supplementary (RPMs):"
+echo "*********************************************************"
 hammer repository-set enable --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Enterprise Linux 7 Server - Supplementary (RPMs)'
 time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 7 Server - Supplementary RPMs x86_64 7Server' 2>/dev/null
+sleep 10
+echo "*********************************************************"
+echo "Red Hat Enterprise Linux 7 Server - Optional (RPMs):"
+echo "*********************************************************"
 hammer repository-set enable --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Enterprise Linux 7 Server - Optional (RPMs)'
 time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 7 Server - Optional RPMs x86_64 7Server' 2>/dev/null
+sleep 10
+echo "*********************************************************"
+echo "Red Hat Enterprise Linux 7 Server - Extras (RPMs):"
+echo "*********************************************************"
 hammer repository-set enable --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --name 'Red Hat Enterprise Linux 7 Server - Extras (RPMs)'
 time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 7 Server - Extras RPMs x86_64' 2>/dev/null
+sleep 10
+echo "*********************************************************"
+echo "Red Hat Satellite Tools 6.4 (for RHEL 7 Server) (RPMs):"
+echo "*********************************************************"
 hammer repository-set enable --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --name 'Red Hat Satellite Tools 6.4 (for RHEL 7 Server) (RPMs)'
 time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Satellite Tools 6.4 for RHEL 7 Server RPMs x86_64'
+sleep 10
+echo "*********************************************************"
+echo "Red Hat Enterprise Linux 7 Server - RH Common (RPMs):"
+echo "*********************************************************"
 hammer repository-set enable --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Enterprise Linux 7 Server - RH Common (RPMs)'
 time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 7 Server - RH Common RPMs x86_64 7Server' 2>/dev/null
+sleep 10
+echo "*********************************************************"
+echo "'Red Hat Software Collections RPMs for Red Hat Enterprise Linux 7 Server:"
+echo "*********************************************************"
 hammer repository-set enable --organization "$ORG" --product 'Red Hat Software Collections (for RHEL Server)' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Software Collections RPMs for Red Hat Enterprise Linux 7 Server'
 time hammer repository synchronize --organization "$ORG" --product 'Red Hat Software Collections (for RHEL Server)' --name 'Red Hat Software Collections RPMs for Red Hat Enterprise Linux 7 Server x86_64 7Server' 2>/dev/null
+sleep 10
+echo "*********************************************************"
+echo "'Extra Packages for Enterprise Linux 7:"
+echo "*********************************************************"
 wget -q https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7 -O /root/RPM-GPG-KEY-EPEL-7
 wget -q https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7Server -O /root/RPM-GPG-KEY-EPEL-7Server
 sleep 10
@@ -1148,8 +1261,10 @@ hammer product create --name='Extra Packages for Enterprise Linux 7Server' --org
 sleep 10
 hammer repository create --name='Extra Packages for Enterprise Linux 7' --organization $ORG --product='Extra Packages for Enterprise Linux 7' --content-type yum --publish-via-http=true --url=https://dl.fedoraproject.org/pub/epel/7/x86_64/
 time hammer repository synchronize --organization "$ORG" --product 'Extra Packages for Enterprise Linux 7' --name 'Extra Packages for Enterprise Linux 7' 2>/dev/null
+sleep 10
 hammer repository create --name='Extra Packages for Enterprise Linux 7Server' --organization $ORG --product='Extra Packages for Enterprise Linux 7Server' --content-type yum --publish-via-http=true --url=https://dl.fedoraproject.org/pub/epel/7Server/x86_64/
 time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Extra Packages for Enterprise Linux 7Server' 2>/dev/null
+sleep 10
 #COMMANDEXECUTION
 elif [ "$INPUT" = "n" -o "$INPUT" = "N" ] ;then
 echo -e "\n$NMESSAGE\n"
@@ -1671,6 +1786,7 @@ function SYNC {
 #------------------------------
 source /root/.bashrc
 echo -ne "\e[8;40;170t"
+echo " "
 echo "*********************************************************"
 echo "SYNC ALL REPOSITORIES (WAIT FOR THIS TO COMPLETE BEFORE CONTINUING):"
 echo "*********************************************************"
@@ -1681,6 +1797,7 @@ echo " "
 #-------------------------------
 function SYNCMSG {
 #------------------------------
+echo " "
 if ! xset q &>/dev/null; then
     echo "No X server at \$DISPLAY [$DISPLAY]" >&2
     echo 'In a system browser please goto the URL to view progress https://$(hostname)/katello/sync_management'
@@ -1814,6 +1931,7 @@ hammer content-view add-repository --organization $ORG --name 'CentOS 7' --produ
 hammer content-view add-repository --organization $ORG --name 'CentOS 7' --product 'CentOS-7' --repository 'CentOS-7 Updates'
 time hammer content-view publish --organization $ORG --name 'CentOS 7' --description 'Initial Publishing' 2>/dev/null
 time hammer content-view version promote --organization $ORG --content-view 'CentOS 7' --to-lifecycle-environment DEV_CentOS_7  2>/dev/null
+echo " "
 echo "***********************************************"
 echo "CREATE A CONTENT VIEW FOR RHEL 7:"
 echo "***********************************************"
@@ -1832,6 +1950,7 @@ hammer content-view puppet-module add --organization $ORG --content-view 'RHEL 7
 hammer content-view puppet-module add --organization $ORG --content-view 'RHEL 7' --author saz --name ssh
 time hammer content-view publish --organization $ORG --name 'RHEL 7' --description 'Initial Publishing' 2>/dev/null
 time hammer content-view version promote --organization $ORG --content-view 'RHEL 7' --to-lifecycle-environment DEV_RHEL_7  2>/dev/null
+echo " "
 echo "***********************************************"
 echo "CREATE A CONTENT VIEW FOR RHEL 7 CAPSULES:"
 echo "***********************************************"
@@ -1849,6 +1968,7 @@ hammer content-view puppet-module add --organization $ORG --content-view 'RHEL7-
 hammer content-view puppet-module add --organization $ORG --content-view 'RHEL7-Capsule' --author saz --name ssh
 time hammer content-view publish --organization $ORG --name 'RHEL7-Capsule' --description 'Initial Publishing' 2>/dev/null
 time hammer content-view version promote --organization $ORG --content-view 'RHEL7-Capsule' --to-lifecycle-environment DEV_RHEL_7  2>/dev/null
+echo " "
 echo "***********************************************"
 echo "CREATE A CONTENT VIEW FOR RHEL 7 Hypervisor:"
 echo "***********************************************"
@@ -1861,6 +1981,7 @@ hammer content-view puppet-module add --organization $ORG --content-view 'RHEL7-
 hammer content-view puppet-module add --organization $ORG --content-view 'RHEL7-Hypervisor' --author puppetlabs --name ntp
 time hammer content-view publish --organization $ORG --name 'RHEL7-Hypervisor' --description 'Initial Publishing' 2>/dev/null
 time hammer content-view version promote --organization $ORG --content-view 'RHEL7-Hypervisor' --to-lifecycle-environment DEV_RHEL_7  2>/dev/null
+echo " "
 echo "***********************************************"
 echo "CREATE A CONTENT VIEW FOR RHEL 7 Builder:"
 echo "***********************************************"
@@ -1888,6 +2009,7 @@ hammer content-view puppet-module add --organization $ORG --content-view 'RHEL7-
 hammer content-view puppet-module add --organization $ORG --content-view 'RHEL7-Builder' --author camptocamp --name archive
 time hammer content-view publish --organization $ORG --name 'RHEL7-Builder' --description 'Initial Publishing'
 time hammer content-view version promote --organization $ORG --content-view 'RHEL7-Builder' --to-lifecycle-environment DEV_RHEL_7
+echo " "
 echo "***********************************************"
 echo "CREATE A CONTENT VIEW FOR RHEL 7 OSCP:"
 echo "***********************************************"
@@ -1908,6 +2030,7 @@ hammer content-view puppet-module add --organization $ORG --content-view 'RHEL7-
 hammer content-view puppet-module add --organization $ORG --content-view 'RHEL7-Oscp' --author crayfishx --name firewalld
 time hammer content-view publish --organization $ORG --name 'RHEL7-Oscp' --description 'Initial Publishing'
 time hammer content-view version promote --organization $ORG --content-view 'RHEL7-Oscp' --to-lifecycle-environment DEV_RHEL_7
+echo " "
 echo "***********************************************"
 echo "CREATE A CONTENT VIEW FOR RHEL 7 DOCKER:"
 echo "***********************************************"
@@ -1933,6 +2056,10 @@ time hammer content-view version promote --organization $ORG --content-view 'RHE
 echo '#-------------------------------'
 echo 'RHEL6 CONTENT VIEW'
 echo '#-------------------------------'
+echo " "
+echo "***********************************************"
+echo "CREATE A CONTENT VIEW FOR RHEL 6:"
+echo "***********************************************"
 hammer content-view create --organization $ORG --name 'RHEL6' --label 'RHEL6' --description 'Core Build for RHEL 6'
 hammer content-view add-repository --organization $ORG --name 'RHEL6_Base' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Enterprise Linux 6 Server RPMs x86_64 6Server'
 hammer content-view add-repository --organization $ORG --name 'RHEL6_Base' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Satellite Tools 6.4 for RHEL 6 Server RPMs x86_64'
@@ -1945,15 +2072,19 @@ time hammer content-view version promote --organization $ORG --content-view 'RHE
 echo '#-------------------------------'
 echo 'RHEL5 CONTENT VIEW'
 echo '#-------------------------------'
-hammer content-view create --organization $ORG --name 'RHEL5_Base' --label 'RHEL5_Base' --description 'Core Build for RHEL 5'
-hammer content-view add-repository --organization $ORG --name 'RHEL5_Base' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Enterprise Linux 5 Server RPMs x86_64 6Server'
-hammer content-view add-repository --organization $ORG --name 'RHEL5_Base' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Satellite Tools 6.4 for RHEL 5 Server RPMs x86_64'
-hammer content-view puppet-module add --organization $ORG --content-view 'RHEL5_Base' --author puppetlabs --name stdlib
-hammer content-view puppet-module add --organization $ORG --content-view 'RHEL5_Base' --author puppetlabs --name concat
-hammer content-view puppet-module add --organization $ORG --content-view 'RHEL5_Base' --author puppetlabs --name ntp
-hammer content-view puppet-module add --organization $ORG --content-view 'RHEL5_Base' --author saz --name ssh
-time hammer content-view publish --organization $ORG --name 'RHEL5_Base' --description 'Initial Publishing' 2>/dev/null
-time hammer content-view version promote --organization $ORG --content-view 'RHEL5_Base' --to-lifecycle-environment DEV_RHEL_5  2>/dev/null
+echo " "
+echo "***********************************************"
+echo "CREATE A CONTENT VIEW FOR RHEL 5:"
+echo "***********************************************"
+hammer content-view create --organization $ORG --name 'RHEL5' --label 'RHEL5' --description 'Core Build for RHEL 5'
+hammer content-view add-repository --organization $ORG --name 'RHEL5' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Enterprise Linux 5 Server RPMs x86_64 6Server'
+hammer content-view add-repository --organization $ORG --name 'RHEL5' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Satellite Tools 6.4 for RHEL 5 Server RPMs x86_64'
+hammer content-view puppet-module add --organization $ORG --content-view 'RHEL5' --author puppetlabs --name stdlib
+hammer content-view puppet-module add --organization $ORG --content-view 'RHEL5' --author puppetlabs --name concat
+hammer content-view puppet-module add --organization $ORG --content-view 'RHEL5' --author puppetlabs --name ntp
+hammer content-view puppet-module add --organization $ORG --content-view 'RHEL5' --author saz --name ssh
+time hammer content-view publish --organization $ORG --name 'RHEL5' --description 'Initial Publishing' 2>/dev/null
+time hammer content-view version promote --organization $ORG --content-view 'RHEL5' --to-lifecycle-environment DEV_RHEL_5  2>/dev/null
 }
 #-------------------------------
 #function PUBLISHCONTENT {
@@ -2099,8 +2230,6 @@ cat /root/.bashrc
 echo " "
 sleep 5
 read -p "Press [Enter] to continue"
-
-
 }
 #-----------------------------------
 function PARTITION_OS_PXE_TEMPLATE {
@@ -2144,7 +2273,8 @@ echo "*********************************************************"
 echo "Setting up and Modifying default template for auto discovery"
 echo "*********************************************************"
 #sed -i 's/SATELLITE_CAPSULE_URL/'$(hostname)'/g' /usr/share/foreman/app/views/unattended/pxe/PXELinux_default.erb
-#hammer template update --id 1
+#sed -i 's/'$(hostname -f)'/$SAT_IP/g' /etc/foreman-proxy/settings.d/tftp.yml
+hammer template update --id 1
 }
 #-------------------------------
 function ADD_OS_TO_TEMPLATE {
@@ -2157,7 +2287,6 @@ echo "ASSOCIATE OS TO TEMPLATE"
 echo "*********************************************************"
 hammer template add-operatingsystem --operatingsystem-id 1 --id 1
 }
-
 #-------------------------------
 function SATDONE {
 #-------------------------------
@@ -2515,7 +2644,7 @@ HAMMERCONF
 CONFIG2
 STOPSPAMMINGVARLOG
 REQUESTSYNCMGT
-DEFAULTMSG
+#DEFAULTMSG
 REQUEST5
 REQUEST6
 REQUEST7
@@ -2538,7 +2667,7 @@ REQUESTJENKINS
 REQUESTMAVEN
 REQUESTICINGA
 REQUESTCENTOS7
-SYNC
+#SYNC
 SYNCMSG
 PRIDOMAIN
 CREATESUBNET
