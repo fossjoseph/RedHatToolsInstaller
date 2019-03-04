@@ -1790,7 +1790,7 @@ echo " "
 echo "*********************************************************"
 echo "SYNC ALL REPOSITORIES (WAIT FOR THIS TO COMPLETE BEFORE CONTINUING):"
 echo "*********************************************************"
-for i in $(hammer --csv repository list --organization $ORG | awk -F, {'print $1'} | grep -vi '^ID'); do hammer repository synchronize --id ${i} --organization $ORG --async; done
+for i in $(hammer --csv repository list --organization $ORG | awk -F, {'print $1'} | grep -vi '^ID'); do hammer repository synchronize --id ${i} --organization $ORG ; done
 sleep 5
 echo " "
 }
@@ -2667,7 +2667,7 @@ REQUESTJENKINS
 REQUESTMAVEN
 REQUESTICINGA
 REQUESTCENTOS7
-#SYNC
+SYNC
 SYNCMSG
 PRIDOMAIN
 CREATESUBNET
