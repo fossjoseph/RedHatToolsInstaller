@@ -1,0 +1,8 @@
+---
+- hosts: web
+  become: root
+
+  tasks:
+    - name: install firewalld
+      when: ansible_hostname != 'node03' 
+      yum: name=firewalld state=present

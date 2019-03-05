@@ -1,0 +1,7 @@
+---
+- hosts: web
+  become: root
+
+  handlers:
+    - name: restart firewalld
+      service: name=firewalld state=restarted

@@ -1,0 +1,9 @@
+---
+- hosts: web
+  become: root
+
+  tasks:
+    - name: Applying latest patches on nodes 
+      yum:
+        name: '*'
+        state: latest

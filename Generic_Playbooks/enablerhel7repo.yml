@@ -1,0 +1,11 @@
+---
+- hosts: web
+  become: root
+
+  tasks:
+    - name: Install required packages module
+      yum: package={{ item }}  update_cache=yes
+      with_items:
+        - yum-utils
+        - net-tools
+        - gnome-terminal
