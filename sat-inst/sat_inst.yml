@@ -1,0 +1,152 @@
+---
+- name: Install and Configure Satellite Server from Base RHEL Installation
+  hosts: satellite6
+  become: true
+
+  vars_files:
+  - group_vars/all
+  - sat_creds.yml
+
+  tasks:
+  - name: Set Timezone
+    timezone:
+      name: "{{TIMEZONE}}"
+    tags: system_setup
+
+  - name: set system hostname
+    hostname:
+      name: "{{sat_server_name}}"
+    tags: system_setup
+
+#  - name: Remove Existing Subscriptions
+#    redhat_subscription:
+#      state: absent
+#      username: "{{ access_redhat_com_user }}" #defined in sat_creds.yml
+#      password: "{{ access_redhat_com_password }}" #defined in sat_creds.yml
+#    tags: system_setup
+
+  - name: Register and Subscribe to RHEL and Satellite Pools
+    redhat_subscription:
+      state: present
+      username: "{{ access_redhat_com_user }}" #defined in sat_creds.yml
+      password: "{{ access_redhat_com_password }}" #defined in sat_creds.yml
+      force_register: yes
+      pool_ids: 
+      - "{{ sat_pool_id }}" #defined in sat_creds.yml
+    tags: system_setup
+        
+  - name: Disable all Repos
+    command: subscription-manager repos --disable "*"
+    tags: system_setup
+
+  - name: Ensure subscription-manager not set to a specific version
+    command: subscription-manager release --unset
+    tags: system_setup
+
+  - name: Enable Required Repos
+    command: subscription-manager repos \
+               --enable rhel-7-server-rpms \
+               --enable rhel-server-rhscl-7-rpms \
+               --enable rhel-7-server-ansible-2.7-rpms \
+               --enable rhel-7-server-optional-rpms \
+               --enable rhel-7-server-satellite-{{sat_version}}-rpms \
+               --enable rhel-7-server-satellite-maintenance-6-rpms
+    tags: system_setup
+
+  - name: Ensure Subscription Manager is not set to use a specific RHEL Release
+    command: subscription-manager release --unset
+    tags: system_setup
+
+  - name: clean any yum meta data
+    command: yum -y clean all
+    args:
+      warn: no
+    tags: system_setup
+    
+  - name: install chrony
+    package:
+      name: chrony
+      state: latest
+    tags: system_setup
+
+  - name: setup chrony.conf file
+    template:
+      src: chrony.conf.j2
+      dest: /etc/chrony.conf
+      owner: root
+      group: root
+      mode: 0644
+    tags: system_setup
+    notify: restart chronyd
+
+  - name: start and enable chronyd
+    service:
+      name: chronyd
+      state: started
+      enabled: yes
+    tags: system_setup
+
+  - name: update all packages
+    yum:
+      name: '*'
+      state: latest
+    tags: system_setup
+
+  - name: install sos
+    package:
+      name: sos
+      state: latest
+    tags: system_setup
+
+  - name: Ensure that firewalld is installed
+    yum:
+      name: firewalld
+      state: latest
+    tags: system_setup
+
+  - name: Ensure that firewalld is started
+    service:
+      name: firewalld
+      state: started
+    tags: system_setup
+
+  - name: assign eth0 to "public" zone
+    firewalld:
+      zone: public
+      interface: eth0
+      state: enabled
+    tags: system_setup
+
+  - name: deploy firewalld rules
+    firewalld:
+      zone: public
+      immediate: yes
+      port: "{{ item }}"
+      state: enabled
+      permanent: yes
+    with_items:
+      - "53/udp"
+      - "53/tcp"
+      - "67/udp"
+      - "69/udp"
+      - "80/tcp"
+      - "443/tcp"
+      - "5000/tcp"
+      - "5647/tcp"
+      - "8000/tcp"
+      - "8140/tcp"
+      - "9090/tcp"
+    tags: system_setup
+
+  - name: Install satellite
+    yum:
+      name: satellite
+      state: latest
+    tags: sat_inst
+
+  handlers:
+  - name: restart chronyd
+    service:
+      name: chronyd
+      state: restarted
+
