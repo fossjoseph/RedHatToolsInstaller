@@ -36,8 +36,8 @@ I can set up a full satellite for a P.O.C in 4 hours with:
 * 22 GB ram 
 * 300 GB storage
 * 2 Ethernet  
-    ◦ eth0 internal - provisioning node communication
-    ◦ eth1 external - connection to Red Hat CDN
+    * eth0 internal - provisioning node communication
+    * eth1 external - connection to Red Hat CDN
 
 **OS:**
 
