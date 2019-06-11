@@ -1,0 +1,8 @@
+---
+- hosts: web
+  become: root
+
+  tasks:
+    - name: Ensure that firewalld is started and enable at boot
+      when: ansible_hostname != 'node03'
+      service: name=firewalld enabled=yes state=started

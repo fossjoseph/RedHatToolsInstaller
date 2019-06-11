@@ -1,0 +1,10 @@
+---
+- hosts: web
+  become: root
+
+  tasks:
+    - name: Registering nodes to Red Hat Network with username "{{ rhn_username }}"
+      redhat_subscription: state=present username="{{rhn_username}}" password="{{rhn_password}}" pool="^Employee SKU" autosubscribe=true
+
+      tags:
+        - Registering
