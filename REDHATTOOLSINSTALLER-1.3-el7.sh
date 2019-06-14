@@ -607,9 +607,8 @@ getent passwd admin > /dev/null 2&>1
 if [ $? -eq 0 ]; then
     echo "yes the admin user exists"
 else
-    echo "No, the user does not exist
-    The user does not exist please create a admin user
-    and try again."
+    echo "No, the admin user does not exist
+    please create a admin user and try again."
     exit
 sleep 5
 echo " "
@@ -2534,7 +2533,7 @@ CREATESUBNET
 #KEYSFORENV
 #KEYSTOHOST
 #SUBTOKEYS
-#MEDIUM
+MEDIUM
 #VARSETUP2
 #PARTITION_OS_PXE_TEMPLATE
 #HOSTGROUPS
