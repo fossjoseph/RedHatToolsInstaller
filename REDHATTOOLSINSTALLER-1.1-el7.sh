@@ -70,6 +70,12 @@ echo " "
 echo " "
 echo " "
 echo "
+<<<<<<< HEAD
+=======
+
+
+
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
                           JUST A REVIEW
                           This is a Proof Of Concept script for the purposes of evaluation
                           and/or training.
@@ -87,7 +93,11 @@ echo "
                               swap 
 
                            If this is more than a Proof of Concept please vist: 
+<<<<<<< HEAD
                             https://access.redhat.com/documentation/en-us/red_hat_satellite/6.4/html/installing_satellite_server_from_a_connected_network/preparing_your_environment_for_installation#hardware_storage_prerequisites
+=======
+ https://access.redhat.com/documentation/en-us/red_hat_satellite/6.4/html/installing_satellite_server_from_a_connected_network/preparing_your_environment_for_installation#hardware_storage_prerequisites
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 
                            * An external network connection 
                            * A subscription to Satellite 
@@ -105,6 +115,12 @@ echo " "
 echo " "
 echo " "
 echo " "
+<<<<<<< HEAD
+=======
+echo " "
+echo " "
+echo " "
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 read -p "Press [Enter] to continue"
 clear
 if [ "$(whoami)" != "root" ]
@@ -143,7 +159,11 @@ echo " "
 echo "*********************************************************"
 echo "REGESTERING SYSTEM"
 echo "*********************************************************"
+<<<<<<< HEAD
 subscription-manager register
+=======
+subscription-manager register --auto-attach
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 echo " "
 echo "*********************************************************"
 echo "NOTE:"
@@ -165,7 +185,11 @@ if [ $? -eq 0 ]; then
 else
 echo 'None of the predefined Satellite Pool IDs worked please enter your 32 digit alphanumeric Pool ID'
 read POOLID
+<<<<<<< HEAD
 subscription-manager attach --pool=`$POOLID` || exit 1
+=======
+subscription-manager attach --pool="$POOLID" || exit 1
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 echo " "
 fi
 echo " "
@@ -192,11 +216,18 @@ yum -q list installed firewalld &>/dev/null && echo "firewalld is installed" || 
 yum -q list installed ansible &>/dev/null && echo "ansible is installed" || yum install -y ansible --skip-broken 
 yum -q list installed gnome-terminal &>/dev/null && echo "gnome-terminal is installed" || yum install -y gnome-terminal --skip-broken
 yum -q list installed yum &>/dev/null && echo "yum is installed" || yum install -y yum --skip-broken
+<<<<<<< HEAD
+=======
+yum -q list installed lynx &>/dev/null && echo "lynx is installed" || yum install -y lynx --skip-broken
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 yum -q list installed perl &>/dev/null && echo "perl is installed" || yum install -y perl --skip-broken
 yum -q list installed dialog &>/dev/null && echo "dialog is installed" || yum install -y dialog --skip-broken
 yum -q list installed xdialog &>/dev/null && echo "xdialog is installed" || yum localinstall -y xdialog-2.3.1-13.el7.centos.x86_64.rpm --skip-broken
 yum -q list installed firefox &>/dev/null && echo "firefox is installed" || install -y firefox --skip-broken
+<<<<<<< HEAD
 yum -q list installed libpwquality &>/dev/null && echo "libpwquality is installed" || install -y libpwquality --skip-broken
+=======
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 yum install -y dconf*
 touch ./SCRIPT
 echo " "
@@ -241,7 +272,11 @@ if [[ $RC != 0 ]]
 then
 echo "Error:: Could not locate suitable dialog command: Please install dialog or if running in a desktop install Xdialog."
 subscription-manager unregister
+<<<<<<< HEAD
 subscription manager clean
+=======
+subscription-manager clean
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 exit 1
 fi
 fi
@@ -378,7 +413,11 @@ echo ""
 YMESSAGE="Adding to /root/.bashrc vars"
 NMESSAGE="Skipping"
 FMESSAGE="PLEASE ENTER Y or N"
+<<<<<<< HEAD
 COUNTDOWN=15
+=======
+COUNTDOWN=10
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 DEFAULTVALUE=n
 #-------------------------------
 function IPA {
@@ -511,7 +550,11 @@ fi
 #-------------------------------
 function RHVORLIBVIRT {
 #-------------------------------
+<<<<<<< HEAD
 echo " "
+=======
+echo ""
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 echo "*********************************************************"
 echo "RHV or LIBVIRT=TRUE"
 echo "*********************************************************"
@@ -538,12 +581,20 @@ ONLY SYNC THE CORE RHEL 7 (KICKSTART, 7SERVER, OPTIONAL, EXTRAS,
  SAT 6.4 TOOLS, SUPPLAMENTRY, AND RH COMMON ) THE PROGRESS 
  TO THIS STEP CAN BE TRACKED AT $(hostname)/katello/sync_management:"
 echo "*********************************************************"
+<<<<<<< HEAD
 echo " "
+=======
+echo ""
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 }
 #-------------------------------
 function SYNCREL5 {
 #-------------------------------
+<<<<<<< HEAD
 echo " "
+=======
+echo ""
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 echo "*********************************************************"
 echo "SYNC RHEL 5?"
 echo "*********************************************************"
@@ -565,7 +616,11 @@ fi
 #-------------------------------
 function SYNCREL6 {
 #-------------------------------
+<<<<<<< HEAD
 echo " "
+=======
+echo ""
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 echo "*********************************************************"
 echo "SYNC RHEL 6?"
 echo "*********************************************************"
@@ -590,9 +645,15 @@ fi
 #------------------------------
 function INSTALLREPOS {
 #------------------------------
+<<<<<<< HEAD
 echo " "
 echo "*********************************************************"
 echo "SETTING REPOS FOR INSTALLING AND UPDATING SATELLITE 6.4"
+=======
+echo ""
+echo "*********************************************************"
+echo "SET REPOS FOR INSTALLING AND UPDATING SATELLITE 6.4"
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 echo "*********************************************************"
 echo -ne "\e[8;40;170t"
 subscription-manager repos --disable '*'
@@ -615,14 +676,22 @@ echo "*********************************************************"
 echo -ne "\e[8;40;170t"
 yum-config-manager --enable epel
 sleep 5
+<<<<<<< HEAD
 yum install -y rh-mongodb34 rh-mongodb34-syspaths screen yum-utils vim gcc gcc-c++ git rh-nodejs8-npm make automake kernel-devel ruby-devel libvirt-client bind bind-utils dhcp tftp syslinux* tftp-server
+=======
+yum install -y screen yum-utils vim gcc gcc-c++ git rh-nodejs8-npm make automake kernel-devel ruby-devel libvirt-client bind dhcp tftp syslinux* xorg-x11-server-Xorg  xorg-x11-server-common ntp chrony sos
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 sleep 5
 echo ""
 echo "*********************************************************"
 echo "INSTALLING DEPENDENCIES FOR CONTENT VIEW AUTO PUBLISH"
 echo "*********************************************************"
 yum -y install python-pip rubygem-builder
+<<<<<<< HEAD
 yum-config manager --disable epel
+=======
+yum-config-manager --disable epel
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 pip install --upgrade pip
 yum clean all ; rm -rf /var/cache/yum
 yum upgrade -y; yum update -y
@@ -637,6 +706,10 @@ echo "*********************************************************"
 echo -ne "\e[8;40;170t"
 source /root/.bashrc
 echo " "
+<<<<<<< HEAD
+=======
+
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 echo "*********************************************************"
 echo "GENERATE USERS AND SYSTEM KEYS FOR REQUIRED USERS"
 echo "*********************************************************"
@@ -651,6 +724,10 @@ mkdir -p /home/admin/git
 chown -R admin:admin /home/admin
 sudo -u admin ssh-keygen -f /home/admin/.ssh/id_rsa -N ''
 echo " "
+<<<<<<< HEAD
+=======
+
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 echo "*********************************************************"
 echo "SETTING UP FOREMAN-PROXY"
 echo "*********************************************************"
@@ -660,24 +737,39 @@ mkdir -p /usr/share/foreman-proxy/.ssh
 sudo -u foreman-proxy ssh-keygen -f /usr/share/foreman-proxy/.ssh/id_rsa_foreman_proxy -N ''
 chown -R foreman-proxy:foreman-proxy /usr/share/foreman-proxy
 echo " "
+<<<<<<< HEAD
+=======
+
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 echo "*********************************************************"
 echo "ROOT"
 echo "*********************************************************"
 ssh-keygen -f /root/.ssh/id_rsa -t rsa -N ''
 echo " "
+<<<<<<< HEAD
 echo "*********************************************************"
 echo 'SET DOMAIN' 
+=======
+
+echo "*********************************************************"
+echo “SET DOMAIN”
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 echo "*********************************************************"
 cp /etc/sysctl.conf /etc/sysctl.conf.bak
 echo 'inet.ipv4.ip_forward=1' >> /etc/sysctl.conf
 echo "kernel.domainname=$DOM" >> /etc/sysctl.conf
 echo " "
+<<<<<<< HEAD
+=======
+
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 echo "*********************************************************"
 echo "GENERATE /ETC/HOSTS"
 echo "*********************************************************"
 cp /etc/hosts /etc/hosts.bak
 echo "${SAT_IP} $(hostname)" >>/etc/hosts
 echo " "
+<<<<<<< HEAD
 echo "*********************************************************"
 echo "ADDING KATELLO-CVMANAGER TO /HOME/ADMIN/GIT "
 echo "*********************************************************"
@@ -689,6 +781,19 @@ gem install apipie-bindings || true
 cd 
 mkdir -p /root/.hammer
 echo " "
+=======
+
+echo "*********************************************************"
+echo "ADDING KATELLO-CVMANAGER TO /HOME/ADMIN/GIT "
+echo "*********************************************************"
+cd /home/admin/git
+git clone https://github.com/RedHatSatellite/katello-cvmanager.git
+git clone https://github.com/flyemsafe/my-satellite-post-config.git
+cd 
+mkdir -p /root/.hammer
+echo " "
+
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 echo "*********************************************************"
 echo "SETTING ADMIN USER TO NO PASSWORD FOR SUDO"
 echo "*********************************************************"
@@ -775,10 +880,13 @@ echo "Installing puppet-agent"
 yum -q list installed puppet-agent &>/dev/null && echo "puppet-agent is installed" || time yum install puppet-agent -y --skip-broken
 echo "foreman-proxy"
 yum -q list installed foreman-proxy &>/dev/null && echo "foreman-proxy is installed" || time yum install foreman-proxy -y --skip-broken
+<<<<<<< HEAD
 echo "Ansible Roles"
 subscription-manager repos --enable=rhel-7-server-extras-rpms
 yum -q list installed rhel-system-roles &>/dev/null && echo "rhel-system-roles is installed" || time yum install rhel-system-roles -y --skip-broken
 subscription-manager repos --disable=rhel-7-server-extras-rpms
+=======
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 }
 #---END OF SAT 6.X INSTALL SCRIPT---
 
@@ -802,7 +910,11 @@ satellite-installer --scenario satellite -v \
 --foreman-initial-organization=$ORG \
 --foreman-initial-location=$LOC \
 --foreman-proxy-dns true \
+<<<<<<< HEAD
 --foreman-proxy-dns-managed true \
+=======
+--foreman-proxy-dns-managed=true \
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 --foreman-proxy-dns-provider=nsupdate \
 --foreman-proxy-dns-server="127.0.0.1" \
 --foreman-proxy-dns-interface $SAT_INTERFACE \
@@ -819,7 +931,10 @@ echo "*********************************************************"
 source /root/.bashrc
 satellite-installer --scenario satellite -v \
 --foreman-proxy-dhcp true \
+<<<<<<< HEAD
 --foreman-proxy-dhcp-managed true \
+=======
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 --foreman-proxy-dhcp-server=$INTERNALIP \
 --foreman-proxy-dhcp-interface=$SAT_INTERFACE \
 --foreman-proxy-dhcp-range="$DHCP_RANGE" \
@@ -835,7 +950,10 @@ echo "*********************************************************"
 source /root/.bashrc
 satellite-installer --scenario satellite -v \
 --foreman-proxy-tftp true \
+<<<<<<< HEAD
 --foreman-proxy-tftp-managed true \
+=======
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 --foreman-proxy-tftp-listen-on both \
 --foreman-proxy-tftp-servername=$SAT_IP
 echo " "
@@ -854,7 +972,10 @@ satellite-installer --scenario satellite -v \
 --foreman-plugin-tasks-automatic-cleanup true \
 --foreman-proxy-content-enable-ostree true \
 --enable-foreman-plugin-docker \
+<<<<<<< HEAD
 --enable-foreman-plugin-ansible \
+=======
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 --enable-foreman-plugin-hooks \
 --enable-foreman-plugin-openscap \
 --enable-foreman-plugin-templates \
@@ -867,17 +988,30 @@ satellite-installer --scenario satellite -v \
 --enable-foreman-compute-rackspace \
 --enable-foreman-compute-vmware \
 --enable-foreman-plugin-bootdisk \
+<<<<<<< HEAD
 --foreman-proxy-http=true \
+=======
+--foreman-proxy-http true \
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 --foreman-proxy-ssl=true \
 --foreman-proxy-templates-listen-on both \
 --foreman-proxy-puppet-listen-on both \
 --foreman-proxy-templates=true
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 echo " "
 echo "*********************************************************"
 echo "ENABLE DEB"
 echo "*********************************************************"
+<<<<<<< HEAD
 foreman-installer -v --foreman-proxy-content-enable-deb=true --katello-enable-deb
+=======
+foreman-installer -v --foreman-proxy-content-enable-deb --katello-enable-deb
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 echo " "
 echo "*********************************************************"
 echo "CONFIGURING SATELLITE CACHE"
@@ -974,8 +1108,13 @@ hammer settings set --name default_download_policy --value on_demand
 hammer settings set --name default_organization  --value $ORG
 hammer settings set --name default_location  --value $LOC
 hammer settings set --name discovery_organization  --value $ORG
+<<<<<<< HEAD
 hammer settings set --name root_pass --value $NODEPASS
 hammer settings set --name register_hostname_fact  --value network.hostname-override
+=======
+hammer settings set --name discovery_organization  --value $ORG
+hammer settings set --name root_pass --value $NODEPASS
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 
 mkdir -p /etc/puppet/environments/production/modules
 }
@@ -1017,16 +1156,40 @@ This will enable
  Red Hat Enterprise Linux 6 Server - RH Common
  Extra Packages for Enterprise Linux 6"
 
+<<<<<<< HEAD
+=======
+QMESSAGE7="Would you like to enable and sync RHEL 7 Content
+This will enable:
+ Red Hat Enterprise Linux 7 Server (Kickstart)
+ Red Hat Enterprise Linux 7 Server
+ Red Hat Satellite Tools 6.4 (for RHEL 7 Server)
+ Red Hat Software Collections RPMs for Red Hat Enterprise Linux 7 Server
+ Red Hat Enterprise Linux 7 Server - Extras
+ Red Hat Enterprise Linux 7 Server - Optional
+ Red Hat Enterprise Linux 7 Server - Supplementary
+ Red Hat Enterprise Linux 7 Server - RH Common
+ Extra Packages for Enterprise Linux 7"
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 
 QMESSAGEJBOSS="Would you like to download JBoss Enterprise Application Platform 7 (RHEL 7 Server) content"
 QMESSAGEVIRTAGENT="Would you like to download Red Hat Virtualization 4 Management Agents for RHEL 7 content"
 QMESSAGESAT64="Would you like to download Red Hat Satellite 6.4 (for RHEL 7 Server) content"
+<<<<<<< HEAD
 QMESSAGESTORAGERHEL7="Would you like to download Red Hat Storage content"
 QMESSAGEOSC="Would you like to download Red Hat OpenShift Container Platform 3.10 content"
 QMESSAGEDOCKER="Would you like to download Red Hat Docker content"
 QMESSAGECEPH="Would you like to download Red Hat Ceph Storage Tools 3.0 for Red Hat Enterprise Linux 7 Server content"
 QMESSAGECSI="Would you like to download Red Hat Ceph Storage Installer 3.0 for Red Hat Enterprise Linux 7 Server content"
 QMESSAGEOSPD="Would you like to download Red Hat OpenStack Platform 14 for RHEL 7 content"
+=======
+QMESSAGECAP64="Would you like to download Red Hat Satellite Capsule 6.4 (for RHEL 7 Server) content"
+QMESSAGEOSC="Would you like to download Red Hat OpenShift Container Platform 3.10 content"
+QMESSAGECEPH="Would you like to download Red Hat Ceph Storage Tools 3.0 for Red Hat Enterprise Linux 7 Server content"
+QMESSAGESNC="Would you like to download Red Hat Storage Native Client for RHEL 7 content"
+QMESSAGECSI="Would you like to download Red Hat Ceph Storage Installer 3.0 for Red Hat Enterprise Linux 7 Server content"
+QMESSAGEOSP="Would you like to download Red Hat OpenStack Platform 13 for RHEL 7 content"
+QMESSAGEOSPT="Would you like to download Red Hat OpenStack Tools 7.0 for Red Hat Enterprise Linux 7 Server content"
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 QMESSAGERHVH="Would you like to download Red Hat Virtualization Host 7 content"
 QMESSAGERHVM="Would you like to download Red Hat Virtualization Manager 4.2 (RHEL 7 Server) content"
 QMESSAGEATOMIC="Would you like to download Red Hat Enterprise Linux Atomic Host content"
@@ -1052,7 +1215,11 @@ ATOMICRHEL7=n
 JENKINS=n
 MAVEN=n
 ICINGA=n
+<<<<<<< HEAD
 CENTOS7DEFAULTVALUE=n
+=======
+CENTOS7=n
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 
 #-------------------------------
 function REQUESTSYNCMGT {
@@ -1082,7 +1249,11 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "RHEL 5 STANDARD REPOS:"
 echo "*********************************************************"
+<<<<<<< HEAD
 read -n1 -t $COUNTDOWN -p "$QMESSAGE5 ? Y/N " INPUT
+=======
+read -n1 -t$COUNTDOWN -p "$QMESSAGE5 ? Y/N " INPUT
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 INPUT=${INPUT:-$RHEL5DEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1127,7 +1298,11 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "RHEL 6 STANDARD REPOS:"
 echo "*********************************************************"
+<<<<<<< HEAD
 read -n1 -t $COUNTDOWN -p "$QMESSAGE6 ? Y/N " INPUT
+=======
+read -n1 -t$COUNTDOWN -p "$QMESSAGE6 ? Y/N " INPUT
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 INPUT=${INPUT:-$RHEL6DEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1268,7 +1443,11 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "JBOSS ENTERPRISE:"
 echo "*********************************************************"
+<<<<<<< HEAD
 read -n1 -t $COUNTDOWN -p "$QMESSAGEJBOSS ? Y/N " INPUT
+=======
+read -n1 -t$COUNTDOWN -p "$QMESSAGEJBOSS ? Y/N " INPUT
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 INPUT=${INPUT:-$JBOSSRHEL7}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1313,11 +1492,19 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "RED HAT SATELLITE 6.4:"
 echo "*********************************************************"
+<<<<<<< HEAD
 read -n1 -t $COUNTDOWN -p "$QMESSAGESAT64 ? Y/N " INPUT
+=======
+read -n1 -t$COUNTDOWN -p "$QMESSAGESAT64 ? Y/N " INPUT
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 INPUT=${INPUT:-$SATELLITE64}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
 hammer repository-set enable --organization $ORG --product 'Red Hat Satellite' --basearch='x86_64' --name 'Red Hat Satellite 6.4 (for RHEL 7 Server) (RPMs)'
+<<<<<<< HEAD
+=======
+hammer repository-set enable --organization $ORG --product 'Red Hat Satellite' --basearch='x86_64' --name 'Red Hat Satellite 6.4 (for RHEL 7 Server) (ISOs)'
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 hammer repository-set enable --organization $ORG --product 'Red Hat Satellite Capsule' --basearch='x86_64' --name 'Red Hat Satellite Capsule 6.4 (for RHEL 7 Server) (RPMs)'
 hammer repository-set enable --organization $ORG --product 'Red Hat Satellite Capsule' --basearch='x86_64' --name 'Red Hat Satellite Capsule 6.4 (for RHEL 7 Server) (ISOs)'
 sleep 2
@@ -1331,6 +1518,7 @@ echo -e "\n$FMESSAGE\n"
 fi
 }
 #-------------------------------
+<<<<<<< HEAD
 function REQUESTDOCKER {
 #-------------------------------
 source /root/.bashrc
@@ -1357,6 +1545,8 @@ fi
 }
 
 #-------------------------------
+=======
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 function REQUESTOSC {
 #-------------------------------
 source /root/.bashrc
@@ -1364,12 +1554,20 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "RED HAT OPENSHIFT CONTAINER PLATFORM 3.10:"
 echo "*********************************************************"
+<<<<<<< HEAD
 read -n1 -t $COUNTDOWN -p "$QMESSAGEOSC ? Y/N " INPUT
+=======
+read -n1 -t$COUNTDOWN -p "$QMESSAGEOSC ? Y/N " INPUT
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 INPUT=${INPUT:-$OSCPRHEL7}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
 hammer repository-set enable --organization $ORG --product 'Red Hat OpenShift Container Platform' --basearch='x86_64' --name 'Red Hat OpenShift Container Platform 3.10 (RPMs)'
+<<<<<<< HEAD
 hammer repository-set enable --organization $ORG --product 'Red Hat OpenShift Enterprise Client Tools' --basearch='x86_64' --name 'Red Hat OpenShift Enterprise 3.10 Client Tools (RPMs)'
+=======
+hammer repository-set enable --organization $ORG --product 'Red Hat OpenShift Enterprise Client Tools' --basearch='x86_64' --name 'Red Hat OpenShift Enterprise 2.2 Client Tools (RPMs)'
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 hammer repository-set enable --organization $ORG --product 'Red Hat OpenShift Enterprise Infrastructure' --basearch='x86_64' --name 'Red Hat OpenShift Enterprise 2.2 Infrastructure (RPMs)'
 hammer repository-set enable --organization $ORG --product 'Red Hat OpenShift Enterprise Infrastructure' --basearch='x86_64' --name 'Red Hat OpenShift Enterprise 2.2 Infrastructure (Images)'
 hammer repository-set enable --organization $ORG --product 'Red Hat OpenShift Enterprise JBoss A-MQ add-on' --basearch='x86_64' --name 'Red Hat OpenShift Enterprise 2.2 JBoss A-MQ add-on (RPMs)'
@@ -1394,7 +1592,11 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "RED HAT CEPH:"
 echo "*********************************************************"
+<<<<<<< HEAD
 read -n1 -t $COUNTDOWN -p "$QMESSAGECEPH ? Y/N " INPUT
+=======
+read -n1 -t$COUNTDOWN -p "$QMESSAGECEPH ? Y/N " INPUT
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 INPUT=${INPUT:-$CEPHRHEL7}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1412,14 +1614,22 @@ echo -e "\n$FMESSAGE\n"
 fi
 }
 #-------------------------------
+<<<<<<< HEAD
 function REQUESTRHS {
+=======
+function REQUESTSNC {
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 #-------------------------------
 source /root/.bashrc
 echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "RED HAT STORAGE:"
 echo "*********************************************************"
+<<<<<<< HEAD
 read -n1 -t $COUNTDOWN -p "$QMESSAGESTORAGERHEL7 ? Y/N " INPUT
+=======
+read -n1 -t$COUNTDOWN -p "$QMESSAGESTORAGERHEL7 ? Y/N " INPUT
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 INPUT=${INPUT:-$STORAGERHEL7}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1452,6 +1662,7 @@ function REQUESTOS {
 source /root/.bashrc
 echo -ne "\e[8;40;170t"
 echo "*********************************************************"
+<<<<<<< HEAD
 echo "OPENSTACK PLATFORM 13:"
 echo "*********************************************************"
 read -n1 -t $COUNTDOWN -p "$QMESSAGEOSPD ? Y/N " INPUT
@@ -1464,6 +1675,20 @@ hammer repository-set enable --organization $ORG --product 'Red Hat OpenStack' -
 hammer repository-set enable --organization $ORG --product 'Red Hat OpenStack' --basearch='x86_64' --releasever='7Server' --name 'Red Hat OpenStack Platform 13 for RHEL 7 (RPMs)'
 hammer repository-set enable --organization $ORG --product 'Red Hat OpenStack' --basearch='x86_64' --releasever='7Server' --name 'Red Hat OpenStack Platform 13 Developer Tools for RHEL 7 (RPMs)'
 hammer repository-set enable --organization $ORG --product 'Red Hat OpenStack' --basearch='x86_64' --releasever='7Server' --name 'Red Hat OpenStack 13 for Server 7 (Containers)'
+=======
+echo "OPENSTACK PLATFORM 14:"
+echo "*********************************************************"
+read -n1 -t$COUNTDOWN -p "$QMESSAGEOSPD ? Y/N " INPUT
+INPUT=${INPUT:-$OPENSTACKRHEL7}
+if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
+echo -e "\n$YMESSAGE\n"
+hammer repository-set enable --organization $ORG --product 'Red Hat OpenStack' --basearch='x86_64' --releasever='7Server' --name 'Red Hat OpenStack 14 for Server 7 (Containers) Multiarch'
+hammer repository-set enable --organization $ORG --product 'Red Hat OpenStack' --basearch='x86_64' --releasever='7Server' --name 'Red Hat OpenStack Platform 14 for RHEL 7 (Files)'
+hammer repository-set enable --organization $ORG --product 'Red Hat OpenStack' --basearch='x86_64' --releasever='7Server' --name 'Red Hat OpenStack Platform 14 Operational Tools for RHEL 7 (RPMs)'
+hammer repository-set enable --organization $ORG --product 'Red Hat OpenStack' --basearch='x86_64' --releasever='7Server' --name 'Red Hat OpenStack Platform 14 for RHEL 7 (RPMs)'
+hammer repository-set enable --organization $ORG --product 'Red Hat OpenStack' --basearch='x86_64' --releasever='7Server' --name 'Red Hat OpenStack Platform 14 Developer Tools for RHEL 7 (RPMs)'
+hammer repository-set enable --organization $ORG --product 'Red Hat OpenStack' --basearch='x86_64' --releasever='7Server' --name 'Red Hat OpenStack 14 for Server 7 (Containers)'
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 sleep 2
 echo 'OPENSTACKRHEL7=y' >> /root/.bashrc
 #COMMANDEXECUTION
@@ -1482,7 +1707,11 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "RED HAT VIRTUALIZATION:"
 echo "*********************************************************"
+<<<<<<< HEAD
 read -n1 -t $COUNTDOWN -p "$QMESSAGEVIRTAGENT ? Y/N " INPUT
+=======
+read -n1 -t$COUNTDOWN -p "$QMESSAGEVIRTAGENT ? Y/N " INPUT
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 INPUT=${INPUT:-$VIRTUALIZATIONRHEL7}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1510,7 +1739,11 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "ATOMIC:"
 echo "*********************************************************"
+<<<<<<< HEAD
 read -n1 -t $COUNTDOWN -p "$QMESSAGEATOMIC ? Y/N " INPUT
+=======
+read -n1 -t$COUNTDOWN -p "$QMESSAGEATOMIC ? Y/N " INPUT
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 INPUT=${INPUT:-$ATOMICRHEL7}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1550,9 +1783,12 @@ echo "PUPPET FORGE:"
 echo "*********************************************************"
 hammer product create --name='Puppet Forge' --organization $ORG
 hammer repository create --name='Puppet Forge' --organization $ORG --product='Puppet Forge' --content-type puppet --publish-via-http=true --url=https://forge.puppetlabs.com
+<<<<<<< HEAD
 du -sh /var/lib/pulp/content/units/puppet_module
 find /var/lib/pulp/content/units/puppet_module -name \*tar.gz|wc -l
 sleep 5
+=======
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 }
 #-------------------------------
 function REQUESTJENKINS {
@@ -1562,7 +1798,11 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "JENKINS:"
 echo "*********************************************************"
+<<<<<<< HEAD
 read -n1 -t $COUNTDOWN -p "$QMESSAGEJENKINS ? Y/N " INPUT
+=======
+read -n1 -t$COUNTDOWN -p "$QMESSAGEJENKINS ? Y/N " INPUT
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 INPUT=${INPUT:-$JENKINS}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1588,7 +1828,11 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "MAVEN:"
 echo "*********************************************************"
+<<<<<<< HEAD
 read -n1 -t $COUNTDOWN -p "$QMESSAGEMAVEN ? Y/N " INPUT
+=======
+read -n1 -t$COUNTDOWN -p "$QMESSAGEMAVEN ? Y/N " INPUT
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 INPUT=${INPUT:-$MAVEN}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1612,7 +1856,11 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "ICINGA:"
 echo "*********************************************************"
+<<<<<<< HEAD
 read -n1 -t $COUNTDOWN -p "$ICINGA ? Y/N " INPUT
+=======
+read -n1 -t$COUNTDOWN -p "$ICINGA ? Y/N " INPUT
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 INPUT=${INPUT:-$ICINGA}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1638,8 +1886,13 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "CentOS-7:"
 echo "*********************************************************"
+<<<<<<< HEAD
 read -n1 -t$COUNTDOWN -p "$QMESSAGEICENTOS7 ? Y/N " INPUT
 INPUT=${INPUT:-$CENTOS7DEFAULTVALUE}
+=======
+read -n1 -t$COUNTDOWN -p "$CENTOS7 ? Y/N " INPUT
+INPUT=${INPUT:-$CENTOS7}
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
 cd /root/Downloads
@@ -1668,7 +1921,11 @@ hammer repository create  --organization $ORG --name='CentOS-7 Ceph-Luminous' --
 sleep 2
 hammer repository create  --organization $ORG --name='CentOS-7 Updates' --product='CentOS-7' --content-type='yum' --gpg-key='RPM-GPG-KEY-CentOS-7' --publish-via-http=true --url=http://mirror.centos.org/centos/7.6.1810/updates/x86_64/ --checksum-type=sha256
 sleep 2
+<<<<<<< HEAD
 echo 'CENTOS7DEFAULTVALUE=y' >> /root/.bashrc
+=======
+echo 'CENTOS7=y' >> /root/.bashrc
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 #COMMANDEXECUTION
 elif [ "$INPUT" = "n" -o "$INPUT" = "N" ] ;then
 echo -e "\n$NMESSAGE\n"
@@ -1686,7 +1943,11 @@ echo " "
 echo "*********************************************************"
 echo "SYNC ALL REPOSITORIES (WAIT FOR THIS TO COMPLETE BEFORE CONTINUING):"
 echo "*********************************************************"
+<<<<<<< HEAD
 for i in $(hammer --csv repository list --organization $ORG | awk -F, {'print $1'} | grep -vi '^ID'); do time hammer repository synchronize --id ${i} --organization $ORG  --async ; done
+=======
+for i in $(hammer --csv repository list --organization $ORG | awk -F, {'print $1'} | grep -vi '^ID'); do time hammer repository synchronize --id ${i} --organization $ORG ; done
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 sleep 5
 echo " "
 }
@@ -1706,11 +1967,14 @@ echo " "
 #-------------------------------
 function PRIDOMAIN {
 #------------------------------
+<<<<<<< HEAD
 source /root/.bashrc
 echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo 'UPDATING DOMAIN'
 echo "*********************************************************"
+=======
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 hammer domain update --id 1 --organizations $ORG --locations $LOC
 }
 #-------------------------------
@@ -1725,6 +1989,7 @@ echo " "
 hammer subnet create --name $SUBNET_NAME --network $INTERNALNETWORK --mask $SUBNET_MASK --gateway $DHCP_GW --dns-primary $DNS --ipam 'Internal DB' --from $SUBNET_IPAM_BEGIN --to $SUBNET_IPAM_END --tftp-id 1 --dhcp-id 1 --dns-id 1 --domain-ids 1 --organizations $ORG --locations "$LOC"
 }
 #-------------------------------
+<<<<<<< HEAD
 function CVMANAGER {
 #------------------------------
 CVMANAGER_PASS=$(pwmake 64) >> /root/.bashrc
@@ -1818,6 +2083,8 @@ EOF
  hammer os update --title 'RedHat 7.6' --partition-tables='Kickstart default','Kickstart Docker'
 }
 #-------------------------------
+=======
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 function ENVIRONMENTRHEL7 {
 #-------------------------------
 source /root/.bashrc
@@ -1826,10 +2093,15 @@ echo " "
 echo "*********************************************************"
 echo "CREATE ENVIRONMENTS DEV_RHEL_7->TEST_RHEL_7->PROD_RHEL_7:"
 echo "*********************************************************"
+<<<<<<< HEAD
 echo 'UNSTAGED_RHEL_7'
 hammer lifecycle-environment create --name='UNSTAGED_RHEL_7' --prior='Library' --organization $ORG
 echo "DEVLOPMENT_RHEL_7"
 hammer lifecycle-environment create --name='DEV_RHEL_7' --prior='UNSTAGED_RHEL_7' --organization $ORG
+=======
+echo "DEVLOPMENT_RHEL_7"
+hammer lifecycle-environment create --name='DEV_RHEL_7' --prior='Library' --organization $ORG
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 echo "TEST_RHEL_7"
 hammer lifecycle-environment create --name='TEST_RHEL_7' --prior='DEV_RHEL_7' --organization $ORG
 echo "PRODUCTION_RHEL_7"
@@ -1846,10 +2118,15 @@ if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo "*********************************************************"
 echo "CREATE ENVIRONMENTS DEV_RHEL_6->TEST_RHEL_6->PROD_RHEL_6:"
 echo "*********************************************************"
+<<<<<<< HEAD
 echo 'UNSTAGED_RHEL_6'
 hammer lifecycle-environment create --name='UNSTAGED_RHEL_6' --prior='Library' --organization $ORG
 echo "DEVLOPMENT_RHEL_6"
 hammer lifecycle-environment create --name='DEV_RHEL_6' --prior='UNSTAGED_RHEL_6' --organization $ORG
+=======
+echo "DEVLOPMENT_RHEL_6"
+hammer lifecycle-environment create --name='DEV_RHEL_6' --prior='Library' --organization $ORG
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 echo "TEST_RHEL_6"
 hammer lifecycle-environment create --name='TEST_RHEL_6' --prior='DEV_RHEL_6' --organization $ORG
 echo "PRODUCTION_RHEL_6"
@@ -1867,10 +2144,15 @@ if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo "*********************************************************"
 echo "CREATE ENVIRONMENTS DEV_RHEL_5->TEST_RHEL_5->PROD_RHEL_5:"
 echo "*********************************************************"
+<<<<<<< HEAD
 echo 'UNSTAGED_RHEL_5'
 hammer lifecycle-environment create --name='UNSTAGED_RHEL_5' --prior='Library' --organization $ORG
 echo "DEVLOPMENT_RHEL_5"
 hammer lifecycle-environment create --name='DEV_RHEL_5' --prior='UNSTAGED_RHEL_5' --organization $ORG
+=======
+echo "DEVLOPMENT_RHEL_5"
+hammer lifecycle-environment create --name='DEV_RHEL_5' --prior='Library' --organization $ORG
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 echo "TEST_RHEL_5"
 hammer lifecycle-environment create --name='TEST_RHEL_5' --prior='DEV_RHEL_5' --organization $ORG
 echo "PRODUCTION_RHEL_5"
@@ -1883,20 +2165,34 @@ function ENVIRONMENTCENTOS7 {
 source /root/.bashrc
 echo -ne "\e[8;40;170t"
 echo " "
+<<<<<<< HEAD
 INPUT=${INPUT:-$CENTOS7DEFAULTVALUE}
+=======
+INPUT=${INPUT:-$CENTOS7}
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo "*********************************************************"
 echo "CREATE ENVIRONMENTS DEV_CENTOS_7->TEST_CENTOS_7->PROD_CENTOS_7:"
 echo "*********************************************************"
+<<<<<<< HEAD
 echo 'UNSTAGED_CentOS_7'
 hammer lifecycle-environment create --name='UNSTAGED_CentOS_7' --prior='Library' --organization $ORG
 echo "DEVLOPMENT_CentOS_7"
 hammer lifecycle-environment create --name='DEV_CentOS_7' --prior='UNSTAGED_CentOS_7' --organization $ORG
+=======
+echo "DEVLOPMENT_CentOS_7"
+hammer lifecycle-environment create --name='DEV_CentOS_7' --prior='Library' --organization $ORG
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 echo "TEST_CentOS_7"
 hammer lifecycle-environment create --name='TEST_CentOS_7' --prior='DEV_CentOS_7' --organization $ORG
 echo "PRODUCTION_CentOS_7"
 hammer lifecycle-environment create --name='PROD_CentOS_7' --prior='TEST_CentOS_7' --organization $ORG
 echo " "
+<<<<<<< HEAD
+=======
+hammer lifecycle-environment list --organization $ORG
+echo " "
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 fi
 }
 #-------------------------------
@@ -1910,10 +2206,13 @@ echo "Create sync plans:"
 echo "*********************************************************"
 hammer sync-plan create --name 'Daily_Sync' --description 'Daily Synchronization Plan' --organization $ORG --interval daily --sync-date $(date +"%Y-%m-%d")" 00:00:00" --enabled no
 hammer sync-plan create --name 'Weekly_Sync' --description 'Weekly Synchronization Plan' --organization $ORG --interval weekly --sync-date $(date +"%Y-%m-%d")" 00:00:00" --enabled yes
+<<<<<<< HEAD
 for i in $(hammer --csv product list --organization $ORG --per-page 999 | grep -vi '^ID' | grep -vi not_synced | awk -F, {'{ if ($5!=0) print $1}'})
 do
 hammer product set-sync-plan --sync-plan "Weekly_Sync" --organization $ORG --id $i
 done
+=======
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 echo " "
 }
 #-------------------------------
@@ -1922,9 +2221,12 @@ function RHEL7SYNCPLANCOMPONENTS {
 source /root/.bashrc
 echo -ne "\e[8;40;170t"
 echo " "
+<<<<<<< HEAD
 echo "*********************************************************"
 echo "Addinng RHEL 7 to sync plan:"
 echo "*********************************************************"
+=======
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 hammer product set-sync-plan --name 'Red Hat Enterprise Linux Server' --organization $ORG --sync-plan 'Weekly_Sync'
 hammer product set-sync-plan --name 'Extra Packages for Enterprise Linux 7' --organization $ORG --sync-plan 'Weekly_Sync'
 hammer product set-sync-plan --name 'Puppet Forge' --organization $ORG --sync-plan 'Weekly_Sync'
@@ -1937,6 +2239,7 @@ source /root/.bashrc
 echo -ne "\e[8;40;170t"
 INPUT=${INPUT:-$RHEL6DEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
+<<<<<<< HEAD
 echo "*********************************************************"
 echo "Addinng RHEL 6 to sync plan:"
 echo "*********************************************************"
@@ -1945,6 +2248,11 @@ hammer product set-sync-plan --name 'Red Hat Enterprise Linux Server' --organiza
 hammer product set-sync-plan --name 'Puppet Forge' --organization $ORG --sync-plan 'Weekly_Sync'
 echo " "
 fi 
+=======
+hammer product set-sync-plan --name 'Extra Packages for Enterprise Linux 6' --organization $ORG --sync-plan 'Weekly_Sync'
+fi 
+echo " "
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 }
 #-------------------------------
 function RHEL5EPELSYNCPLANCOMPONENTS {
@@ -1953,6 +2261,7 @@ source /root/.bashrc
 echo -ne "\e[8;40;170t"
 INPUT=${INPUT:-$RHEL5DEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
+<<<<<<< HEAD
 echo "*********************************************************"
 echo "Addinng RHEL 5 to sync plan:"
 echo "*********************************************************"
@@ -1960,6 +2269,9 @@ hammer product set-sync-plan --name 'Extra Packages for Enterprise Linux 5' --or
 hammer product set-sync-plan --name 'Red Hat Enterprise Linux Server' --organization $ORG --sync-plan 'Weekly_Sync'
 hammer product set-sync-plan --name 'Puppet Forge' --organization $ORG --sync-plan 'Weekly_Sync'
 echo " "
+=======
+hammer product set-sync-plan --name 'Extra Packages for Enterprise Linux 5' --organization $ORG --sync-plan 'Weekly_Sync'
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 fi
 }
 #-------------------------------
@@ -1967,6 +2279,7 @@ function CENTOS7SYNCPLANCOMPONENTS {
 #-------------------------------
 source /root/.bashrc
 echo -ne "\e[8;40;170t"
+<<<<<<< HEAD
 INPUT=${INPUT:-$CENTOS7DEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo "*********************************************************"
@@ -1977,6 +2290,11 @@ hammer product set-sync-plan --name 'Extra Packages for Enterprise Linux 7' --or
 hammer product set-sync-plan --name 'Puppet Forge' --organization $ORG --sync-plan 'Weekly_Sync'
 echo " "
 sleep 2
+=======
+INPUT=${INPUT:-$RHEL5DEFAULTVALUE}
+if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
+hammer product set-sync-plan --name 'CentOS-7' --organization $ORG --sync-plan 'Weekly_Sync'
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 fi
 }
 #-------------------------------
@@ -1986,16 +2304,23 @@ source /root/.bashrc
 echo -ne "\e[8;40;170t"
 echo " "
 echo "*********************************************************"
+<<<<<<< HEAD
 echo "Associate plan to products RHEL 7:"
+=======
+echo "Associate plan to products:"
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 echo "*********************************************************"
 hammer product set-sync-plan --sync-plan-id=1 --organization $ORG --name='Red Hat Enterprise Linux Server'
 hammer product set-sync-plan --sync-plan-id=1 --organization $ORG --name='Extra Packages for Enterprise Linux 7'
 hammer product set-sync-plan --sync-plan-id=1 --organization $ORG --name='Puppet Forge'
+<<<<<<< HEAD
 hammer product set-sync-plan --sync-plan-id=2 --organization $ORG --name='Red Hat Enterprise Linux Server'
 hammer product set-sync-plan --sync-plan-id=2 --organization $ORG --name='Extra Packages for Enterprise Linux 7'
 hammer product set-sync-plan --sync-plan-id=2 --organization $ORG --name='Puppet Forge'
 echo " "
 sleep 2
+=======
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 }
 #-------------------------------
 function ASSOCRHEL5PLANTOPRODUCTS {
@@ -2005,6 +2330,7 @@ echo -ne "\e[8;40;170t"
 echo " "
 INPUT=${INPUT:-$RHEL5DEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
+<<<<<<< HEAD
 echo "*********************************************************"
 echo "Associate plan to products RHEL 5:"
 echo "*********************************************************"
@@ -2016,6 +2342,9 @@ hammer product set-sync-plan --sync-plan-id=2 --organization $ORG --name='Extra 
 hammer product set-sync-plan --sync-plan-id=2 --organization $ORG --name='Puppet Forge'
 echo " "
 sleep 2
+=======
+hammer product set-sync-plan --sync-plan-id=2 --organization $ORG --name='Extra Packages for Enterprise Linux 5'
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 fi
 }
 #-------------------------------
@@ -2026,6 +2355,7 @@ echo -ne "\e[8;40;170t"
 echo " "
 INPUT=${INPUT:-$RHEL6DEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
+<<<<<<< HEAD
 echo "*********************************************************"
 echo "Associate plan to products RHEL 6:"
 echo "*********************************************************"
@@ -2037,6 +2367,9 @@ hammer product set-sync-plan --sync-plan-id=2 --organization $ORG --name='Extra 
 hammer product set-sync-plan --sync-plan-id=2 --organization $ORG --name='Puppet Forge'
 echo " "
 sleep 2
+=======
+hammer product set-sync-plan --sync-plan-id=2 --organization $ORG --name='Extra Packages for Enterprise Linux 6'
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 fi
 }
 #-------------------------------
@@ -2045,6 +2378,7 @@ function ASSOCCENTOS7PLANTOPRODUCTS {
 source /root/.bashrc
 echo -ne "\e[8;40;170t"
 echo " "
+<<<<<<< HEAD
 INPUT=${INPUT:-$CENTOS7DEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo "*********************************************************"
@@ -2058,6 +2392,12 @@ hammer product set-sync-plan --sync-plan-id=2 --organization $ORG --name='Puppet
 hammer product set-sync-plan --sync-plan-id=2 --organization $ORG --name='Extra Packages for Enterprise Linux 7'
 echo " "
 sleep 2
+=======
+INPUT=${INPUT:-$CENTOS7}
+if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
+hammer product set-sync-plan --sync-plan-id=2 --organization $ORG --name='CentOS-7'
+hammer product set-sync-plan --sync-plan-id=1 --organization $ORG --name='Extra Packages for Enterprise Linux 7'
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 fi
 }
 #hammer content-view create --name='RHEL7-server-x86_64' --organization $ORG
@@ -2073,6 +2413,7 @@ echo "***********************************************"
 echo "Create a content view for CentOS-7:"
 echo "***********************************************"
 echo " "
+<<<<<<< HEAD
 INPUT=${INPUT:-$CENTOS7DEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 hammer content-view create --organization $ORG --name 'CentOS7' --label 'CentOS7' --description 'CentOS7'
@@ -2092,6 +2433,26 @@ time hammer content-view version promote --organization $ORG --content-view 'Cen
 echo " "
 sleep 2
 fi
+=======
+INPUT=${INPUT:-$CENTOS7}
+if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
+hammer content-view create --organization $ORG --name 'CentOS 7' --label 'CentOS7' --description 'CentOS 7'
+hammer content-view add-repository --organization $ORG --name 'CentOS 7' --product 'CentOS-7' --repository 'CentOS-7 (Kickstart)'
+hammer content-view add-repository --organization $ORG --name 'CentOS 7' --product 'CentOS-7' --repository 'CentOS-7 Gluster 5'
+hammer content-view add-repository --organization $ORG --name 'CentOS 7' --product 'CentOS-7' --repository 'CentOS-7 Extras'
+hammer content-view add-repository --organization $ORG --name 'CentOS 7' --product 'CentOS-7' --repository 'CentOS-7 ISO'
+hammer content-view add-repository --organization $ORG --name 'CentOS 7' --product 'CentOS-7' --repository 'CentOS-7 Openshift-Origin'
+hammer content-view add-repository --organization $ORG --name 'CentOS 7' --product 'CentOS-7' --repository 'CentOS-7 DotNET'
+hammer content-view add-repository --organization $ORG --name 'CentOS 7' --product 'CentOS-7' --repository 'CentOS-7 CentOSplus'
+hammer content-view add-repository --organization $ORG --name 'CentOS 7' --product 'CentOS-7' --repository 'CentOS-7 Ceph-Luminous'
+hammer content-view add-repository --organization $ORG --name 'CentOS 7' --product 'CentOS-7' --repository 'CentOS-7 Fasttrack'
+hammer content-view add-repository --organization $ORG --name 'CentOS 7' --product 'CentOS-7' --repository 'CentOS-7 OpsTools'
+hammer content-view add-repository --organization $ORG --name 'CentOS 7' --product 'CentOS-7' --repository 'CentOS-7 Updates'
+time hammer content-view publish --organization $ORG --name 'CentOS 7' --description 'Initial Publishing' 2>/dev/null
+time hammer content-view version promote --organization $ORG --content-view 'CentOS 7' --to-lifecycle-environment DEV_CentOS_7  2>/dev/null
+fi
+echo " "
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 }
 #-------------------------------
 function RHEL7CONTENTVIEW {
@@ -2102,6 +2463,7 @@ echo "***********************************************"
 source /root/.bashrc
 echo -ne "\e[8;40;170t"
 echo " "
+<<<<<<< HEAD
 hammer content-view create --organization $ORG --name 'RHEL7' --label RHEL7 --description 'RHEL7'
 hammer content-view add-repository --organization $ORG --name 'RHEL7' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server'
 hammer content-view add-repository --organization $ORG --name 'RHEL7' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Enterprise Linux 7 Server Kickstart x86_64 7.6'
@@ -2120,6 +2482,24 @@ time hammer content-view publish --organization $ORG --name 'RHEL7' --descriptio
 time hammer content-view version promote --organization $ORG --content-view 'RHEL7' --to-lifecycle-environment DEV_RHEL_7  2>/dev/null
 echo " "
 sleep 2
+=======
+hammer content-view create --organization $ORG --name 'RHEL 7' --label RHEL 7 --description 'RHEL 7'
+hammer content-view add-repository --organization $ORG --name 'RHEL 7' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server'
+hammer content-view add-repository --organization $ORG --name 'RHEL 7' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Enterprise Linux 7 Server Kickstart x86_64 7.6'
+hammer content-view add-repository --organization $ORG --name 'RHEL 7' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Satellite Tools 6.4 for RHEL 7 Server RPMs x86_64'
+hammer content-view add-repository --organization $ORG --name 'RHEL 7' --product 'Red Hat Software Collections for RHEL Server' --repository 'Red Hat Software Collections RPMs for Red Hat Enterprise Linux 7 Server x86_64 7Server'
+hammer content-view add-repository --organization $ORG --name 'RHEL 7' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Enterprise Linux 7 Server - Supplementary RPMs x86_64 7Server'
+hammer content-view add-repository --organization $ORG --name 'RHEL 7' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Enterprise Linux 7 Server - RH Common RPMs x86_64 7Server'
+hammer content-view add-repository --organization $ORG --name 'RHEL 7' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Enterprise Linux 7 Server - Optional RPMs x86_64 7Server'
+hammer content-view add-repository --organization $ORG --name 'RHEL 7' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Enterprise Linux 7 Server - Extras RPMs x86_64'
+hammer content-view puppet-module add --organization $ORG --content-view 'RHEL 7' --author puppetlabs --name stdlib
+hammer content-view puppet-module add --organization $ORG --content-view 'RHEL 7' --author puppetlabs --name concat
+hammer content-view puppet-module add --organization $ORG --content-view 'RHEL 7' --author puppetlabs --name ntp
+hammer content-view puppet-module add --organization $ORG --content-view 'RHEL 7' --author saz --name ssh
+time hammer content-view publish --organization $ORG --name 'RHEL 7' --description 'Initial Publishing' 2>/dev/null
+time hammer content-view version promote --organization $ORG --content-view 'RHEL 7' --to-lifecycle-environment DEV_RHEL_7  2>/dev/null
+echo " "
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 }
 #-------------------------------
 function CAPSULESCONTENTVIEW {
@@ -2144,7 +2524,10 @@ hammer content-view puppet-module add --organization $ORG --content-view 'RHEL7-
 time hammer content-view publish --organization $ORG --name 'RHEL7-Capsule' --description 'Initial Publishing' 2>/dev/null
 time hammer content-view version promote --organization $ORG --content-view 'RHEL7-Capsule' --to-lifecycle-environment DEV_RHEL_7  2>/dev/null
 echo " "
+<<<<<<< HEAD
 sleep 2
+=======
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 }
 #-------------------------------
 function HYPERCONTENTVIEW {
@@ -2167,7 +2550,10 @@ hammer content-view puppet-module add --organization $ORG --content-view 'RHEL7-
 time hammer content-view publish --organization $ORG --name 'RHEL7-Hypervisor' --description 'Initial Publishing' 2>/dev/null
 time hammer content-view version promote --organization $ORG --content-view 'RHEL7-Hypervisor' --to-lifecycle-environment DEV_RHEL_7  2>/dev/null
 echo " "
+<<<<<<< HEAD
 sleep 2
+=======
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 fi
 }
 #-------------------------------
@@ -2192,7 +2578,11 @@ hammer content-view add-repository --organization $ORG --name 'RHEL7-JBOSS' --pr
 hammer content-view add-repository --organization $ORG --name 'RHEL7-JBOSS' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Enterprise Linux 7 Server - Extras RPMs x86_64'
 hammer content-view add-repository --organization $ORG --name 'RHEL7-JBOSS' --product 'JBoss Enterprise Application Platform' --repository 'JBoss Enterprise Application Platform 7 RHEL 7 Server RPMs x86_64 7Server'
 hammer content-view add-repository --organization $ORG --name 'RHEL7-JBOSS' --product 'Maven' --repository 'Maven 7Server'
+<<<<<<< HEAD
 hammer content-view add-repository --organization $ORG --name 'RHEL7-JBOSS' --product 'Extra Packages for Enterprise Linux 7' --repository 'Extra Packages for Enterprise Linux 7'
+=======
+hammer content-view add-repository --organization $ORG --name 'RHEL7-JBOSS' --product 'EPEL' --repository 'EPEL 7 - x86_64'
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 hammer content-view add-repository --organization $ORG --name 'RHEL7-JBOSS' --product $ORG --repository "Packages"
 hammer content-view add-repository --organization $ORG --name 'RHEL7-JBOSS' --product $ORG --repository "Jenkins"
 hammer content-view puppet-module add --organization $ORG --content-view 'RHEL7-JBOSS' --author puppetlabs --name stdlib
@@ -2206,7 +2596,10 @@ hammer content-view puppet-module add --organization $ORG --content-view 'RHEL7-
 time hammer content-view publish --organization $ORG --name 'RHEL7-JBOSS' --description 'Initial Publishing'
 time hammer content-view version promote --organization $ORG --content-view 'RHEL7-JBOSS' --to-lifecycle-environment DEV_RHEL_7
 echo " "
+<<<<<<< HEAD
 sleep 2
+=======
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 fi
 }
 #-------------------------------
@@ -2238,7 +2631,10 @@ hammer content-view puppet-module add --organization $ORG --content-view 'RHEL7-
 time hammer content-view publish --organization $ORG --name 'RHEL7-OSCP' --description 'Initial Publishing'
 time hammer content-view version promote --organization $ORG --content-view 'RHEL7-OSCP' --to-lifecycle-environment DEV_RHEL_7
 echo " "
+<<<<<<< HEAD
 sleep 2
+=======
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 fi
 }
 #-------------------------------
@@ -2254,6 +2650,7 @@ INPUT=${INPUT:-$OSCPRHEL7}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 hammer content-view create --organization $ORG --name 'RHEL7-DOCKER' --label 'RHEL7-DOCKER' --description ''
 hammer content-view add-repository --organization $ORG --name 'RHEL7-DOCKER' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server'
+<<<<<<< HEAD
 hammer content-view add-repository --organization $ORG --name 'RHEL7-DOCKER' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Enterprise Linux 7 Server Kickstart x86_64 7.6'
 hammer content-view add-repository --organization $ORG --name 'RHEL7-DOCKER' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Satellite Tools 6.4 for RHEL7 Server RPMs x86_64'
 hammer content-view add-repository --organization $ORG --name 'RHEL7-DOCKER' --product 'Red Hat Software Collections for RHEL Server' --repository 'Red Hat Software Collections RPMs for Red Hat Enterprise Linux 7 Server x86_64 7Server'
@@ -2262,6 +2659,13 @@ hammer content-view add-repository --organization $ORG --name 'RHEL7-DOCKER' --p
 hammer content-view add-repository --organization $ORG --name 'RHEL7-DOCKER' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Enterprise Linux 7 Server - Optional RPMs x86_64 7Server'
 hammer content-view add-repository --organization $ORG --name 'RHEL7-DOCKER' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Enterprise Linux 7 Server - Extras RPMs x86_64'
 hammer content-view add-repository --organization $ORG --name 'RHEL7-DOCKER' --product 'Red Hat OpenShift Container Platform' --repository 'Red Hat OpenShift Container Platform 3.10 RPMs x86_64'
+=======
+hammer content-view add-repository --organization $ORG --name 'RHEL7-DOCKER' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Satellite Tools 6.4 for RHEL 7 Server RPMs x86_64'
+hammer content-view add-repository --organization $ORG --name 'RHEL7-DOCKER' --product 'Red Hat Software Collections for RHEL Server' --repository 'Red Hat Software Collections RPMs for Red Hat Enterprise Linux 7 Server x86_64 7Server'
+hammer content-view add-repository --organization $ORG --name 'RHEL7-DOCKER' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Enterprise Linux 7 Server - Optional RPMs x86_64 7Server'
+hammer content-view add-repository --organization $ORG --name 'RHEL7-DOCKER' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Enterprise Linux 7 Server - Extras RPMs x86_64'
+hammer content-view add-repository --organization $ORG --name 'RHEL7-DOCKER' --product 'Red Hat OpenShift Container Platform' --repository 'Red Hat OpenShift Container Platform 3.9 RPMs x86_64'
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 hammer content-view add-repository --organization $ORG --name 'RHEL7-DOCKER' --product 'JBoss Enterprise Application Platform' --repository 'JBoss Enterprise Application Platform 7 RHEL 7 Server RPMs x86_64 7Server'
 hammer content-view puppet-module add --organization $ORG --content-view 'RHEL7-DOCKER' --author puppetlabs --name stdlib
 hammer content-view puppet-module add --organization $ORG --content-view 'RHEL7-DOCKER' --author puppetlabs --name concat
@@ -2272,11 +2676,16 @@ hammer content-view puppet-module add --organization $ORG --content-view 'RHEL7-
 hammer content-view puppet-module add --organization $ORG --content-view 'RHEL7-DOCKER' --author cristifalcas --name docker
 hammer content-view puppet-module add --organization $ORG --content-view 'RHEL7-DOCKER' --author crayfishx --name firewalld
 hammer content-view puppet-module add --organization $ORG --content-view 'RHEL7-DOCKER' --author LunetIX --name dockerhost
+<<<<<<< HEAD
 sleep 5
 time hammer content-view publish --organization $ORG --name 'RHEL7-DOCKER' --description 'Initial Publishing'  2>/dev/null
 time hammer content-view version promote --organization $ORG --content-view 'RHEL7-DOCKER' --to-lifecycle-environment DEV_RHEL_7  2>/dev/null
 echo " "
 sleep 2
+=======
+time hammer content-view publish --organization $ORG --name 'RHEL7-DOCKER' --description 'Initial Publishing'
+time hammer content-view version promote --organization $ORG --content-view 'RHEL7-DOCKER' --to-lifecycle-environment DEV_RHEL_7
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 fi
 }
 #-------------------------------
@@ -2297,11 +2706,16 @@ hammer content-view puppet-module add --organization $ORG --content-view 'RHEL 6
 hammer content-view puppet-module add --organization $ORG --content-view 'RHEL 6' --author puppetlabs --name concat
 hammer content-view puppet-module add --organization $ORG --content-view 'RHEL 6' --author puppetlabs --name ntp
 hammer content-view puppet-module add --organization $ORG --content-view 'RHEL 6' --author saz --name ssh
+<<<<<<< HEAD
 sleep 5
 time hammer content-view publish --organization $ORG --name 'RHEL 6' --description 'Initial Publishing' 2>/dev/null
 time hammer content-view version promote --organization $ORG --content-view 'RHEL 6' --to-lifecycle-environment DEV_RHEL_6  2>/dev/null
 echo " "
 sleep 2
+=======
+time hammer content-view publish --organization $ORG --name 'RHEL 6' --description 'Initial Publishing' 2>/dev/null
+time hammer content-view version promote --organization $ORG --content-view 'RHEL 6' --to-lifecycle-environment DEV_RHEL_6  2>/dev/null
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 fi
 }
 #-------------------------------
@@ -2325,8 +2739,11 @@ hammer content-view puppet-module add --organization $ORG --content-view 'RHEL 5
 hammer content-view puppet-module add --organization $ORG --content-view 'RHEL 5' --author saz --name ssh
 time hammer content-view publish --organization $ORG --name 'RHEL 5' --description 'Initial Publishing' 2>/dev/null
 time hammer content-view version promote --organization $ORG --content-view 'RHEL 5' --to-lifecycle-environment DEV_RHEL_5  2>/dev/null
+<<<<<<< HEAD
 echo " "
 sleep 2
+=======
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 fi
 }
 #-------------------------------
@@ -2359,10 +2776,15 @@ fi
 # sleep 700
 #}
 #-------------------------------
+<<<<<<< HEAD
 function RHEL7HOSTCOLLECTION {
 #-------------------------------
 source /root/.bashrc
 echo -ne "\e[8;40;170t"
+=======
+function HOSTCOLLECTIONRHEL7 {
+#-------------------------------
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 echo " "
 echo "***********************************"
 echo "Create a host collection for RHEL7:"
@@ -2371,6 +2793,7 @@ source /root/.bashrc
 echo -ne "\e[8;40;170t"
 echo " "
 hammer host-collection create --name='RHEL 7 x86_64' --organization $ORG
+<<<<<<< HEAD
 echo " "
 sleep 2
 }
@@ -2382,10 +2805,17 @@ echo -ne "\e[8;40;170t"
 echo " "
 INPUT=${INPUT:-$CENTOS7DEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
+=======
+}
+#-------------------------------
+function HOSTCOLLECTIONCENTOS7 {
+#-------------------------------
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 echo " "
 echo "***********************************"
 echo "Create a host collection for CentOS 7:"
 echo "***********************************"
+<<<<<<< HEAD
 hammer host-collection create --name='CentOS 7 x86_64' --organization $ORG
 echo " "
 sleep 2
@@ -2394,11 +2824,29 @@ fi
 #-------------------------------
 function RHEL5HOSTCOLLECTION {
 #-------------------------------
+=======
+source /root/.bashrc
+echo -ne "\e[8;40;170t"
+echo " "
+INPUT=${INPUT:-$CENTOS7}
+if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
+hammer host-collection create --name='CentOS 7 x86_64' --organization $ORG
+fi
+}
+#-------------------------------
+function HOSTCOLLECTIONRHEL5 {
+#-------------------------------
+echo " "
+echo "***********************************"
+echo "Create a host collection for RHEL 5:"
+echo "***********************************"
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 source /root/.bashrc
 echo -ne "\e[8;40;170t"
 echo " "
 INPUT=${INPUT:-$RHEL5DEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
+<<<<<<< HEAD
 echo " "
 echo "***********************************"
 echo "Create a host collection for RHEL 5:"
@@ -2416,10 +2864,20 @@ echo -ne "\e[8;40;170t"
 INPUT=${INPUT:-$RHEL6DEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 hammer host-collection create --name='RHEL 6 x86_64' --organization $ORG
+=======
+hammer host-collection create --name='RHEL 5 x86_64' --organization $ORG
+fi
+echo " "
+}
+#-------------------------------
+function HOSTCOLLECTIONRHEL6 {
+#-------------------------------
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 echo " "
 echo "***********************************"
 echo "Create a host collection for RHEL 6:"
 echo "***********************************"
+<<<<<<< HEAD
 echo " "
 sleep 2
 fi
@@ -2450,10 +2908,19 @@ echo "Create an activation keys for DEV_CENTOS_7"
 echo "*********************************************************"
 hammer activation-key create --name 'CentOS7-x86_64' --organization $ORG --content-view='CentOS 7' --lifecycle-environment 'DEV_CENTOS_7'
 echo " "
+=======
+source /root/.bashrc
+echo -ne "\e[8;40;170t"
+echo " "
+INPUT=${INPUT:-$RHEL6DEFAULTVALUE}
+if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
+hammer host-collection create --name='RHEL 6 x86_64' --organization $ORG
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 sleep 2
 fi
 }
 #-------------------------------
+<<<<<<< HEAD
 function RHEL6KEYSFORENV {
 #-------------------------------
 source /root/.bashrc
@@ -2487,11 +2954,48 @@ fi
 }
 #-------------------------------
 function RHEL7KEYSTOHOST {
+=======
+function HOSTCOLLECTIONCENTOS7 {
+#-------------------------------
+echo " "
+echo "***********************************"
+echo "Create a host collection for CentOS7:"
+echo "***********************************"
+source /root/.bashrc
+echo -ne "\e[8;40;170t"
+INPUT=${INPUT:-$CENTOS7}
+if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
+echo " "
+echo "***********************************"
+echo "Create a host collection for DEV_CentOS_7:"
+echo "***********************************"
+hammer activation-key create --name 'CentOS7-x86_64' --organization $ORG --content-view='CentOS 7' --lifecycle-environment 'DEV_CentOS_7'
+echo " "
+fi
+}
+#-------------------------------
+function KEYSFORENV {
 #-------------------------------
 source /root/.bashrc
 echo -ne "\e[8;40;170t"
 echo " "
 echo "*********************************************************"
+echo "Create an activation keys for DEV_RHEL7"
+echo "*********************************************************"
+hammer activation-key create --name 'RHEL7-x86_64' --organization $ORG --content-view='RHEL 7' --lifecycle-environment 'DEV_RHEL_7'
+hammer activation-key create --name 'CentOS7-x86_64' --organization $ORG --content-view='CentOS 7' --lifecycle-environment 'DEV_CENTOS_7'
+hammer activation-key create --name 'RHEL6-x86_64' --organization $ORG --content-view='RHEL 6' --lifecycle-environment 'DEV_RHEL_6'
+hammer activation-key create --name 'RHEL5-x86_64' --organization $ORG --content-view='RHEL 5' --lifecycle-environment 'DEV_RHEL_5'
+}
+#-------------------------------
+function KEYSTOHOST {
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
+#-------------------------------
+source /root/.bashrc
+echo -ne "\e[8;40;170t"
+echo " "
+echo "*********************************************************"
+<<<<<<< HEAD
 echo "Associate each activation key to host collection RHEL 7:"
 echo "*********************************************************"
 hammer activation-key add-host-collection --name 'RHEL7-x86_64' --host-collection='RHEL 7 x86_64' --organization $ORG
@@ -2545,6 +3049,18 @@ hammer activation-key add-host-collection --name 'RHEL5-x86_64' --host-collectio
 echo " "
 sleep 2
 fi
+=======
+echo "Associate each activation key to host collection:"
+echo "*********************************************************"
+hammer activation-key add-host-collection --name 'RHEL7-x86_64' --host-collection='RHEL 7 x86_64' --organization $ORG
+sleep 5
+hammer activation-key add-host-collection --name 'CentOS7-x86_64' --host-collection='CentOS 7 x86_64' --organization $ORG
+sleep 5
+hammer activation-key add-host-collection --name 'RHEL6-x86_64'-PROD_RHEL_7 --host-collection='RHEL 6 x86_64' --organization $ORG
+sleep 5
+hammer activation-key add-host-collection --name 'RHEL5-x86_64'-PROD_RHEL_7 --host-collection='RHEL 5 x86_64' --organization $ORG
+
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 }
 #-------------------------------
 function SUBTOKEYS {
@@ -2559,12 +3075,16 @@ echo "
   
 echo " "
 echo "********************************"
+<<<<<<< HEAD
 sleep 5
+=======
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 echo " "
 echo "*********************************************************"
 echo "Add all subscriptions available to keys:"
 echo "*********************************************************"
 for i in $(hammer --csv activation-key list --organization $ORG | awk -F "," {'print $1'} | grep -vi '^ID'); do for j in $(hammer --csv subscription list --organization $ORG | awk -F "," {'print $1'} | grep -vi '^ID'); do hammer activation-key add-subscription --id ${i} --subscription-id ${j}; done; done
+<<<<<<< HEAD
 echo " "
 sleep 2
 }
@@ -2599,11 +3119,17 @@ fi
 }
 #-------------------------------
 function MEDIUMRHEL5 {
+=======
+}
+#-------------------------------
+function MEDIUM {
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 #-------------------------------
 source /root/.bashrc
 echo -ne "\e[8;40;170t"
 echo " "
 echo "*********************************************************"
+<<<<<<< HEAD
 echo "Create Media RHEL5:"
 echo "*********************************************************"
 INPUT=${INPUT:-$RHEL5DEFAULTVALUE}
@@ -2629,6 +3155,11 @@ hammer medium create --path=http://$(hostname -f)/pulp/repos/$ORG/Library/CENTOS
 echo " "
 sleep 2
 fi
+=======
+echo "Create Media:"
+echo "*********************************************************"
+hammer medium create --path=http://repos/${ORG}/Library/content/dist/rhel/server/7/7.6/x86_64/kickstart/ --organizations=$ORG --locations="$LOC" --os-family=Redhat --name="RHEL 7.6 Kickstart" --operatingsystems="RedHat 7.6"
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 }
 #----------------------------------
 function VARSETUP2 {
@@ -2638,6 +3169,7 @@ echo "CREATING THE NEXT SET OF VARIABLES."
 echo "*********************************************************"
 source /root/.bashrc
 echo -ne "\e[8;40;170t"
+<<<<<<< HEAD
 ENVIROMENT=$(hammer --csv environment list |awk -F "," {'print $2'}|grep -v Name |grep -v production)
 echo "CAID=1" >> /root/.bashrc
 echo "MEDIDRHEL76=$(hammer --csv medium list |grep 'RHEL 7.6' |awk -F "," {'print $1'} |grep -v Id)" >> /root/.bashrc
@@ -2649,6 +3181,17 @@ echo "OSIDRHEL7=$(hammer os list |grep -i "RedHat 7.6"  |awk -F "|" {'print $1'}
 echo "OSIDRHEL6=$(hammer os list |grep -i "RedHat 6."  |awk -F "|" {'print $1'})" >> /root/.bashrc
 echo "OSIDRHEL5=$(hammer os list |grep -i "RedHat 5."  |awk -F "|" {'print $1'})" >> /root/.bashrc
 echo "OSIDCENTOS7=$(hammer os list |grep -i "CentOS 7.6"  |awk -F "|" {'print $1'})" >> /root/.bashrc
+=======
+
+ENVIROMENT=$(hammer --csv environment list |awk -F "," {'print $2'}|grep -v Name |grep -v production)
+LEL=$(hammer --csv lifecycle-environment list  |awk -F "," {'print $2'} |grep -v NAME)
+echo "CAID=1" >> /root/.bashrc
+echo "MEDIDRHEL76=$(hammer --csv medium list |grep 'RHEL 7.6' |awk -F "," {'print $1'} |grep -v Id)" >> /root/.bashrc
+#echo "MEDID2=$(hammer --csv medium list |grep 'CentOS 7' |awk -F "," {'print $1'} |grep -v Id)" >> /root/.bashrc
+echo "SUBNETID=$(hammer --csv subnet list |awk -F "," {'print $1'}| grep -v Id)" >> /root/.bashrc
+echo "OSIDRHEL76=$(hammer os list |grep -i "RedHat 7.6"  |awk -F "|" {'print $1'})" >> /root/.bashrc
+#echo "OSID2=$(hammer os list |grep -i "CentOS 7.6"  |awk -F "|" {'print $1'})" >> /root/.bashrc
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 echo "PROXYID=$(hammer --csv proxy list |awk -F "," {'print $1'} |grep -v Id)" >> /root/.bashrc
 echo "PARTID=$(hammer --csv partition-table list | grep "Kickstart default" | grep -i -v thin |cut -d, -f1)" >> /root/.bashrc
 echo "PXEID=$(hammer --csv template list --per-page=1000 | grep "Kickstart default PXELinux" | cut -d, -f1)" >> /root/.bashrc
@@ -2659,11 +3202,15 @@ echo "ARCH=$(uname -i)" >> /root/.bashrc
 echo "ARCHID=$(hammer --csv architecture list|grep x86_64 |awk -F "," {'print $1'})"  >> /root/.bashrc
 echo "DOMID=$(hammer --csv domain list |grep -v Id |grep -v Name |awk -F "," {'print $1'})"  >> /root/.bashrc
 echo "SUBNETID=$(hammer --csv subnet list |awk -F "," {'print $1'}| grep -v Id)" >> /root/.bashrc
+<<<<<<< HEAD
 echo "RHEL7CVID=$(hammer --csv content-view list --organization $ORG |grep 'RHEL7'|grep -v - |awk -F "," {'print $1'})" >>  /root/.bashrc
 echo "RHEL6CVID=$(hammer --csv content-view list --organization $ORG |grep 'RHEL6'|grep -v - |awk -F "," {'print $1'})" >>  /root/.bashrc
 echo "RHEL5CVID=$(hammer --csv content-view list --organization $ORG |grep 'RHEL5'|grep -v - |awk -F "," {'print $1'})" >>  /root/.bashrc
 echo "CENTOSCVID=$(hammer --csv content-view list --organization $ORG |grep 'CentOS'|grep -v - |awk -F "," {'print $1'})" >>  /root/.bashrc
 
+=======
+echo "CVID=$(hammer --csv content-view list --organization $ORG |grep 'RHEL 7' |awk -F "," {'print $1'})" >>  /root/.bashrc
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 echo "*********************************************************"
 echo "VERIFY VARIABLES IN /root/.bashrc"
 echo "*********************************************************"
@@ -2673,6 +3220,7 @@ sleep 5
 read -p "Press [Enter] to continue"
 }
 #-----------------------------------
+<<<<<<< HEAD
 function PARTITION_OS_PXE_TEMPLATERHEL7 {
 #-----------------------------------
 source /root/.bashrc
@@ -2702,6 +3250,16 @@ echo "*********************************************************"
 echo "Setting Default Templates."
 echo "*********************************************************"
 for i in $OSIDRHEL6
+=======
+function PARTITION_OS_PXE_TEMPLATE {
+#-----------------------------------
+source /root/.bashrc
+echo -ne "\e[8;40;170t"
+echo "*********************************************************"
+echo "Setting Default Templates."
+echo "*********************************************************"
+for i in $OSID
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 do
 hammer partition-table add-operatingsystem --id="${PARTID}" --operatingsystem-id="${i}"
 hammer template add-operatingsystem --id="${PXEID}" --operatingsystem-id="${i}"
@@ -2709,6 +3267,7 @@ hammer os set-default-template --id="${i}" --config-template-id="${PXEID}"
 hammer os add-config-template --id="${i}" --config-template-id="${SATID}"
 hammer os set-default-template --id="${i}" --config-template-id="${SATID}"
 done
+<<<<<<< HEAD
 echo " "
 sleep 2
 fi
@@ -2759,16 +3318,26 @@ fi
 }
 #-------------------------------
 function HOSTGROUPSRHEL7 {
+=======
+}
+#-------------------------------
+function HOSTGROUPS {
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 #-------------------------------
 source /root/.bashrc
 echo -ne "\e[8;40;170t"
 echo " "
 echo "*********************************************************"
+<<<<<<< HEAD
 echo "Create a RHEL 7 hostgroup:"
+=======
+echo "Create a RHEL hostgroup(s):"
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 echo "*********************************************************"
 #MAKES ROOTPASSWORD ON NODES rreeddhhaatt BECAUSE THE SYSTEM REQUIRES IT TO BE 8+ CHAR (--root-pass rreeddhhaatt)
 ENVIROMENT=$(hammer --csv lifecycle-environment list |awk -F "," {'print $2'}|grep -v Name |grep -v production)
 LEL=$(hammer --csv environment list  |awk -F "," {'print $2'}|grep -v Name)
+<<<<<<< HEAD
 for i in $LEL; do for j in $(hammer --csv content-view list |awk -F "," {'print $2'} | grep -v Name); do hammer hostgroup create --name RHEL-7.6-$j --environment $i --architecture-id $ARCHID --content-view-id $RHEL7CVID --domain-id $DOMID --location-ids $LOCID --medium-id $MEDIDRHEL76 --operatingsystem-id $OSIDRHEL76 --organization-id=$ORGID  --partition-table-id $PARTID --puppet-ca-proxy-id $PROXYID --subnet-id $SUBNETID --root-pass=$NODEPASS ; done; done
 
 }
@@ -2824,6 +3393,10 @@ LEL=$(hammer --csv environment list  |awk -F "," {'print $2'}|grep -v Name)
 for i in $LEL; do for j in $(hammer --csv environment list |awk -F "," {'print $2'}| awk -F "_" {'print $1'}|grep -v Name); do hammer hostgroup create --name CentOS-7.6-$j --environment $i --architecture-id $ARCHID --content-view-id $CENTOSCVID --domain-id $DOMID --location-ids $LOCID --medium-id $MEDIDCENTOS7 --operatingsystem-id $OSIDCENTOS7 --organization-id=$ORGID  --partition-table-id $PARTID --puppet-ca-proxy-id $PROXYID --subnet-id $SUBNETID --root-pass=$NODEPASS ; done; done
 echo ' '
 fi
+=======
+for i in $LEL; do for j in $(hammer --csv environment list |awk -F "," {'print $2'}| awk -F "_" {'print $1'}|grep -v Name); do hammer hostgroup create --name RHEL-7.6-$j --environment $i --architecture-id $ARCHID --content-view-id $CVID --domain-id $DOMID --location-ids $LOCID --medium-id $MEDIDRHEL76 --operatingsystem-id $OSIDRHEL76 --organization-id=$ORGID  --partition-table-id $PARTID --puppet-ca-proxy-id $PROXYID --subnet-id $SUBNETID --root-pass=rreeddhhaatt ; done; done
+#for i in $LEL; do for j in $(hammer --csv environment list |awk -F "," {'print $2'}| awk -F "_" {'print $1'}|grep -v Name); do hammer hostgroup create --name CentOS-7.6-$j --environment $i --architecture-id $ARCHID --content-view-id $CVID --domain-id $DOMID --location-ids $LOCID --medium-id $MEDID2 --operatingsystem-id $OSID2 --organization-id=$ORGID  --partition-table-id $PARTID --puppet-ca-proxy-id $PROXYID --subnet-id $SUBNETID --root-pass=redhat ; done; done
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 }
 #-------------------------------
 function MODPXELINUXDEF {
@@ -2848,14 +3421,20 @@ echo "*********************************************************"
 echo "ASSOCIATE OS TO TEMPLATE"
 echo "*********************************************************"
 hammer template add-operatingsystem --operatingsystem-id 1 --id 1
+<<<<<<< HEAD
 echo " "
 sleep 2
+=======
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 }
 #-------------------------------
 function MOTD {
 #-------------------------------
+<<<<<<< HEAD
 source /root/.bashrc
 echo -ne "\e[8;40;170t"
+=======
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 yum-config-manager --enable epel
 yum install -y figlet
 yum-config-manager --disable epel
@@ -2865,6 +3444,7 @@ git clone https://github.com/GoKEV/motd-splash.git
 cp /home/admin/git/roles/motd-splash/tests/test.yml /home/admin/git/site.yml
 cd /home/admin/git
 ansible-playbook site.yml
+<<<<<<< HEAD
 #sed -e '/HOSTNAME/d' -e '/IP ADDRESS/d' -e '/--/d' -e '/KERNEL/d' -e '/ARCH/d' -e '/MACHINE/d' -e '/COREs/d' /etc/motd
 echo " "
 sleep 2
@@ -2894,12 +3474,22 @@ function SATDONE {
 #-------------------------------
 source /root/.bashrc
 echo -ne "\e[8;40;170t"
+=======
+sed -e '/HOSTNAME/d' -e '/IP ADDRESS/d' -e '/--/d' -e '/KERNEL/d' -e '/ARCH/d' -e '/MACHINE/d' -e '/COREs/d' /etc/motd
+}
+#-------------------------------
+function SATDONE {
+#-------------------------------
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 for i in $(hammer capsule list |awk -F '|' '{print $1}' |grep -v ID|grep -v -) ; do hammer capsule refresh-features --id=$i ; done 
 hammer template build-pxe-default
 foreman-rake foreman_tasks:cleanup TASK_SEARCH='label = Actions::Katello::Repository::Sync' STATES='paused,pending,stopped' VERBOSE=true
 foreman-rake katello:delete_orphaned_content --trace
 foreman-rake katello:reindex --trace
+<<<<<<< HEAD
 clear
+=======
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 echo ""
 echo ""
 echo ""
@@ -2916,7 +3506,11 @@ echo ""
 echo ""
 echo "
 
+<<<<<<< HEAD
                            YOU HAVE NOW COMPLETED INSTALLING SATELLITE!
+=======
+                           YOU HAVE NOW COMPLETED INSTALLING SATELLITE!\
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
                            All documentation can be found at https://access.redhat.com/documentation/en-US/
                            LAST BUT NOT LEAST IF YOU NEED SUPPORT
            		
@@ -2942,8 +3536,11 @@ echo ""
 echo ""
 read -p "Press [Enter] to continue"
 exit 1
+<<<<<<< HEAD
 echo " "
 sleep 2
+=======
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 }
 #NOTE You can remove or dissasociate templates Remove is perm (Destricutve) dissasociate you can re associate if you need 
 
@@ -2981,8 +3578,11 @@ for i in $(hammer medium list |grep -i Fedora |awk -F "|" {'print $1'}) ; do ham
 for i in $(hammer medium list |grep -i FreeBSD |awk -F "|" {'print $1'}) ; do hammer medium delete --id $i ;done
 for i in $(hammer medium list |grep -i OpenSUSE |awk -F "|" {'print $1'}) ; do hammer medium delete --id $i ;done
 for i in $(hammer medium list |grep -i Ubuntu |awk -F "|" {'print $1'}) ; do hammer medium delete --id $i ;done
+<<<<<<< HEAD
 echo " "
 sleep 2
+=======
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 }
 #-------------------------------
 function DISASSOCIATE_TEMPLATES {
@@ -3037,14 +3637,20 @@ echo disassoction of ${INDEX} from ${ORG}@${LOC}
 hammer organization remove-config-template --config-template "${INDEX}" --name "${ORG}"
 hammer location remove-config-template --config-template "${INDEX}" --name "${LOC}"
 done
+<<<<<<< HEAD
 echo " "
 sleep 2
+=======
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 }
 #-------------------------------
 function SATUPDATE {
 #-------------------------------
+<<<<<<< HEAD
 source /root/.bashrc
 echo -ne "\e[8;40;170t"
+=======
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 echo " "
 echo "*********************************************************"
 echo "Upgrading/Updating Satellite 6.3 to 6.4"
@@ -3055,9 +3661,13 @@ subscription-manager repos --enable=rhel-7-server-rpms
 subscription-manager repos --enable=rhel-server-rhscl-7-rpms
 subscription-manager repos --enable=rhel-7-server-satellite-6.4-rpms
 subscription-manager repos --enable=rhel-7-server-satellite-maintenance-6-rpms
+<<<<<<< HEAD
 subscription-manager repos --enable=rhel-7-server-ansible-2.6-rpms
 yum-config-manager --setopt=\*.skip_if_unavailable=1 --save \* 
 subscription-manager release --unset
+=======
+yum-config-manager --setopt=\*.skip_if_unavailable=1 --save \* 
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 foreman-rake foreman_tasks:cleanup TASK_SEARCH='label = Actions::Katello::Repository::Sync' STATES='paused,pending,stopped' VERBOSE=true
 foreman-rake katello:delete_orphaned_content --trace
 foreman-rake katello:reindex --trace
@@ -3073,12 +3683,16 @@ satellite-installer -v --scenario satellite --upgrade
 foreman-rake apipie:cache:index --trace
 hammer template build-pxe-default
 for i in $(hammer capsule list |awk -F '|' '{print $1}' |grep -v ID|grep -v -) ; do hammer capsule refresh-features --id=$i ; done 
+<<<<<<< HEAD
 echo " "
 sleep 2
+=======
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 }
 #-------------------------------
 function INSIGHTS {
 #-------------------------------
+<<<<<<< HEAD
 source /root/.bashrc
 echo -ne "\e[8;40;170t"
 yum update python-requests -y
@@ -3092,19 +3706,39 @@ function CLEANUP {
 #-------------------------------
 source /root/.bashrc
 echo -ne "\e[8;40;170t"
+=======
+yum update python-requests -y
+yum install redhat-access-insights -y
+redhat-access-insights --register
+}
+
+#-------------------------------
+function CLEANUP {
+#-------------------------------
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 rm -rf /home/admin/FILES
 rm -rf /root/FILES
 rm -rf /tmp/*
 mv -f /root/.bashrc.bak /root/.bashrc
+<<<<<<< HEAD
 echo " "
 sleep 2
 }
+=======
+}
+
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 #-----------------------------------------------------------------------------------------------------------------------
 #-------------------------------------------------Ansible Tower---------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------------------
 #-------------------------------
+<<<<<<< HEAD
 function ANSIBLETOWER {
 #-------------------------------
+=======
+#-------------------------------
+function ANSIBLETOWER {
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 echo -ne "\e[8;33;120t"
 reset 
 
@@ -3352,6 +3986,7 @@ DOCKERCONTENTVIEW
 RHEL6CONTENTVIEW
 RHEL5CONTENTVIEW
 #PUBLISHCONTENT
+<<<<<<< HEAD
 RHEL7HOSTCOLLECTION
 CENTOS7HOSTCOLLECTION
 RHEL5HOSTCOLLECTION
@@ -3364,6 +3999,15 @@ RHEL7KEYSTOHOST
 CENTOS7KEYSTOHOST
 RHEL6KEYSTOHOST
 RHEL5KEYSTOHOST
+=======
+HOSTCOLLECTIONRHEL7
+HOSTCOLLECTIONCENTOS7
+HOSTCOLLECTIONRHEL5
+HOSTCOLLECTIONRHEL6
+HOSTCOLLECTIONCENTOS7
+KEYSFORENV
+KEYSTOHOST
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 SUBTOKEYS
 MEDIUM
 VARSETUP2
@@ -3372,7 +4016,10 @@ HOSTGROUPS
 MODPXELINUXDEF
 ADD_OS_TO_TEMPLATE
 MOTD
+<<<<<<< HEAD
 FIREWALLD
+=======
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e
 SATDONE
 sleep 10 
 exit
@@ -3399,4 +4046,8 @@ esac
 
 done
 
+<<<<<<< HEAD
 exit 0
+=======
+exit 0
+>>>>>>> d9864a5c6596dfe54cca2e03b6c83a25b7e3c99e

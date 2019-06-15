@@ -36,8 +36,8 @@ I can set up a full satellite for a P.O.C in 4 hours with:
 * 22 GB ram 
 * 300 GB storage
 * 2 Ethernet  
-    ◦ eth0 internal - provisioning node communication
-    ◦ eth1 external - connection to Red Hat CDN
+    * eth0 internal - provisioning node communication
+    * eth1 external - connection to Red Hat CDN
 
 **OS:**
 
@@ -53,6 +53,13 @@ I can set up a full satellite for a P.O.C in 4 hours with:
 * puppet
       
 **NOTE:** *You can stop/disable any service you don't want after the install.*
+
+**Running REDHATTOOLSINSTALLER-1.0-el7.sh:** 
+
+* git clone https://github.com/ShaddGallegos/RedHatToolsInstaller.git
+* cd RedHatToolsInstaller
+* sh REDHATTOOLSINSTALLER-1.0-el7.sh
+* Follow prompts to completion 
 
 ## Why this installer
 

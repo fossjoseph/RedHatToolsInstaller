@@ -729,7 +729,7 @@ echo "ENABLE Ansible"
 echo "*********************************************************"
 subscription-manager repos --enable=rhel-7-server-extras-rpms
 yum -y install rhel-system-roles
-subscription-manager repos --disable=rhel-7-server-extras-rpms
+subscription-manager repos --disable=rhel-7-server-e●●●●●●xtras-rpms
 
 echo " "
 echo "*********************************************************"
