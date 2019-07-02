@@ -729,7 +729,9 @@ echo "ENABLE Ansible"
 echo "*********************************************************"
 subscription-manager repos --enable=rhel-7-server-extras-rpms
 yum -y install rhel-system-roles
-subscription-manager repos --disable=rhel-7-server-e●●●●●●xtras-rpms
+foreman-installer --enable-foreman-plugin-ansible --enable-foreman-proxy-plugin-ansible
+foreman-installer --enable-foreman-plugin-remote-execution --enable-foreman-proxy-plugin-remote-execution-ssh
+subscription-manager repos --disable=rhel-7-server-extras-rpms
 
 echo " "
 echo "*********************************************************"
@@ -2264,7 +2266,7 @@ subscription-manager repos --enable=rhel-7-server-satellite-6.5-rpms
 subscription-manager repos --enable=rhel-7-server-satellite-maintenance-6-rpms
 subscription-manager repos --enable rhel-7-server-ansible-2.8-rpms
 yum-config-manager --setopt=\*.skip_if_unavailable=1 --save \* 
-foreman-rake foreman_tasks:cleanup TASK_SEARCH='label = Actions::Katello::Repository::Sync' STATES='paused,pending,stopped,error' VERBOSE=true
+foreman-rake foreman_tasks:cleanup TASK_SEARCH='label = Actions::Katello::Repository::Sync' STATES='paused,pending,stopped' VERBOSE=true
 foreman-rake katello:delete_orphaned_content --trace
 foreman-rake katello:reindex --trace
 katello-service stop
@@ -2542,6 +2544,7 @@ CREATESUBNET
 #KEYSTOHOST
 #SUBTOKEYS
 MEDIUM
+DISASSOCIATE_TEMPLATES
 #VARSETUP2
 #PARTITION_OS_PXE_TEMPLATE
 #HOSTGROUPS
