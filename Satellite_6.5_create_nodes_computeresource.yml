@@ -1,0 +1,11 @@
+---
+- hosts: localhost
+  become: root
+
+  vars_prompt:
+    - name: "Node name you would like to create"
+      prompt: "Enter Red Hat Network username"
+    - name: "rhn_password"
+      prompt: "Enter Red Hat Networt password"
+      private: yes
+  
