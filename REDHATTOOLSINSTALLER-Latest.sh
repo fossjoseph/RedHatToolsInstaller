@@ -949,7 +949,6 @@ INPUT=${INPUT:-$RHEL5DEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
 hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='5.11' --name 'Red Hat Enterprise Linux 5 Server (Kickstart)'
-hammer repository update --organization $ORG --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 5 Server (Kickstart)' --download-policy immediate
 time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 5 Server Kickstart x86_64 5.11' 2>/dev/null
 
 hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='5Server' --name 'Red Hat Enterprise Linux 5 Server (RPMs)'
@@ -1004,7 +1003,6 @@ INPUT=${INPUT:-$RHEL6DEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
 hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='6Server' --name 'Red Hat Enterprise Linux 6 Server (Kickstart)'
-hammer repository update --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='6.10' --name 'Red Hat Enterprise Linux 6 Server (Kickstart)' --download-policy immediate
 time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='6.10'--name 'Red Hat Enterprise Linux 6 Server (Kickstart)' 2>/dev/null
 
 hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='6Server' --name 'Red Hat Enterprise Linux 6 Server (RPMs)'
@@ -1062,7 +1060,6 @@ INPUT=${INPUT:-$RHEL7DEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
 hammer repository-set enable --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='7.6' --name 'Red Hat Enterprise Linux 7 Server (Kickstart)' 
-hammer repository update --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='7.6' --name 'Red Hat Enterprise Linux 7 Server (Kickstart)' --download-policy immediate
 time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 7 Server Kickstart x86_64 7.6' 2>/dev/null
 hammer repository-set enable --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Enterprise Linux 7 Server (RPMs)'
 time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server' 2>/dev/null
@@ -1567,7 +1564,6 @@ hammer gpg create --organization $ORG --name  RPM-GPG-KEY-CentOS-Linux-7.6  --ke
 hammer product create --name='CentOS Linux 7.6' --organization $ORG
 
 hammer repository create  --organization $ORG --name='CentOS Linux 7.6 (Kickstart)' --product='CentOS Linux 7.6' --content-type='yum' --gpg-key=RPM-GPG-KEY-CentOS-Linux-7.6 --publish-via-http=true --url=http://mirror.centos.org/centos/7.6.1810/os/x86_64/ 
-hammer repository update --organization "$ORG" --product 'CentOS Linux 7.6' --name='CentOS Linux 7.6 (Kickstart)' --download-policy immediate
 time hammer repository synchronize --organization "$ORG" --product 'CentOS Linux 7.6' --name 'CentOS Linux 7.6 (Kickstart)' 2>/dev/null
 
 hammer repository create  --organization $ORG --name='CentOS Linux 7.6 CentOS Plus' --product='CentOS Linux 7.6' --content-type='yum' --gpg-key=RPM-GPG-KEY-CentOS-Linux-7.6 --publish-via-http=true --url=http://mirror.centos.org/centos/7.6.1810/centosplus/x86_64/ --checksum-type=sha256
@@ -1625,7 +1621,6 @@ hammer gpg create --organization $ORG --name RPM-GPG-KEY-sl7 --key RPM-GPG-KEY-s
 hammer product create --name='Scientific Linux 7.6' --organization $ORG
 
 hammer repository create  --organization $ORG --name='Scientific Linux 7.6 (Kickstart)' --product='Scientific Linux 7.6' --content-type='yum' --gpg-key='RPM-GPG-KEY-sl7' --publish-via-http=true --url=http://mirror.cpsc.ucalgary.ca/mirror/scientificlinux.org/7.6/x86_64/os/
-hammer repository update --organization "$ORG" --product 'Scientific Linux 7.6' --name='Scientific Linux 7.6 (Kickstart)' --download-policy immediate
 time hammer repository synchronize --organization "$ORG" --product='Scientific Linux 7.6' --name='Scientific Linux 7.6 (Kickstart)' 2>/dev/null
 
 hammer repository create  --organization $ORG --name='Scientific Linux 7.6 Updates Fastbugs' --product='Scientific Linux 7.6' --content-type='yum' --gpg-key='RPM-GPG-KEY-sl7' --publish-via-http=true --url=http://mirror.cpsc.ucalgary.ca/mirror/scientificlinux.org/7.6/x86_64/updates/fastbugs/
