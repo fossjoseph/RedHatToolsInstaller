@@ -4,7 +4,7 @@
 
   vars_prompt:
     - name: "Node name you would like to create"
-      prompt: "Enter Red Hat Network username"
+      prompt: "Enter the hostname name of the node you would like to add"
     - name: "rhn_password"
       prompt: "Enter Red Hat Networt password"
       private: yes
