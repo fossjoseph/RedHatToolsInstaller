@@ -692,6 +692,16 @@ yum -q list installed rubygem-smart_proxy_discovery &>/dev/null && echo "rubygem
 satellite-installer --scenario satellite -v \
 --foreman-proxy-tftp true \
 --foreman-proxy-tftp-servername="$(hostname)"
+
+echo " "
+echo "*********************************************************"
+echo "ENABLE Ansible"
+echo "*********************************************************"
+subscription-manager repos --enable=rhel-7-server-extras-rpms
+yum -y install rhel-system-roles
+foreman-installer -v --enable-foreman-plugin-ansible --enable-foreman-proxy-plugin-ansible
+foreman-installer -v --enable-foreman-plugin-remote-execution --enable-foreman-proxy-plugin-remote-execution-ssh
+
 echo " "
 echo "*********************************************************"
 echo "CONFIGURING ALL SATELLITE PLUGINS"
@@ -717,21 +727,16 @@ satellite-installer --scenario satellite -v \
 --enable-foreman-compute-ovirt \
 --enable-foreman-compute-rackspace \
 --enable-foreman-compute-vmware \
---enable-foreman-plugin-bootdisk 
+--enable-foreman-plugin-bootdisk \
+--enable-foreman-plugin-ansible
+
+subscription-manager repos --disable=rhel-7-server-extras-rpms
+
 echo " "
 echo "*********************************************************"
 echo "ENABLE DEB"
 echo "*********************************************************"
 foreman-installer -v --foreman-proxy-content-enable-deb true --katello-enable-deb
-echo " "
-echo "*********************************************************"
-echo "ENABLE Ansible"
-echo "*********************************************************"
-subscription-manager repos --enable=rhel-7-server-extras-rpms
-yum -y install rhel-system-roles
-foreman-installer --enable-foreman-plugin-ansible --enable-foreman-proxy-plugin-ansible
-foreman-installer --enable-foreman-plugin-remote-execution --enable-foreman-proxy-plugin-remote-execution-ssh
-subscription-manager repos --disable=rhel-7-server-extras-rpms
 
 echo " "
 echo "*********************************************************"
