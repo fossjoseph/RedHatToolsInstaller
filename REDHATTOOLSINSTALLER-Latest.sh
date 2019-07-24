@@ -745,12 +745,12 @@ satellite-installer --scenario satellite -v \
 
 subscription-manager repos --disable=rhel-7-server-extras-rpms
 
-echo " "
-echo "*********************************************************"
-echo "ENABLE DEB"
-echo "*********************************************************"
-satellite-installer -v  --katello-enable-deb true
-foreman-installer -v --foreman-proxy-content-enable-deb true --katello-enable-deb
+#echo " "
+#echo "*********************************************************"
+#echo "ENABLE DEB"
+#echo "*********************************************************"
+#satellite-installer -v  --katello-enable-deb true
+#foreman-installer -v --foreman-proxy-content-enable-deb  --katello-enable-deb
 
 echo " "
 echo "*********************************************************"
