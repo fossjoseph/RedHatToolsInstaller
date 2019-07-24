@@ -92,15 +92,23 @@ echo "*********************************************************"
 echo "SET REPOS ENABLING SCRIPT TO RUN"
 echo "*********************************************************"
 subscription-manager repos --disable "*" || exit 1
+echo " "
+echo " "
+echo " "
 subscription-manager repos --enable=rhel-7-server-rpms || exit 1
 subscription-manager repos --enable=rhel-7-server-extras-rpms || exit 1
 subscription-manager repos --enable=rhel-7-server-optional-rpms || exit 1
 subscription-manager repos --enable=rhel-7-server-rpms || exit 1
+echo " "
+echo " "
+echo " "
 yum -q list installed epel-release-latest-7 &>/dev/null && echo "epel-release-latest-7 is installed" || yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm --skip-broken
 yum-config-manager --enable epel  || exit 1
 yum-config-manager --save --setopt=*.skip_if_unavailable=true
 rm -fr /var/cache/yum/*
 yum clean all
+echo " "
+echo " "
 echo " "
 echo "*********************************************************"
 echo "INSTALLING PACKAGES ENABLING SCRIPT TO RUN"
