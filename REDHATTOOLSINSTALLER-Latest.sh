@@ -692,6 +692,7 @@ yum -q list installed rubygem-smart_proxy_discovery &>/dev/null && echo "rubygem
 
 satellite-installer --scenario satellite -v \
 --foreman-proxy-tftp true \
+--foreman-proxy-tftp-listen-on both \
 --foreman-proxy-tftp-servername="$(hostname)"
 
 echo " "
@@ -1713,30 +1714,30 @@ echo "TEST_RHEL_7"
 hammer lifecycle-environment create --name='TEST_RHEL_7' --prior='DEV_RHEL_7' --organization $ORG
 echo "PRODUCTION_RHEL_7"
 hammer lifecycle-environment create --name='PROD_RHEL_7' --prior='TEST_RHEL_7' --organization $ORG
-echo "DEVLOPMENT_RHEL_6"
-hammer lifecycle-environment create --name='DEV_RHEL_6' --prior='Library' --organization $ORG
-echo "TEST_RHEL_6"
-hammer lifecycle-environment create --name='TEST_RHEL_6' --prior='DEV_RHEL_6' --organization $ORG
-echo "PRODUCTION_RHEL_6"
-hammer lifecycle-environment create --name='PROD_RHEL_6' --prior='TEST_RHEL_6' --organization $ORG
-echo "DEVLOPMENT_RHEL_5"
-hammer lifecycle-environment create --name='DEV_RHEL_5' --prior='Library' --organization $ORG
-echo "TEST_RHEL_5"
-hammer lifecycle-environment create --name='TEST_RHEL_5' --prior='DEV_RHEL_5' --organization $ORG
-echo "PRODUCTION_RHEL_5"
-hammer lifecycle-environment create --name='PROD_RHEL_5' --prior='TEST_RHEL_5' --organization $ORG
-echo "DEVLOPMENT_CentOS_7"
-hammer lifecycle-environment create --name='DEV_CentOS_7' --prior='Library' --organization $ORG
-echo "TEST_CentOS_7"
-hammer lifecycle-environment create --name='TEST_CentOS_7' --prior='DEV_CentOS_7' --organization $ORG
-echo "PRODUCTION_CentOS_7"
-hammer lifecycle-environment create --name='PROD_CentOS_7' --prior='TEST_CentOS_7' --organization $ORG
-echo " "
-hammer lifecycle-environment list --organization $ORG
-echo " "
+#echo "DEVLOPMENT_RHEL_6"
+#hammer lifecycle-environment create --name='DEV_RHEL_6' --prior='Library' --organization $ORG
+#echo "TEST_RHEL_6"
+#hammer lifecycle-environment create --name='TEST_RHEL_6' --prior='DEV_RHEL_6' --organization $ORG
+#echo "PRODUCTION_RHEL_6"
+#hammer lifecycle-environment create --name='PROD_RHEL_6' --prior='TEST_RHEL_6' --organization $ORG
+#echo "DEVLOPMENT_RHEL_5"
+#hammer lifecycle-environment create --name='DEV_RHEL_5' --prior='Library' --organization $ORG
+#echo "TEST_RHEL_5"
+#hammer lifecycle-environment create --name='TEST_RHEL_5' --prior='DEV_RHEL_5' --organization $ORG
+#echo "PRODUCTION_RHEL_5"
+#hammer lifecycle-environment create --name='PROD_RHEL_5' --prior='TEST_RHEL_5' --organization $ORG
+#echo "DEVLOPMENT_CentOS_7"
+#hammer lifecycle-environment create --name='DEV_CentOS_7' --prior='Library' --organization $ORG
+#echo "TEST_CentOS_7"
+#hammer lifecycle-environment create --name='TEST_CentOS_7' --prior='DEV_CentOS_7' --organization $ORG
+#echo "PRODUCTION_CentOS_7"
+#hammer lifecycle-environment create --name='PROD_CentOS_7' --prior='TEST_CentOS_7' --organization $ORG
+#echo " "
+#hammer lifecycle-environment list --organization $ORG
+#echo " "
 }
 #-------------------------------
-function DAILYSYNC {
+function SYNCPLANS {
 #-------------------------------
 source /root/.bashrc
 echo -ne "\e[8;40;170t"
@@ -2535,8 +2536,8 @@ REQUESTPUPPET
 #REQUESTCENTOS7
 SYNC
 SYNCMSG
-#ENVIRONMENTS
-#DAILYSYNC
+ENVIRONMENTS
+SYNCPLANS
 #SYNCPLANCOMPONENTS
 #ASSOCPLANTOPRODUCTS
 #CONTENTVIEWS
