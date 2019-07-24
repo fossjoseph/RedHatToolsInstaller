@@ -712,8 +712,8 @@ echo "ENABLE Ansible"
 echo "*********************************************************"
 subscription-manager repos --enable=rhel-7-server-extras-rpms
 yum -y install rhel-system-roles
-foreman-installer -v --enable-foreman-plugin-ansible --enable-foreman-proxy-plugin-ansible
-foreman-installer -v --enable-foreman-plugin-remote-execution --enable-foreman-proxy-plugin-remote-execution-ssh
+foreman-installer -v --enable-foreman-plugin-ansible true --enable-foreman-proxy-plugin-ansible true
+foreman-installer -v --enable-foreman-plugin-remote-execution true --enable-foreman-proxy-plugin-remote-execution-ssh true
 
 echo " "
 echo "*********************************************************"
