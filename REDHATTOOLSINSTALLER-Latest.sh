@@ -511,7 +511,7 @@ echo "*********************************************************"
 echo "INSTALLING DEPENDENCIES FOR CONTENT VIEW AUTO PUBLISH"
 echo "*********************************************************"
 yum -y install python-pip rubygem-builder
-yum-config manager --disable epel
+yum-config-manager --disable epel
 pip install --upgrade pip
 yum clean all ; rm -rf /var/cache/yum
 yum upgrade -y; yum update -y
