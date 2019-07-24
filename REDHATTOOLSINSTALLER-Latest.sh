@@ -492,6 +492,9 @@ subscription-manager repos --enable=rhel-7-server-satellite-maintenance-6-rpms |
 subscription-manager repos --enable rhel-7-server-ansible-2.8-rpms || exit 1
 yum clean all 
 rm -rf /var/cache/yum
+echo " "
+echo " "
+echo " "
 }
 #------------------------------
 function INSTALLDEPS {
