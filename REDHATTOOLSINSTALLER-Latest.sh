@@ -655,6 +655,7 @@ echo "*********************************************************"
 satellite-installer --scenario satellite -v \
 --foreman-admin-password=$ADMIN_PASSWORD \
 --foreman-admin-username=$ADMIN \
+--foreman-proxy-plugin-remote-execution-ssh-install-key true \
 --foreman-initial-organization=$ORG \
 --foreman-initial-location=$LOC \
 --foreman-proxy-dns true \
@@ -736,6 +737,7 @@ echo " "
 echo "*********************************************************"
 echo "ENABLE DEB"
 echo "*********************************************************"
+satellite-installer -v  --katello-enable-deb true
 foreman-installer -v --foreman-proxy-content-enable-deb true --katello-enable-deb
 
 echo " "
