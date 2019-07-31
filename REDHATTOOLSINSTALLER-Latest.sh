@@ -91,10 +91,17 @@ echo " "
 echo "*********************************************************"
 echo "SET REPOS ENABLING SCRIPT TO RUN"
 echo "*********************************************************"
+echo " "
+echo "*********************************************************"
+echo "FIRST DISABLE REPOS"
+echo "*********************************************************"
 subscription-manager repos --disable "*" || exit 1
 echo " "
 echo " "
 echo " "
+echo "*********************************************************"
+echo "ENABLE PROPER REPOS"
+echo "*********************************************************"
 subscription-manager repos --enable=rhel-7-server-rpms || exit 1
 subscription-manager repos --enable=rhel-7-server-extras-rpms || exit 1
 subscription-manager repos --enable=rhel-7-server-optional-rpms || exit 1
@@ -102,6 +109,9 @@ subscription-manager repos --enable=rhel-7-server-rpms || exit 1
 echo " "
 echo " "
 echo " "
+echo "*********************************************************"
+echo "ENABLE PROEPEL FOR A FEW PACKAGES"
+echo "*********************************************************"
 yum -q list installed epel-release-latest-7 &>/dev/null && echo "epel-release-latest-7 is installed" || yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm --skip-broken
 yum-config-manager --enable epel  || exit 1
 yum-config-manager --save --setopt=*.skip_if_unavailable=true
@@ -126,12 +136,14 @@ yum -q list installed dialog &>/dev/null && echo "dialog is installed" || yum in
 yum -q list installed xdialog &>/dev/null && echo "xdialog is installed" || yum localinstall -y xdialog --skip-broken
 yum -q list installed firefox &>/dev/null && echo "firefox is installed" || yum localinstall -y firefox --skip-broken
 yum install -y dconf*
+yum-config-manager --disable epel
 touch ./SCRIPT
 echo " "
 }
 ls ./SCRIPT
 if [ $? -eq 0 ]; then
     echo 'The requirements to run this script have been met, proceeding'
+    sleep 5
 else
     echo "Installing requirements to run script please stand by"
     SCRIPT
@@ -483,7 +495,6 @@ echo "SET REPOS FOR INSTALLING AND UPDATING SATELLITE 6.5"
 echo "*********************************************************"
 echo -ne "\e[8;40;170t"
 subscription-manager repos --disable '*'
-yum-config-manager --disable epel
 subscription-manager repos --enable=rhel-7-server-rpms || exit 1
 subscription-manager repos --enable=rhel-server-rhscl-7-rpms || exit 1
 subscription-manager repos --enable=rhel-7-server-optional-rpms || exit 1
@@ -507,6 +518,7 @@ yum-config-manager --enable epel
 sleep 5
 yum install -y screen yum-utils vim gcc gcc-c++ git rh-nodejs8-npm make automake kernel-devel ruby-devel libvirt-client bind dhcp tftp libvirt
 sleep 5
+yum-config-manager --disable epel
 echo "*********************************************************"
 echo "INSTALLING DEPENDENCIES FOR CONTENT VIEW AUTO PUBLISH"
 echo "*********************************************************"
@@ -712,8 +724,8 @@ echo "ENABLE Ansible"
 echo "*********************************************************"
 subscription-manager repos --enable=rhel-7-server-extras-rpms
 yum -y install rhel-system-roles
-foreman-installer -v --enable-foreman-plugin-ansible true --enable-foreman-proxy-plugin-ansible true
-foreman-installer -v --enable-foreman-plugin-remote-execution true --enable-foreman-proxy-plugin-remote-execution-ssh true
+foreman-installer -v --enable-foreman-plugin-ansible  --enable-foreman-proxy-plugin-ansible 
+foreman-installer -v --enable-foreman-plugin-remote-execution --enable-foreman-proxy-plugin-remote-execution-ssh
 
 echo " "
 echo "*********************************************************"
