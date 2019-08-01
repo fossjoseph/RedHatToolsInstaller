@@ -515,8 +515,9 @@ echo "INSTALLING DEPENDENCIES FOR SATELLITE OPERATING ENVIRONMENT"
 echo "*********************************************************"
 echo -ne "\e[8;40;170t"
 yum-config-manager --enable epel
+yum clean all ; rm -rf /var/cache/yum
 sleep 5
-yum install -y screen yum-utils vim gcc gcc-c++ git rh-nodejs8-npm make automake kernel-devel ruby-devel libvirt-client bind dhcp tftp libvirt
+yum install -y screen yum-utils vim gcc gcc-c++ git rh-nodejs8-npm make automake kernel-devel ruby-devel libvirt-client bind dhcp tftp libvirt augeas
 sleep 5
 yum-config-manager --disable epel
 echo "*********************************************************"
@@ -704,12 +705,14 @@ satellite-installer --scenario satellite -v \
 --foreman-proxy-dhcp-interface=$SAT_INTERFACE \
 --foreman-proxy-dhcp-range="$DHCP_RANGE" \
 --foreman-proxy-dhcp-gateway=$DHCP_GW \
---foreman-proxy-dhcp-nameservers=$DHCP_DNS
+--foreman-proxy-dhcp-nameservers=$DHCP_DNS \
+--foreman-proxy-dhcp-listen-on both
 echo " "
 echo "*********************************************************"
 echo "CONFIGURING SATELLITE TFTP"
 echo "*********************************************************"
 source /root/.bashrc
+subscription-manager repos --enable rhel-7-server-extras-rpms
 yum -q list installed foreman-discovery-image &>/dev/null && echo "foreman-discovery-image is installed" || yum install -y foreman-discovery-image* --skip-broken
 yum -q list installed rubygem-smart_proxy_discovery &>/dev/null && echo "rubygem-smart_proxy_discovery is installed" || yum install -y rubygem-smart_proxy_discovery* --skip-broken 
 
@@ -722,7 +725,7 @@ echo " "
 echo "*********************************************************"
 echo "ENABLE Ansible"
 echo "*********************************************************"
-subscription-manager repos --enable=rhel-7-server-extras-rpms
+subscription-manager repos --enable rhel-7-server-extras-rpms
 yum -y install rhel-system-roles
 foreman-installer -v --enable-foreman-plugin-ansible  --enable-foreman-proxy-plugin-ansible 
 foreman-installer -v --enable-foreman-plugin-remote-execution --enable-foreman-proxy-plugin-remote-execution-ssh
@@ -863,7 +866,9 @@ hammer settings set --name default_organization  --value $ORG
 hammer settings set --name default_location  --value $LOC
 hammer settings set --name discovery_organization  --value $ORG
 hammer settings set --name root_pass --value $NODEPASS
-
+hammer settings set --name query_local_nameservers yes
+hammer settings set --name host_owner $ADMIN
+hammer settings set --name lab_features yes
 mkdir -p /etc/puppet/environments/production/modules
 }
 #-------------------------------
@@ -1689,7 +1694,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "SYNC ALL REPOSITORIES (WAIT FOR THIS TO COMPLETE BEFORE CONTINUING):"
 echo "*********************************************************"
-for i in $(hammer --csv repository list |grep -i kickstart  |awk -F ',' '{print $1}') ; do hammer repository update --id $i --download-policy immediate ; done
+for i in $(hammer --csv repository list |grep -i kickstart  | awk -F ',' '{print $1}') ; do hammer repository update --id $i --download-policy immediate ; done
 for i in $(hammer --csv repository list --organization $ORG | awk -F, {'print $1'} | grep -vi '^ID'); do hammer repository synchronize --id ${i} --organization $ORG --async; done
 sleep 5
 echo " "
