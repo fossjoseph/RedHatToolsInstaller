@@ -689,7 +689,12 @@ satellite-installer --scenario satellite -v \
 --foreman-proxy-dns-interface $SAT_INTERFACE \
 --foreman-proxy-dns-zone=$DOM \
 --foreman-proxy-dns-forwarders $DNS \
---foreman-proxy-dns-reverse $DNS_REV 
+--foreman-proxy-dns-reverse $DNS_REV \
+--foreman-proxy-dns-listen-on both \
+--foreman-proxy-bmc-listen-on both \
+--foreman-proxy-logs-listen-on both \
+--foreman-proxy-realm-listen-on both \
+--foreman-proxy-templates-listen-on
 
 #--foreman-proxy-dns-tsig-principal="foreman-proxy $(hostname)@$DOM" \
 #--foreman-proxy-dns-tsig-keytab=/etc/foreman-proxy/dns.key \
@@ -727,7 +732,7 @@ echo "ENABLE Ansible"
 echo "*********************************************************"
 subscription-manager repos --enable rhel-7-server-extras-rpms
 yum -y install rhel-system-roles
-foreman-installer -v --enable-foreman-plugin-ansible  --enable-foreman-proxy-plugin-ansible 
+foreman-installer -v --enable-foreman-plugin-ansible=true  --enable-foreman-proxy-plugin-ansible=true
 foreman-installer -v --enable-foreman-plugin-remote-execution --enable-foreman-proxy-plugin-remote-execution-ssh
 
 echo " "
