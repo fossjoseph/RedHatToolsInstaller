@@ -172,7 +172,7 @@ exit 1
 fi
 fi
 else
-# If Display is no set assume ok to use dialog
+# If Display is not set assume ok to use dialog
 DIALOG=`which dialog`
 RC=$?
 if [[ $RC != 0 ]]
