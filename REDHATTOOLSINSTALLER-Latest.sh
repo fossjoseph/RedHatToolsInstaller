@@ -132,7 +132,7 @@ yum -q list installed gnome-terminal &>/dev/null && echo "gnome-terminal is inst
 yum -q list installed yum &>/dev/null && echo "yum is installed" || yum install -y yum --skip-broken
 yum -q list installed lynx &>/dev/null && echo "lynx is installed" || yum install -y lynx --skip-broken
 yum -q list installed perl &>/dev/null && echo "perl is installed" || yum install -y perl --skip-broken
-yum -q list installed dialog &>/dev/null && echo "dialog is installed" || yum install -y *dialog* --skip-broken
+yum -q list installed dialog &>/dev/null && echo "dialog is installed" || yum install -y dialog --skip-broken
 yum -q list installed xdialog &>/dev/null && echo "xdialog is installed" || yum localinstall -y xdialog --skip-broken
 yum -q list installed firefox &>/dev/null && echo "firefox is installed" || yum localinstall -y firefox --skip-broken
 yum install -y dconf*
