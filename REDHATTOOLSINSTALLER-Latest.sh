@@ -771,8 +771,6 @@ yum -q list installed rubygem-smart_proxy_discovery &>/dev/null && echo "rubygem
 yum -q list installed rubygem-smart_proxy_discovery_image &>/dev/null && echo "rubygem-smart_proxy_discovery_image y is installed" || yum install -y rubygem-smart_proxy_discovery_image* --skip-broken
 yum -q list installed tfm-rubygem-hammer_cli_foreman_discovery &>/dev/null && echo "tfm-rubygem-hammer_cli_foreman_discovery is installed" || yum install -y tfm-rubygem-hammer_cli_foreman_discovery* --skip-broken
 
-
-
 source /root/.bashrc
 satellite-installer --scenario satellite -v \
 --foreman-proxy-plugin-discovery-install-images true \
@@ -805,10 +803,14 @@ subscription-manager repos --disable=rhel-7-server-extras-rpms
 #foreman-installer -v --foreman-proxy-content-enable-deb  --katello-enable-deb
 
 echo " "
+echo " "
+echo " "
 echo "*********************************************************"
 echo "CONFIGURING SATELLITE CACHE"
 echo "*********************************************************"
 foreman-rake apipie:cache:index --trace
+echo " "
+echo " "
 echo " "
 echo "*********************************************************"
 echo "DHCP SATELLITE"
