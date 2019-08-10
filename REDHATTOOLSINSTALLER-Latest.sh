@@ -133,7 +133,7 @@ yum -q list installed yum &>/dev/null && echo "yum is installed" || yum install 
 yum -q list installed lynx &>/dev/null && echo "lynx is installed" || yum install -y lynx --skip-broken
 yum -q list installed perl &>/dev/null && echo "perl is installed" || yum install -y perl --skip-broken
 yum -q list installed dialog &>/dev/null && echo "dialog is installed" || yum install -y dialog --skip-broken
-yum -q list installed xdialog &>/dev/null && echo "xdialog is installed" || yum localinstall -y xdialog --skip-broken
+yum -q list installed xdialog &>/dev/null && echo "xdialog is installed" || yum localinstall -y xdialog-2.3.1-13.el7.centos.x86_64.rpm --skip-broken
 yum -q list installed firefox &>/dev/null && echo "firefox is installed" || yum localinstall -y firefox --skip-broken
 yum install -y dconf*
 yum-config-manager --disable epel
@@ -495,6 +495,12 @@ echo "SET REPOS FOR INSTALLING AND UPDATING SATELLITE 6.5"
 echo "*********************************************************"
 echo -ne "\e[8;40;170t"
 subscription-manager repos --disable '*'
+echo " "
+echo " "
+echo " "
+echo "*********************************************************"
+echo "ENABLE SATELLITE 6.5 REPOS"
+echo "*********************************************************"
 subscription-manager repos --enable=rhel-7-server-rpms || exit 1
 subscription-manager repos --enable=rhel-server-rhscl-7-rpms || exit 1
 subscription-manager repos --enable=rhel-7-server-optional-rpms || exit 1
@@ -641,11 +647,14 @@ fi
 #  --------------------------------------
 function INSTALLNSAT {
 #  --------------------------------------
-echo "*********************************************************"
-echo "INSTALLING SATELLITE"
-echo "*********************************************************"
 echo -ne "\e[8;40;170t"
 source /root/.bashrc
+echo " "
+echo " "
+echo " "
+echo "*********************************************************"
+echo "VERIFING REPOS FOR SATELLITE 6.5"
+echo "*********************************************************"
 yum-config-manager --disable epel
 subscription-manager repos --enable=rhel-7-server-rpms || exit 1
 subscription-manager repos --enable=rhel-server-rhscl-7-rpms || exit 1
@@ -655,7 +664,12 @@ subscription-manager repos --enable=rhel-7-server-satellite-maintenance-6-rpms |
 subscription-manager repos --enable rhel-7-server-ansible-2.8-rpms 
 yum clean all 
 rm -rf /var/cache/yum
-
+echo " "
+echo " "
+echo " "
+echo "*********************************************************"
+echo "INSTALLING SATELLITE"
+echo "*********************************************************"
 yum -q list installed satellite &>/dev/null && echo "satellite is installed" || time yum install satellite -y --skip-broken
 yum -q list installed puppetserver &>/dev/null && echo "puppetserver is installed" || time yum install puppetserver -y --skip-broken
 yum -q list installed puppet-agent-oauth &>/dev/null && echo "puppet-agent-oauth is installed" || time yum install puppet-agent-oauth -y --skip-broken
@@ -669,6 +683,9 @@ function CONFSAT {
 #  --------------------------------------
 source /root/.bashrc
 echo -ne "\e[8;40;170t"
+echo " "
+echo " "
+echo " "
 echo "*********************************************************"
 echo "CONFIGURING SATELLITE"
 echo "*********************************************************"
@@ -694,11 +711,13 @@ satellite-installer --scenario satellite -v \
 --foreman-proxy-bmc-listen-on both \
 --foreman-proxy-logs-listen-on both \
 --foreman-proxy-realm-listen-on both \
---foreman-proxy-templates-listen-on
+--foreman-proxy-templates-listen-on both
 
 #--foreman-proxy-dns-tsig-principal="foreman-proxy $(hostname)@$DOM" \
 #--foreman-proxy-dns-tsig-keytab=/etc/foreman-proxy/dns.key \
 
+echo " "
+echo " "
 echo " "
 echo "*********************************************************"
 echo "CONFIGURING SATELLITE DHCP"
@@ -713,34 +732,46 @@ satellite-installer --scenario satellite -v \
 --foreman-proxy-dhcp-nameservers=$DHCP_DNS \
 --foreman-proxy-dhcp-listen-on both
 echo " "
+echo " "
+echo " "
 echo "*********************************************************"
 echo "CONFIGURING SATELLITE TFTP"
 echo "*********************************************************"
-source /root/.bashrc
 subscription-manager repos --enable rhel-7-server-extras-rpms
 yum -q list installed foreman-discovery-image &>/dev/null && echo "foreman-discovery-image is installed" || yum install -y foreman-discovery-image* --skip-broken
 yum -q list installed rubygem-smart_proxy_discovery &>/dev/null && echo "rubygem-smart_proxy_discovery is installed" || yum install -y rubygem-smart_proxy_discovery* --skip-broken 
-
 satellite-installer --scenario satellite -v \
 --foreman-proxy-tftp true \
 --foreman-proxy-tftp-listen-on both \
 --foreman-proxy-tftp-servername="$(hostname)"
-
+echo " "
+echo " "
 echo " "
 echo "*********************************************************"
 echo "ENABLE Ansible"
 echo "*********************************************************"
 subscription-manager repos --enable rhel-7-server-extras-rpms
 yum -y install rhel-system-roles
-foreman-installer -v --enable-foreman-plugin-ansible=true  --enable-foreman-proxy-plugin-ansible=true
+foreman-installer -v --enable-foreman-plugin-ansible  --enable-foreman-proxy-plugin-ansible
 foreman-installer -v --enable-foreman-plugin-remote-execution --enable-foreman-proxy-plugin-remote-execution-ssh
-
+echo " "
+echo " "
 echo " "
 echo "*********************************************************"
 echo "CONFIGURING ALL SATELLITE PLUGINS"
 echo "*********************************************************"
+subscription-manager repos --enable=rhel-7-server-extras-rpms
+yum clean all 
+rm -rf /var/cache/yum
 yum groupinstall -y 'Red Hat Satellite'
 yum -q list installed puppet-foreman_scap_client &>/dev/null && echo "puppet-foreman_scap_client is installed" || yum install -y puppet-foreman_scap_client* --skip-broken
+yum -q list installed tfm-rubygem-foreman_discovery &>/dev/null && echo "tfm-rubygem-foreman_discovery is installed" || yum install -y tfm-rubygem-foreman_discovery* --skip-broken
+yum -q list installed foreman-discovery-image &>/dev/null && echo "foreman-discovery-image_client is installed" || yum install -y foreman-discovery-image* --skip-broken
+yum -q list installed rubygem-smart_proxy_discovery &>/dev/null && echo "rubygem-smart_proxy_discovery is installed" || yum install -y rubygem-smart_proxy_discovery* --skip-broken
+yum -q list installed rubygem-smart_proxy_discovery_image &>/dev/null && echo "rubygem-smart_proxy_discovery_image y is installed" || yum install -y rubygem-smart_proxy_discovery_image* --skip-broken
+yum -q list installed tfm-rubygem-hammer_cli_foreman_discovery &>/dev/null && echo "tfm-rubygem-hammer_cli_foreman_discovery is installed" || yum install -y tfm-rubygem-hammer_cli_foreman_discovery* --skip-broken
+
+
 
 source /root/.bashrc
 satellite-installer --scenario satellite -v \
@@ -769,6 +800,7 @@ subscription-manager repos --disable=rhel-7-server-extras-rpms
 #echo "*********************************************************"
 #echo "ENABLE DEB"
 #echo "*********************************************************"
+#yum install https://yum.theforeman.org/releases/latest/el7/x86_64/foreman-release.rpm
 #satellite-installer -v  --katello-enable-deb true
 #foreman-installer -v --foreman-proxy-content-enable-deb  --katello-enable-deb
 
@@ -2095,6 +2127,7 @@ echo "*********************************************************"
 echo "Create Media:"
 echo "*********************************************************"
 hammer medium create --path=http://repos/${ORG}/Library/content/dist/rhel/server/7/7.6/x86_64/kickstart/ --organizations=$ORG --locations="$LOC" --os-family=Redhat --name="RHEL 7.6 Kickstart" --operatingsystems="RedHat 7.6"
+hammer medium create --path=http://repos/${ORG}/Library/content/dist/rhel/server/7/7.7/x86_64/kickstart/ --organizations=$ORG --locations="$LOC" --os-family=Redhat --name="RHEL 7.7 Kickstart" --operatingsystems="RedHat 7.7"
 }
 #----------------------------------
 function VARSETUP2 {
