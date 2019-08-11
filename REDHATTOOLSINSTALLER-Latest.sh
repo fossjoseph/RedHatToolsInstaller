@@ -630,7 +630,7 @@ echo "CHECKING FQDN"
 echo "*********************************************************"
 hostname -f 
 if [ $? -eq 0 ]; then
-    echo 'The FQDN is as expected $(hostname)'
+    echo 'The FQDN is as expected '$(hostname)''
 else
     echo "The FQDN is not defined please correct and try again"
     mv /root/.bashrc.bak /root/.bashrc
@@ -668,6 +668,9 @@ echo "*********************************************************"
 echo "VERIFING REPOS FOR SATELLITE 6.5"
 echo "*********************************************************"
 yum-config-manager --disable epel
+subscription-manager repos --disable=rhel-7-server-extras-rpms
+yum clean all
+rm -rf /var/cache/yum
 subscription-manager repos --enable=rhel-7-server-rpms || exit 1
 subscription-manager repos --enable=rhel-server-rhscl-7-rpms || exit 1
 subscription-manager repos --enable=rhel-7-server-optional-rpms || exit 1
@@ -681,16 +684,19 @@ echo " "
 echo " "
 echo " "
 echo "*********************************************************"
-echo "INSTALLING SATELLITE"
+echo "INSTALLING SATELLITE COMPONENTS"
 echo "*********************************************************"
+echo "INSTALLING SATELLITE"
 yum -q list installed satellite &>/dev/null && echo "satellite is installed" || time yum install satellite -y --skip-broken
+echo "INSTALLING PUPPET"
 yum -q list installed puppetserver &>/dev/null && echo "puppetserver is installed" || time yum install puppetserver -y --skip-broken
 yum -q list installed puppet-agent-oauth &>/dev/null && echo "puppet-agent-oauth is installed" || time yum install puppet-agent-oauth -y --skip-broken
 yum -q list installed puppet-agent &>/dev/null && echo "puppet-agent is installed" || time yum install puppet-agent -y --skip-broken
 yum -q list installed rhel-system-roles &>/dev/null && echo "rhel-system-roles is installed" || time yum install rhel-system-roles -y --skip-broken
-subscription-manager repos --enable=rhel-7-server-extras-rpms || exit 1
-yum clean all 
-
+echo "INSTALLING ANSIBLE ROLES"
+subscription-manager repos --enable=rhel-7-server-extras-rpms
+yum clean all
+rm -rf /var/cache/yuml 
 }
 #---END OF SAT 6.X INSTALL SCRIPT---
 
@@ -2672,7 +2678,7 @@ CONFSAT
 CONFSATDHCP
 CONFSATTFTP
 CONFSATPLUGINS
-CONFSATDEB
+#CONFSATDEB
 CONFSATCACHE
 CHECKDHCP
 DISABLEEXTRAS
