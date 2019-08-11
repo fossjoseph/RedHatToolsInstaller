@@ -897,7 +897,7 @@ REQUEST
 fi
 }
 #--------------------------------------
-function DISAMLEEXTRAS {
+function DISABLEEXTRAS {
 #--------------------------------------
 echo "*********************************************************"
 echo "DISABLING EXTRA REPO "
@@ -2675,7 +2675,7 @@ CONFSATPLUGINS
 CONFSATDEB
 CONFSATCACHE
 CHECKDHCP
-DISAMLEEXTRAS
+DISABLEEXTRAS
 HAMMERCONF
 CONFIG2
 STOPSPAMMINGVARLOG
