@@ -115,8 +115,8 @@ echo "*********************************************************"
 yum -q list installed epel-release-latest-7 &>/dev/null && echo "epel-release-latest-7 is installed" || yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm --skip-broken
 yum-config-manager --enable epel  || exit 1
 yum-config-manager --save --setopt=*.skip_if_unavailable=true
-rm -fr /var/cache/yum/*
 yum clean all
+rm -fr /var/cache/yum/*
 echo " "
 echo " "
 echo " "
@@ -662,8 +662,9 @@ subscription-manager repos --enable=rhel-7-server-optional-rpms || exit 1
 subscription-manager repos --enable=rhel-7-server-satellite-6.5-rpms || exit 1
 subscription-manager repos --enable=rhel-7-server-satellite-maintenance-6-rpms || exit 1
 subscription-manager repos --enable rhel-7-server-ansible-2.8-rpms 
-yum clean all 
+yum clean all
 rm -rf /var/cache/yum
+sleep 5
 echo " "
 echo " "
 echo " "
@@ -674,13 +675,17 @@ yum -q list installed satellite &>/dev/null && echo "satellite is installed" || 
 yum -q list installed puppetserver &>/dev/null && echo "puppetserver is installed" || time yum install puppetserver -y --skip-broken
 yum -q list installed puppet-agent-oauth &>/dev/null && echo "puppet-agent-oauth is installed" || time yum install puppet-agent-oauth -y --skip-broken
 yum -q list installed puppet-agent &>/dev/null && echo "puppet-agent is installed" || time yum install puppet-agent -y --skip-broken
+yum -q list installed rhel-system-roles &>/dev/null && echo "rhel-system-roles is installed" || time yum install rhel-system-roles -y --skip-broken
+subscription-manager repos --enable=rhel-7-server-extras-rpms || exit 1
+yum clean all 
+
 }
 #---END OF SAT 6.X INSTALL SCRIPT---
 
 #---START OF SAT 6.X CONFIGURE SCRIPT---
-#  --------------------------------------
+#--------------------------------------
 function CONFSAT {
-#  --------------------------------------
+#--------------------------------------
 source /root/.bashrc
 echo -ne "\e[8;40;170t"
 echo " "
@@ -693,6 +698,14 @@ echo " "
 echo "*********************************************************"
 echo "CONFIGURING SATELLITE BASE"
 echo "*********************************************************"
+source /root/.bashrc
+echo -ne "\e[8;40;170t"
+echo " "
+echo " "
+echo " "
+yum clean all
+rm -rf /var/cache/yum
+sleep 5
 satellite-installer --scenario satellite -v \
 --foreman-admin-password=$ADMIN_PASSWORD \
 --foreman-admin-username=$ADMIN \
@@ -715,14 +728,21 @@ satellite-installer --scenario satellite -v \
 
 #--foreman-proxy-dns-tsig-principal="foreman-proxy $(hostname)@$DOM" \
 #--foreman-proxy-dns-tsig-keytab=/etc/foreman-proxy/dns.key \
-
+}
+#--------------------------------------
+function CONFSATDHCP {
+#--------------------------------------
+source /root/.bashrc
+echo -ne "\e[8;40;170t"
 echo " "
 echo " "
 echo " "
 echo "*********************************************************"
 echo "CONFIGURING SATELLITE DHCP"
 echo "*********************************************************"
-source /root/.bashrc
+yum clean all
+rm -rf /var/cache/yum
+sleep 5
 satellite-installer --scenario satellite -v \
 --foreman-proxy-dhcp true \
 --foreman-proxy-dhcp-server=$INTERNALIP \
@@ -731,14 +751,20 @@ satellite-installer --scenario satellite -v \
 --foreman-proxy-dhcp-gateway=$DHCP_GW \
 --foreman-proxy-dhcp-nameservers=$DHCP_DNS \
 --foreman-proxy-dhcp-listen-on both
+}
+#--------------------------------------
+function CONFSATTFTP {
+#--------------------------------------
+source /root/.bashrc
+echo -ne "\e[8;40;170t"
 echo " "
 echo " "
 echo " "
 echo "*********************************************************"
 echo "CONFIGURING SATELLITE TFTP"
 echo "*********************************************************"
-subscription-manager repos --enable rhel-7-server-extras-rpms
-yum clean all 
+yum clean all
+rm -rf /var/cache/yum
 sleep 5
 yum -q list installed foreman-discovery-image &>/dev/null && echo "foreman-discovery-image is installed" || yum install -y foreman-discovery-image* --skip-broken
 yum -q list installed rubygem-smart_proxy_discovery &>/dev/null && echo "rubygem-smart_proxy_discovery is installed" || yum install -y rubygem-smart_proxy_discovery* --skip-broken 
@@ -746,25 +772,18 @@ satellite-installer --scenario satellite -v \
 --foreman-proxy-tftp true \
 --foreman-proxy-tftp-listen-on both \
 --foreman-proxy-tftp-servername="$(hostname)"
-echo " "
-echo " "
-echo " "
-echo "*********************************************************"
-echo "ENABLE Ansible"
-echo "*********************************************************"
-subscription-manager repos --enable rhel-7-server-extras-rpms
-sleep 5
-yum clean all 
-yum -y install rhel-system-roles
-#foreman-installer -v --enable-foreman-plugin-ansible  --enable-foreman-proxy-plugin-ansible
-#foreman-installer -v --enable-foreman-plugin-remote-execution --enable-foreman-proxy-plugin-remote-execution-ssh
+}
+#--------------------------------------
+function CONFSATPLUGINS {
+#--------------------------------------
+source /root/.bashrc
+echo -ne "\e[8;40;170t"
 echo " "
 echo " "
 echo " "
 echo "*********************************************************"
 echo "CONFIGURING ALL SATELLITE PLUGINS"
 echo "*********************************************************"
-subscription-manager repos --enable=rhel-7-server-extras-rpms
 yum clean all 
 rm -rf /var/cache/yum
 sleep 5
@@ -797,19 +816,36 @@ satellite-installer --scenario satellite -v \
 --enable-foreman-plugin-bootdisk \
 --enable-foreman-plugin-ansible
 
-subscription-manager repos --disable=rhel-7-server-extras-rpms
-
-#echo " "
-#echo "*********************************************************"
-#echo "ENABLE DEB"
-#echo "*********************************************************"
-#yum install https://yum.theforeman.org/releases/latest/el7/x86_64/foreman-release.rpm
-#satellite-installer -v  --katello-enable-deb true
-#foreman-installer -v --foreman-proxy-content-enable-deb  --katello-enable-deb
-
+}
+#--------------------------------------
+function CONFSATDEB {
+#--------------------------------------
+source /root/.bashrc
+echo -ne "\e[8;40;170t"
 echo " "
 echo " "
 echo " "
+echo "*********************************************************"
+echo "CONFIGURING ALL SATELLITE PLUGINS"
+echo "*********************************************************"
+yum clean all 
+rm -rf /var/cache/yum
+sleep 5
+echo " "
+echo "*********************************************************"
+echo "ENABLE DEB"
+echo "*********************************************************"
+yum install https://yum.theforeman.org/releases/latest/el7/x86_64/foreman-release.rpm
+satellite-installer -v  --katello-enable-deb true
+foreman-installer -v --foreman-proxy-content-enable-deb  --katello-enable-deb
+}
+#--------------------------------------
+function CONFSATCACHE {
+#--------------------------------------
+source /root/.bashrc
+echo -ne "\e[8;40;170t"
+echo " "
+sleep 5
 echo "*********************************************************"
 echo "CONFIGURING SATELLITE CACHE"
 echo "*********************************************************"
@@ -817,15 +853,17 @@ foreman-rake apipie:cache:index --trace
 echo " "
 echo " "
 echo " "
-echo "*********************************************************"
-echo "DHCP SATELLITE"
-echo "*********************************************************"
+}
+#--------------------------------------
+function CONFSATCACHE {
+#--------------------------------------
+source /root/.bashrc
+echo -ne "\e[8;40;170t"
 echo " "
-DEFAULTDHCP=y
-COUNTDOWN=15
-read -n1 -p "Would like to use the DHCP server provided by Satellite? y/n " INPUT
-INPUT=${INPUT:-$DEFAULTDHCP}
-if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
+sleep 5
+echo "*********************************************************"
+echo "VERIFYING DHCP ID WANTED FOR NEW SYSTEMS "
+echo "*********************************************************"
 echo " "
 echo "DHCPD ENABLED"
 #COMMANDEXECUTION
@@ -838,6 +876,19 @@ service dhcpd stop
 else
 echo -e "\n$FMESSAGE\n"
 REQUEST
+}
+#--------------------------------------
+function DISAMLEEXTRAS {
+#--------------------------------------
+echo "*********************************************************"
+echo "DISABLING EXTRA REPO "
+echo "*********************************************************"
+source /root/.bashrc
+echo -ne "\e[8;40;170t"
+echo " "
+subscription-manager repos --disable=rhel-7-server-extras-rpms
+yum clean all 
+rm -rf /var/cache/yum
 fi
 }
 #------------------------------
