@@ -902,7 +902,7 @@ echo "*********************************************************"
 echo " "
 DEFAULTDHCP=y
 COUNTDOWN=15
-read -n1 -p "Would like to use the DHCP server provided by Satellite? y/n " INPUT
+read -n1 -t "$COUNTDOWN" -p "Would like to use the DHCP server provided by Satellite? y/n " INPUT
 INPUT=${INPUT:-$DEFAULTDHCP}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo " "
