@@ -865,6 +865,12 @@ echo "*********************************************************"
 echo "VERIFYING DHCP IS WANTED FOR NEW SYSTEMS "
 echo "*********************************************************"
 echo " "
+DEFAULTDHCP=y
+COUNTDOWN=15
+read -n1 -p "Would like to use the DHCP server provided by Satellite? y/n " INPUT
+INPUT=${INPUT:-$DEFAULTDHCP}
+if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
+echo " "
 echo "DHCPD ENABLED"
 #COMMANDEXECUTION
 elif [ "$INPUT" = "n" -o "$INPUT" = "N" ] ;then
@@ -876,6 +882,7 @@ service dhcpd stop
 else
 echo -e "\n$FMESSAGE\n"
 REQUEST
+fi
 }
 #--------------------------------------
 function DISAMLEEXTRAS {
