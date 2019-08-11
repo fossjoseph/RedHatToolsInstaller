@@ -701,6 +701,7 @@ echo " "
 echo " "
 echo "INSTALLING ANSIBLE ROLES"
 subscription-manager repos --enable=rhel-7-server-extras-rpms
+yum -q list installed rhel-system-roles &>/dev/null && echo "rhel-system-roles is installed" || time yum install rhel-system-roles -y --skip-broken
 yum clean all
 rm -rf /var/cache/yuml 
 }
@@ -812,11 +813,13 @@ yum clean all
 rm -rf /var/cache/yum
 sleep 5
 yum groupinstall -y 'Red Hat Satellite'
+sleep 5
 yum -q list installed puppet-foreman_scap_client &>/dev/null && echo "puppet-foreman_scap_client is installed" || yum install -y puppet-foreman_scap_client* --skip-broken
 yum -q list installed tfm-rubygem-foreman_discovery &>/dev/null && echo "tfm-rubygem-foreman_discovery is installed" || yum install -y tfm-rubygem-foreman_discovery* --skip-broken
-yum -q list installed foreman-discovery-image &>/dev/null && echo "foreman-discovery-image_client is installed" || yum install -y foreman-discovery-image* --skip-broken
+yum -q list installed foreman-discovery-image &>/dev/null && echo "foreman-discovery-image_client is installed" || yum install -y *foreman-discovery* --skip-broken
+sleep 6 
 yum -q list installed rubygem-smart_proxy_discovery &>/dev/null && echo "rubygem-smart_proxy_discovery is installed" || yum install -y rubygem-smart_proxy_discovery* --skip-broken
-yum -q list installed rubygem-smart_proxy_discovery_image &>/dev/null && echo "rubygem-smart_proxy_discovery_image y is installed" || yum install -y rubygem-smart_proxy_discovery_image* --skip-broken
+yum -q list installed rubygem-smart_proxy_discovery_image &>/dev/null && echo "rubygem-smart_proxy_discovery_image y is installed" || yum install -y rubygem-smart_proxy_discovery_image --skip-broken
 yum -q list installed tfm-rubygem-hammer_cli_foreman_discovery &>/dev/null && echo "tfm-rubygem-hammer_cli_foreman_discovery is installed" || yum install -y tfm-rubygem-hammer_cli_foreman_discovery* --skip-broken
 
 source /root/.bashrc
@@ -850,11 +853,10 @@ echo " "
 echo " "
 echo " "
 echo "*********************************************************"
-echo "CONFIGURING ALL SATELLITE PLUGINS"
+echo "CONFIGURING DEB SATELLITE PLUGINS"
 echo "*********************************************************"
 yum clean all 
 rm -rf /var/cache/yum
-sleep 5
 echo " "
 echo "*********************************************************"
 echo "ENABLE DEB"
@@ -1008,9 +1010,9 @@ hammer settings set --name default_organization  --value $ORG
 hammer settings set --name default_location  --value $LOC
 hammer settings set --name discovery_organization  --value $ORG
 hammer settings set --name root_pass --value $NODEPASS
-hammer settings set --name query_local_nameservers yes
-hammer settings set --name host_owner $ADMIN
-hammer settings set --name lab_features yes
+hammer settings set --name query_local_nameservers --value true
+hammer settings set --name host_owner --value $ADMIN
+hammer settings set --name lab_features --value true
 mkdir -p /etc/puppet/environments/production/modules
 echo " "
 echo " "
@@ -2528,9 +2530,9 @@ Connection to the internet so the instller can download the required packages
 * Ansible-Tower download will be pulled from https://releases.ansible.com/awx/setup/ansible-tower-setup-latest.tar.gz
 
 6. This install was tested with:
-          * RHEL_7.6 in a KVM environment.
+          * RHEL_7.7 in a KVM environment.
           * Red Hat subscriber channels:
-             rhel-7-server-ansible-2.7-rpms
+             rhel-7-server-ansible-2.8-rpms
              rhel-7-server-extras-rpms
              rhel-7-server-optional-rpms
              rhel-7-server-rpms
@@ -2549,12 +2551,12 @@ read -p "If you have met the minimum requirement from above please Press [Enter]
 echo "************************************"
 echo "installing prereq"
 echo "************************************"
-if grep -q -i "release 7.6" /etc/redhat-release ; then
+if grep -q -i "release 7.7" /etc/redhat-release ; then
 rhel7only=1
-echo "RHEL 7.6"
+echo "RHEL 7.7"
 yum --noplugins -q list installed epel-release-latest-7 &>/dev/null && echo "epel-release-latest-7 is installed" || yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm --skip-broken --noplugins
 else
-echo "Not Running RHEL 7.x !"
+echo "Not Running RHEL 7.7 !"
 fi
 echo " "
 yum --noplugins -q list installed yum-utils &>/dev/null && echo "yum-utils is installed" || yum install -y yum-utils --skip-broken --noplugins
@@ -2689,7 +2691,7 @@ CONFSATCACHE
 CHECKDHCP
 DISABLEEXTRAS
 HAMMERCONF
-CONFIG2
+#CONFIG2
 STOPSPAMMINGVARLOG
 #REQUESTSYNCMGT
 #REQUEST5
