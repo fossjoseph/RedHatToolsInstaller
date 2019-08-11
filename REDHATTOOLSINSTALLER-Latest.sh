@@ -114,6 +114,7 @@ echo "ENABLE PROEPEL FOR A FEW PACKAGES"
 echo "*********************************************************"
 yum -q list installed epel-release-latest-7 &>/dev/null && echo "epel-release-latest-7 is installed" || yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm --skip-broken
 yum-config-manager --enable epel  || exit 1
+subscription-manager repos --enable=rhel-7-server-extras-rpms || exit 1
 yum-config-manager --save --setopt=*.skip_if_unavailable=true
 yum clean all
 rm -fr /var/cache/yum/*
@@ -137,6 +138,7 @@ yum -q list installed xdialog &>/dev/null && echo "xdialog is installed" || yum 
 yum -q list installed firefox &>/dev/null && echo "firefox is installed" || yum localinstall -y firefox --skip-broken
 yum install -y dconf*
 yum-config-manager --disable epel
+subscription-manager repos --disable=rhel-7-server-extras-rpms
 touch ./SCRIPT
 echo " "
 }
@@ -517,21 +519,31 @@ echo " "
 function INSTALLDEPS {
 #------------------------------
 echo "*********************************************************"
-echo "INSTALLING DEPENDENCIES FOR SATELLITE OPERATING ENVIRONMENT"
+echo "INSTALLING DEPENDENCIES AND UPDATING FOR SATELLITE OPERATING ENVIRONMENT"
 echo "*********************************************************"
 echo -ne "\e[8;40;170t"
 yum-config-manager --enable epel
+subscription-manager repos --enable=rhel-7-server-extras-rpms
 yum clean all ; rm -rf /var/cache/yum
 sleep 5
 yum install -y screen yum-utils vim gcc gcc-c++ git rh-nodejs8-npm make automake kernel-devel ruby-devel libvirt-client bind dhcp tftp libvirt augeas
 sleep 5
-yum-config-manager --disable epel
+echo " "
+echo " "
+echo " "
 echo "*********************************************************"
 echo "INSTALLING DEPENDENCIES FOR CONTENT VIEW AUTO PUBLISH"
 echo "*********************************************************"
 yum -y install python-pip rubygem-builder
-yum-config-manager --disable epel
 pip install --upgrade pip
+echo " "
+echo " "
+echo " "
+echo "*********************************************************"
+echo "UPGRADING OS"
+echo "*********************************************************"
+yum-config-manager --disable epel
+subscription-manager repos --disable=rhel-7-server-extras-rpms
 yum clean all ; rm -rf /var/cache/yum
 yum upgrade -y; yum update -y
 }
@@ -835,9 +847,9 @@ echo " "
 echo "*********************************************************"
 echo "ENABLE DEB"
 echo "*********************************************************"
-yum install https://yum.theforeman.org/releases/latest/el7/x86_64/foreman-release.rpm
-satellite-installer -v  --katello-enable-deb true
-foreman-installer -v --foreman-proxy-content-enable-deb  --katello-enable-deb
+#yum install https://yum.theforeman.org/releases/latest/el7/x86_64/foreman-release.rpm
+#satellite-installer -v  --katello-enable-deb true
+#foreman-installer -v --foreman-proxy-content-enable-deb  --katello-enable-deb
 }
 #--------------------------------------
 function CONFSATCACHE {
