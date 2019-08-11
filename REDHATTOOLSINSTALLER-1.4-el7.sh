@@ -114,6 +114,7 @@ echo "ENABLE PROEPEL FOR A FEW PACKAGES"
 echo "*********************************************************"
 yum -q list installed epel-release-latest-7 &>/dev/null && echo "epel-release-latest-7 is installed" || yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm --skip-broken
 yum-config-manager --enable epel  || exit 1
+subscription-manager repos --enable=rhel-7-server-extras-rpms || exit 1
 yum-config-manager --save --setopt=*.skip_if_unavailable=true
 yum clean all
 rm -fr /var/cache/yum/*
@@ -137,6 +138,7 @@ yum -q list installed xdialog &>/dev/null && echo "xdialog is installed" || yum 
 yum -q list installed firefox &>/dev/null && echo "firefox is installed" || yum localinstall -y firefox --skip-broken
 yum install -y dconf*
 yum-config-manager --disable epel
+subscription-manager repos --disable=rhel-7-server-extras-rpms
 touch ./SCRIPT
 echo " "
 }
@@ -517,21 +519,31 @@ echo " "
 function INSTALLDEPS {
 #------------------------------
 echo "*********************************************************"
-echo "INSTALLING DEPENDENCIES FOR SATELLITE OPERATING ENVIRONMENT"
+echo "INSTALLING DEPENDENCIES AND UPDATING FOR SATELLITE OPERATING ENVIRONMENT"
 echo "*********************************************************"
 echo -ne "\e[8;40;170t"
 yum-config-manager --enable epel
+subscription-manager repos --enable=rhel-7-server-extras-rpms
 yum clean all ; rm -rf /var/cache/yum
 sleep 5
 yum install -y screen yum-utils vim gcc gcc-c++ git rh-nodejs8-npm make automake kernel-devel ruby-devel libvirt-client bind dhcp tftp libvirt augeas
 sleep 5
-yum-config-manager --disable epel
+echo " "
+echo " "
+echo " "
 echo "*********************************************************"
 echo "INSTALLING DEPENDENCIES FOR CONTENT VIEW AUTO PUBLISH"
 echo "*********************************************************"
 yum -y install python-pip rubygem-builder
-yum-config-manager --disable epel
 pip install --upgrade pip
+echo " "
+echo " "
+echo " "
+echo "*********************************************************"
+echo "UPGRADING OS"
+echo "*********************************************************"
+yum-config-manager --disable epel
+subscription-manager repos --disable=rhel-7-server-extras-rpms
 yum clean all ; rm -rf /var/cache/yum
 yum upgrade -y; yum update -y
 }
@@ -618,7 +630,7 @@ echo "CHECKING FQDN"
 echo "*********************************************************"
 hostname -f 
 if [ $? -eq 0 ]; then
-    echo 'The FQDN is as expected $(hostname)'
+    echo 'The FQDN is as expected '$(hostname)''
 else
     echo "The FQDN is not defined please correct and try again"
     mv /root/.bashrc.bak /root/.bashrc
@@ -656,6 +668,9 @@ echo "*********************************************************"
 echo "VERIFING REPOS FOR SATELLITE 6.5"
 echo "*********************************************************"
 yum-config-manager --disable epel
+subscription-manager repos --disable=rhel-7-server-extras-rpms
+yum clean all
+rm -rf /var/cache/yum
 subscription-manager repos --enable=rhel-7-server-rpms || exit 1
 subscription-manager repos --enable=rhel-server-rhscl-7-rpms || exit 1
 subscription-manager repos --enable=rhel-7-server-optional-rpms || exit 1
@@ -669,16 +684,26 @@ echo " "
 echo " "
 echo " "
 echo "*********************************************************"
-echo "INSTALLING SATELLITE"
+echo "INSTALLING SATELLITE COMPONENTS"
 echo "*********************************************************"
+echo "INSTALLING SATELLITE"
 yum -q list installed satellite &>/dev/null && echo "satellite is installed" || time yum install satellite -y --skip-broken
+echo " "
+echo " "
+echo " "
+echo "INSTALLING PUPPET"
 yum -q list installed puppetserver &>/dev/null && echo "puppetserver is installed" || time yum install puppetserver -y --skip-broken
 yum -q list installed puppet-agent-oauth &>/dev/null && echo "puppet-agent-oauth is installed" || time yum install puppet-agent-oauth -y --skip-broken
 yum -q list installed puppet-agent &>/dev/null && echo "puppet-agent is installed" || time yum install puppet-agent -y --skip-broken
 yum -q list installed rhel-system-roles &>/dev/null && echo "rhel-system-roles is installed" || time yum install rhel-system-roles -y --skip-broken
-subscription-manager repos --enable=rhel-7-server-extras-rpms || exit 1
-yum clean all 
-
+echo " "
+echo " "
+echo " "
+echo "INSTALLING ANSIBLE ROLES"
+subscription-manager repos --enable=rhel-7-server-extras-rpms
+yum clean all
+rm -rf /var/cache/yuml 
+yum -q list installed rhel-system-roles &>/dev/null && echo "rhel-system-roles is installed" || time yum install rhel-system-roles -y --skip-broken
 }
 #---END OF SAT 6.X INSTALL SCRIPT---
 
@@ -784,15 +809,26 @@ echo " "
 echo "*********************************************************"
 echo "CONFIGURING ALL SATELLITE PLUGINS"
 echo "*********************************************************"
+
+subscription-manager repos --enable=rhel-7-server-rpms
+subscription-manager repos --enable=rhel-server-rhscl-7-rpms
+subscription-manager repos --enable=rhel-7-server-optional-rpms
+subscription-manager repos --enable=rhel-7-server-satellite-6.5-rpms
+subscription-manager repos --enable=rhel-7-server-satellite-maintenance-6-rpm
+subscription-manager repos --enable rhel-7-server-ansible-2.8-rpms
+subscription-manager repos --enable=rhel-7-server-extras-rpms
+
 yum clean all 
 rm -rf /var/cache/yum
 sleep 5
 yum groupinstall -y 'Red Hat Satellite'
+sleep 5
 yum -q list installed puppet-foreman_scap_client &>/dev/null && echo "puppet-foreman_scap_client is installed" || yum install -y puppet-foreman_scap_client* --skip-broken
 yum -q list installed tfm-rubygem-foreman_discovery &>/dev/null && echo "tfm-rubygem-foreman_discovery is installed" || yum install -y tfm-rubygem-foreman_discovery* --skip-broken
-yum -q list installed foreman-discovery-image &>/dev/null && echo "foreman-discovery-image_client is installed" || yum install -y foreman-discovery-image* --skip-broken
+yum -q list installed foreman-discovery-image &>/dev/null && echo "foreman-discovery-image_client is installed" || yum install -y foreman-discovery* --skip-broken
+sleep 5
 yum -q list installed rubygem-smart_proxy_discovery &>/dev/null && echo "rubygem-smart_proxy_discovery is installed" || yum install -y rubygem-smart_proxy_discovery* --skip-broken
-yum -q list installed rubygem-smart_proxy_discovery_image &>/dev/null && echo "rubygem-smart_proxy_discovery_image y is installed" || yum install -y rubygem-smart_proxy_discovery_image* --skip-broken
+yum -q list installed rubygem-smart_proxy_discovery_image &>/dev/null && echo "rubygem-smart_proxy_discovery_image y is installed" || yum install -y rubygem-smart_proxy_discovery_image --skip-broken
 yum -q list installed tfm-rubygem-hammer_cli_foreman_discovery &>/dev/null && echo "tfm-rubygem-hammer_cli_foreman_discovery is installed" || yum install -y tfm-rubygem-hammer_cli_foreman_discovery* --skip-broken
 
 source /root/.bashrc
@@ -826,18 +862,17 @@ echo " "
 echo " "
 echo " "
 echo "*********************************************************"
-echo "CONFIGURING ALL SATELLITE PLUGINS"
+echo "CONFIGURING DEB SATELLITE PLUGINS"
 echo "*********************************************************"
 yum clean all 
 rm -rf /var/cache/yum
-sleep 5
 echo " "
 echo "*********************************************************"
 echo "ENABLE DEB"
 echo "*********************************************************"
-yum install https://yum.theforeman.org/releases/latest/el7/x86_64/foreman-release.rpm
-satellite-installer -v  --katello-enable-deb true
-foreman-installer -v --foreman-proxy-content-enable-deb  --katello-enable-deb
+#yum install https://yum.theforeman.org/releases/latest/el7/x86_64/foreman-release.rpm
+#satellite-installer -v  --katello-enable-deb true
+#foreman-installer -v --foreman-proxy-content-enable-deb  --katello-enable-deb
 }
 #--------------------------------------
 function CONFSATCACHE {
@@ -867,7 +902,7 @@ echo "*********************************************************"
 echo " "
 DEFAULTDHCP=y
 COUNTDOWN=15
-read -n1 -p "Would like to use the DHCP server provided by Satellite? y/n " INPUT
+read -n1 -t "$COUNTDOWN" -p "Would like to use the DHCP server provided by Satellite? y/n " INPUT
 INPUT=${INPUT:-$DEFAULTDHCP}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo " "
@@ -885,7 +920,7 @@ REQUEST
 fi
 }
 #--------------------------------------
-function DISAMLEEXTRAS {
+function DISABLEEXTRAS {
 #--------------------------------------
 echo "*********************************************************"
 echo "DISABLING EXTRA REPO "
@@ -984,9 +1019,9 @@ hammer settings set --name default_organization  --value $ORG
 hammer settings set --name default_location  --value $LOC
 hammer settings set --name discovery_organization  --value $ORG
 hammer settings set --name root_pass --value $NODEPASS
-hammer settings set --name query_local_nameservers yes
-hammer settings set --name host_owner $ADMIN
-hammer settings set --name lab_features yes
+hammer settings set --name query_local_nameservers --value true
+hammer settings set --name host_owner --value $ADMIN
+hammer settings set --name lab_features --value true
 mkdir -p /etc/puppet/environments/production/modules
 echo " "
 echo " "
@@ -1101,7 +1136,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "RHEL 5 STANDARD REPOS:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGE5 ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN" -p "$QMESSAGE5 ? Y/N " INPUT
 INPUT=${INPUT:-$RHEL5DEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1155,7 +1190,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "RHEL 6 STANDARD REPOS:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGE6 ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGE6 ? Y/N " INPUT
 INPUT=${INPUT:-$RHEL6DEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1212,7 +1247,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "RHEL 7 STANDARD REPOS:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGE7 ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGE7 ? Y/N " INPUT
 INPUT=${INPUT:-$RHEL7DEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1262,7 +1297,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "JBOSS ENTERPRISE APPLICATION PLATFORM 7:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGEJBOSS ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGEJBOSS ? Y/N " INPUT
 INPUT=${INPUT:-$OTHER7REPOSDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1285,7 +1320,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "RED HAT VIRTUALIZATION 4 MANAGEMENT AGENTS:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGEVIRTAGENT ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGEVIRTAGENT ? Y/N " INPUT
 INPUT=${INPUT:-$OTHER7REPOSDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1308,7 +1343,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "RED HAT SATELLITE 6.5:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGESAT64 ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGESAT64 ? Y/N " INPUT
 INPUT=${INPUT:-$OTHER7REPOSDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1331,7 +1366,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "RED HAT OPENSHIFT CONTAINER PLATFORM 3.10:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGEOSC ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGEOSC ? Y/N " INPUT
 INPUT=${INPUT:-$OTHER7REPOSDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1354,7 +1389,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "RED HAT CEPH:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGECEPH ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGECEPH ? Y/N " INPUT
 INPUT=${INPUT:-$OTHER7REPOSDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1390,7 +1425,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "RED HAT STORAGE NATIVE CLIENT:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGESNC ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGESNC ? Y/N " INPUT
 INPUT=${INPUT:-$OTHER7REPOSDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1414,7 +1449,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "RED HAT CEPH STORAGE:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGECSI ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGECSI ? Y/N " INPUT
 INPUT=${INPUT:-$OTHER7REPOSDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1438,7 +1473,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "OPENSTACK PLATFORM 13:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGEOSP ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGEOSP ? Y/N " INPUT
 INPUT=${INPUT:-$OTHER7REPOSDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1462,7 +1497,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "OPENSTACK PLATFORM 13 OPERATIONAL TOOLS:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGEOSPT ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGEOSPT ? Y/N " INPUT
 NPUT=${INPUT:-$OTHER7REPOSDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1486,7 +1521,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "OPENSTACK PLATFORM 13 DIRECTOR:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGEOSPD ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGEOSPD ? Y/N " INPUT
 INPUT=${INPUT:-$OTHER7REPOSDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1510,7 +1545,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "RHVH:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGERHVH ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGERHVH ? Y/N " INPUT
 INPUT=${INPUT:-$OTHER7REPOSDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1534,7 +1569,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "RHV:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGERHVM ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGERHVM ? Y/N " INPUT
 INPUT=${INPUT:-$OTHER7REPOSDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1558,7 +1593,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "ATOMIC:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGEATOMIC ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGEATOMIC ? Y/N " INPUT
 INPUT=${INPUT:-$OTHER7REPOSDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1582,7 +1617,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "ANSIBLE TOWER:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGETOWER ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGETOWER ? Y/N " INPUT
 INPUT=${INPUT:-$OTHER7REPOSDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1607,7 +1642,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "PUPPET FORGE:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGEPUPPET ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGEPUPPET ? Y/N " INPUT
 INPUT=${INPUT:-$PUPPETDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1632,7 +1667,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "JENKINS:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGEJENKINS ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGEJENKINS ? Y/N " INPUT
 INPUT=${INPUT:-$OTHER7REPOSDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1659,7 +1694,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "MAVEN:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGEMAVEN ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGEMAVEN ? Y/N " INPUT
 INPUT=${INPUT:-$OTHER7REPOSDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1684,7 +1719,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "ICINGA:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGEICINGA ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGEICINGA ? Y/N " INPUT
 INPUT=${INPUT:-$OTHER7REPOSDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1711,7 +1746,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "CentOS Linux 7.6:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGEICENTOS7 ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGEICENTOS7 ? Y/N " INPUT
 INPUT=${INPUT:-$OTHER7REPOSDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1767,7 +1802,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "CentOS Linux 7.6:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGEISCIENTIFICLINUX7 ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGEISCIENTIFICLINUX7 ? Y/N " INPUT
 INPUT=${INPUT:-$OTHER7REPOSDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -2504,9 +2539,9 @@ Connection to the internet so the instller can download the required packages
 * Ansible-Tower download will be pulled from https://releases.ansible.com/awx/setup/ansible-tower-setup-latest.tar.gz
 
 6. This install was tested with:
-          * RHEL_7.6 in a KVM environment.
+          * RHEL_7.7 in a KVM environment.
           * Red Hat subscriber channels:
-             rhel-7-server-ansible-2.7-rpms
+             rhel-7-server-ansible-2.8-rpms
              rhel-7-server-extras-rpms
              rhel-7-server-optional-rpms
              rhel-7-server-rpms
@@ -2525,12 +2560,12 @@ read -p "If you have met the minimum requirement from above please Press [Enter]
 echo "************************************"
 echo "installing prereq"
 echo "************************************"
-if grep -q -i "release 7.6" /etc/redhat-release ; then
+if grep -q -i "release 7.7" /etc/redhat-release ; then
 rhel7only=1
-echo "RHEL 7.6"
+echo "RHEL 7.7"
 yum --noplugins -q list installed epel-release-latest-7 &>/dev/null && echo "epel-release-latest-7 is installed" || yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm --skip-broken --noplugins
 else
-echo "Not Running RHEL 7.x !"
+echo "Not Running RHEL 7.7 !"
 fi
 echo " "
 yum --noplugins -q list installed yum-utils &>/dev/null && echo "yum-utils is installed" || yum install -y yum-utils --skip-broken --noplugins
@@ -2649,8 +2684,8 @@ CAPSULE
 SATLIBVIRT
 SATRHV
 RHVORLIBVIRT
-SYNCREL5
-SYNCREL6
+#SYNCREL5
+#SYNCREL6
 INSTALLREPOS
 INSTALLDEPS
 GENERALSETUP
@@ -2660,12 +2695,12 @@ CONFSAT
 CONFSATDHCP
 CONFSATTFTP
 CONFSATPLUGINS
-CONFSATDEB
+#CONFSATDEB
 CONFSATCACHE
 CHECKDHCP
-DISAMLEEXTRAS
+DISABLEEXTRAS
 HAMMERCONF
-CONFIG2
+#CONFIG2
 STOPSPAMMINGVARLOG
 #REQUESTSYNCMGT
 #REQUEST5
