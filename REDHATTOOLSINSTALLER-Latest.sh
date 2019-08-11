@@ -738,6 +738,8 @@ echo "*********************************************************"
 echo "CONFIGURING SATELLITE TFTP"
 echo "*********************************************************"
 subscription-manager repos --enable rhel-7-server-extras-rpms
+yum clean all 
+sleep 5
 yum -q list installed foreman-discovery-image &>/dev/null && echo "foreman-discovery-image is installed" || yum install -y foreman-discovery-image* --skip-broken
 yum -q list installed rubygem-smart_proxy_discovery &>/dev/null && echo "rubygem-smart_proxy_discovery is installed" || yum install -y rubygem-smart_proxy_discovery* --skip-broken 
 satellite-installer --scenario satellite -v \
@@ -751,9 +753,11 @@ echo "*********************************************************"
 echo "ENABLE Ansible"
 echo "*********************************************************"
 subscription-manager repos --enable rhel-7-server-extras-rpms
+sleep 5
+yum clean all 
 yum -y install rhel-system-roles
-foreman-installer -v --enable-foreman-plugin-ansible  --enable-foreman-proxy-plugin-ansible
-foreman-installer -v --enable-foreman-plugin-remote-execution --enable-foreman-proxy-plugin-remote-execution-ssh
+#foreman-installer -v --enable-foreman-plugin-ansible  --enable-foreman-proxy-plugin-ansible
+#foreman-installer -v --enable-foreman-plugin-remote-execution --enable-foreman-proxy-plugin-remote-execution-ssh
 echo " "
 echo " "
 echo " "
@@ -763,6 +767,7 @@ echo "*********************************************************"
 subscription-manager repos --enable=rhel-7-server-extras-rpms
 yum clean all 
 rm -rf /var/cache/yum
+sleep 5
 yum groupinstall -y 'Red Hat Satellite'
 yum -q list installed puppet-foreman_scap_client &>/dev/null && echo "puppet-foreman_scap_client is installed" || yum install -y puppet-foreman_scap_client* --skip-broken
 yum -q list installed tfm-rubygem-foreman_discovery &>/dev/null && echo "tfm-rubygem-foreman_discovery is installed" || yum install -y tfm-rubygem-foreman_discovery* --skip-broken
@@ -838,6 +843,9 @@ fi
 #------------------------------
 function HAMMERCONF {
 #------------------------------
+echo " "
+echo " "
+echo " "
 echo "*********************************************************"
 echo "CONFIGURING HAMMER"
 echo "*********************************************************"
@@ -868,22 +876,30 @@ function CONFIG2 {
 #  --------------------------------------
 source /root/.bashrc
 echo -ne "\e[8;40;170t"
-echo ' '
+echo " "
+echo " "
+echo " "
 echo "*********************************************************"
 echo '
 Pulling up the url so you can build and export the manifest
 This must be saved into the /home/admin/Downloads directory
 '
 echo "*********************************************************"
-echo ' '
+echo " "
+echo " "
+echo " "
 read -p "Press [Enter] to continue"
-echo ' '
-echo ' '
+echo " "
+echo " "
+echo " "
 echo "*********************************************************"
 echo 'If you have put your manafest into /home/admin/Downloads/'
 echo "*********************************************************"
 read -p "Press [Enter] to continue"
 sleep 5
+echo " "
+echo " "
+echo " "
 echo "*********************************************************"
 echo 'WHEN PROMPTED PLEASE ENTER YOUR SATELLITE ADMIN USERNAME AND PASSWORD'
 echo "*********************************************************"
@@ -892,11 +908,17 @@ chown -R admin:admin /home/admin
 source /root/.bashrc
 for i in $(find /home/admin/Downloads/ |grep manifest* ); do sudo -u admin hammer subscription upload --file $i --organization $ORG ; done  || exit 1
 hammer subscription refresh-manifest --organization $ORG
+echo " "
+echo " "
+echo " "
 echo "*********************************************************"
 echo 'REFRESHING THE CAPSULE CONTENT'
 echo "*********************************************************"
 for i in $(hammer capsule list |awk -F '|' '{print $1}' |grep -v ID|grep -v -) ; do hammer capsule refresh-features --id=$i ; done 
 sleep 5
+echo " "
+echo " "
+echo " "
 echo "*********************************************************"
 echo 'SETTING SATELLITE EVN SETTINGS'
 echo "*********************************************************"
@@ -909,6 +931,9 @@ hammer settings set --name query_local_nameservers yes
 hammer settings set --name host_owner $ADMIN
 hammer settings set --name lab_features yes
 mkdir -p /etc/puppet/environments/production/modules
+echo " "
+echo " "
+echo " "
 }
 #-------------------------------
 function STOPSPAMMINGVARLOG {
