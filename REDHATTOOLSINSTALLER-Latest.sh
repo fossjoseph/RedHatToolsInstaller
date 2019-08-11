@@ -896,7 +896,6 @@ echo " "
 subscription-manager repos --disable=rhel-7-server-extras-rpms
 yum clean all 
 rm -rf /var/cache/yum
-fi
 }
 #------------------------------
 function HAMMERCONF {
