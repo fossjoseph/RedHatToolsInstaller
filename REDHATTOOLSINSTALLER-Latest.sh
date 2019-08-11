@@ -1136,7 +1136,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "RHEL 5 STANDARD REPOS:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGE5 ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN" -p "$QMESSAGE5 ? Y/N " INPUT
 INPUT=${INPUT:-$RHEL5DEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1190,7 +1190,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "RHEL 6 STANDARD REPOS:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGE6 ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGE6 ? Y/N " INPUT
 INPUT=${INPUT:-$RHEL6DEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1247,7 +1247,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "RHEL 7 STANDARD REPOS:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGE7 ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGE7 ? Y/N " INPUT
 INPUT=${INPUT:-$RHEL7DEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1297,7 +1297,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "JBOSS ENTERPRISE APPLICATION PLATFORM 7:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGEJBOSS ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGEJBOSS ? Y/N " INPUT
 INPUT=${INPUT:-$OTHER7REPOSDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1320,7 +1320,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "RED HAT VIRTUALIZATION 4 MANAGEMENT AGENTS:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGEVIRTAGENT ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGEVIRTAGENT ? Y/N " INPUT
 INPUT=${INPUT:-$OTHER7REPOSDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1343,7 +1343,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "RED HAT SATELLITE 6.5:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGESAT64 ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGESAT64 ? Y/N " INPUT
 INPUT=${INPUT:-$OTHER7REPOSDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1366,7 +1366,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "RED HAT OPENSHIFT CONTAINER PLATFORM 3.10:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGEOSC ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGEOSC ? Y/N " INPUT
 INPUT=${INPUT:-$OTHER7REPOSDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1389,7 +1389,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "RED HAT CEPH:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGECEPH ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGECEPH ? Y/N " INPUT
 INPUT=${INPUT:-$OTHER7REPOSDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1425,7 +1425,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "RED HAT STORAGE NATIVE CLIENT:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGESNC ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGESNC ? Y/N " INPUT
 INPUT=${INPUT:-$OTHER7REPOSDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1449,7 +1449,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "RED HAT CEPH STORAGE:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGECSI ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGECSI ? Y/N " INPUT
 INPUT=${INPUT:-$OTHER7REPOSDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1473,7 +1473,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "OPENSTACK PLATFORM 13:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGEOSP ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGEOSP ? Y/N " INPUT
 INPUT=${INPUT:-$OTHER7REPOSDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1497,7 +1497,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "OPENSTACK PLATFORM 13 OPERATIONAL TOOLS:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGEOSPT ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGEOSPT ? Y/N " INPUT
 NPUT=${INPUT:-$OTHER7REPOSDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1521,7 +1521,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "OPENSTACK PLATFORM 13 DIRECTOR:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGEOSPD ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGEOSPD ? Y/N " INPUT
 INPUT=${INPUT:-$OTHER7REPOSDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1545,7 +1545,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "RHVH:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGERHVH ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGERHVH ? Y/N " INPUT
 INPUT=${INPUT:-$OTHER7REPOSDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1569,7 +1569,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "RHV:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGERHVM ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGERHVM ? Y/N " INPUT
 INPUT=${INPUT:-$OTHER7REPOSDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1593,7 +1593,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "ATOMIC:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGEATOMIC ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGEATOMIC ? Y/N " INPUT
 INPUT=${INPUT:-$OTHER7REPOSDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1617,7 +1617,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "ANSIBLE TOWER:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGETOWER ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGETOWER ? Y/N " INPUT
 INPUT=${INPUT:-$OTHER7REPOSDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1642,7 +1642,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "PUPPET FORGE:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGEPUPPET ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGEPUPPET ? Y/N " INPUT
 INPUT=${INPUT:-$PUPPETDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1667,7 +1667,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "JENKINS:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGEJENKINS ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGEJENKINS ? Y/N " INPUT
 INPUT=${INPUT:-$OTHER7REPOSDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1694,7 +1694,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "MAVEN:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGEMAVEN ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGEMAVEN ? Y/N " INPUT
 INPUT=${INPUT:-$OTHER7REPOSDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1719,7 +1719,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "ICINGA:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGEICINGA ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGEICINGA ? Y/N " INPUT
 INPUT=${INPUT:-$OTHER7REPOSDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1746,7 +1746,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "CentOS Linux 7.6:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGEICENTOS7 ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGEICENTOS7 ? Y/N " INPUT
 INPUT=${INPUT:-$OTHER7REPOSDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1802,7 +1802,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "CentOS Linux 7.6:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGEISCIENTIFICLINUX7 ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGEISCIENTIFICLINUX7 ? Y/N " INPUT
 INPUT=${INPUT:-$OTHER7REPOSDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
