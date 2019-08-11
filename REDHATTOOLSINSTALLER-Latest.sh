@@ -701,9 +701,9 @@ echo " "
 echo " "
 echo "INSTALLING ANSIBLE ROLES"
 subscription-manager repos --enable=rhel-7-server-extras-rpms
-yum -q list installed rhel-system-roles &>/dev/null && echo "rhel-system-roles is installed" || time yum install rhel-system-roles -y --skip-broken
 yum clean all
 rm -rf /var/cache/yuml 
+yum -q list installed rhel-system-roles &>/dev/null && echo "rhel-system-roles is installed" || time yum install rhel-system-roles -y --skip-broken
 }
 #---END OF SAT 6.X INSTALL SCRIPT---
 
@@ -809,6 +809,13 @@ echo " "
 echo "*********************************************************"
 echo "CONFIGURING ALL SATELLITE PLUGINS"
 echo "*********************************************************"
+
+subscription-manager repos --enable=rhel-7-server-rpms || exit 1
+subscription-manager repos --enable=rhel-server-rhscl-7-rpms || exit 1
+subscription-manager repos --enable=rhel-7-server-optional-rpms || exit 1
+subscription-manager repos --enable=rhel-7-server-satellite-6.5-rpms || exit 1
+subscription-manager repos --enable=rhel-7-server-satellite-maintenance-6-rpms || exit 1
+subscription-manager repos --enable rhel-7-server-ansible-2.8-rpms
 yum clean all 
 rm -rf /var/cache/yum
 sleep 5
