@@ -855,14 +855,14 @@ echo " "
 echo " "
 }
 #--------------------------------------
-function CONFSATCACHE {
+function CHECKDHCP {
 #--------------------------------------
 source /root/.bashrc
 echo -ne "\e[8;40;170t"
 echo " "
 sleep 5
 echo "*********************************************************"
-echo "VERIFYING DHCP ID WANTED FOR NEW SYSTEMS "
+echo "VERIFYING DHCP IS WANTED FOR NEW SYSTEMS "
 echo "*********************************************************"
 echo " "
 echo "DHCPD ENABLED"
@@ -2656,7 +2656,7 @@ CONFSATTFTP
 CONFSATPLUGINS
 CONFSATDEB
 CONFSATCACHE
-CONFSATCACHE
+CHECKDHCP
 DISAMLEEXTRAS
 HAMMERCONF
 CONFIG2
