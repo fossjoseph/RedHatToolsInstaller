@@ -829,10 +829,10 @@ sleep 5
 yum -q list installed puppet-foreman_scap_client &>/dev/null && echo "puppet-foreman_scap_client is installed" || yum install -y puppet-foreman_scap_client* --skip-broken
 yum -q list installed tfm-rubygem-foreman_discovery &>/dev/null && echo "tfm-rubygem-foreman_discovery is installed" || yum install -y tfm-rubygem-foreman_discovery* --skip-broken
 yum -q list installed foreman-discovery-image &>/dev/null && echo "foreman-discovery-image_client is installed" || yum install -y foreman-discovery* --skip-broken
-sleep 5
 yum -q list installed rubygem-smart_proxy_discovery &>/dev/null && echo "rubygem-smart_proxy_discovery is installed" || yum install -y rubygem-smart_proxy_discovery* --skip-broken
 yum -q list installed rubygem-smart_proxy_discovery_image &>/dev/null && echo "rubygem-smart_proxy_discovery_image y is installed" || yum install -y rubygem-smart_proxy_discovery_image --skip-broken
-yum -q list installed tfm-rubygem-hammer_cli_foreman_discovery &>/dev/null && echo "tfm-rubygem-hammer_cli_foreman_discovery is installed" || yum install -y tfm-rubygem-hammer_cli_foreman_discovery* --skip-broken
+yum -q list installed tfm-rubygem-hammer_cli_foreman_discovery &>/dev/null && echo "tfm-rubygem-hammer_cli_foreman_discovery is installed" || yum install -y tfm-rubygem-hammer_cli_foreman_discovery --skip-broken
+yum -q list installed foreman_scap_client &>/dev/null && echo "foreman_scap_client is installed" || yum install -y foreman_scap_client --skip-broken
 
 source /root/.bashrc
 satellite-installer --scenario satellite -v \
