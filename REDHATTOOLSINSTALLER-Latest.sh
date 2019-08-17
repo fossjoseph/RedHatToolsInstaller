@@ -854,7 +854,6 @@ satellite-installer --scenario satellite -v \
 --enable-foreman-compute-vmware \
 --enable-foreman-plugin-bootdisk \
 --enable-foreman-plugin-ansible
-
 }
 #--------------------------------------
 function CONFSATDEB {
