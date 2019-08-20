@@ -82,11 +82,9 @@ DOM="$(hostname -d)"
 service firewalld stop
 setenforce 0
 echo "*********************************************************"
-echo "REGESTERING SATELLITE"
+echo "REGESTERING RHEL SYSTEM"
 echo "*********************************************************"
-
 subscription-manager register --auto-attach
-subscription-manager attach --pool=`subscription-manager list --available --matches 'Red Hat Satellite Infrastructure Subscription' --pool-only`
 echo " "
 echo "*********************************************************"
 echo "SET REPOS ENABLING SCRIPT TO RUN"
@@ -186,6 +184,12 @@ fi
 #------------------------------------------------------SCRIPT BEGINS-----------------------------------------------------
 #------------------------------------------------------ Functions ------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------------------
+#-------------------------------
+function REGSAT {
+#-------------------------------
+subscription-manager attach --pool=`subscription-manager list --available --matches 'Red Hat Satellite Infrastructure Subscription' --pool-only`
+}
+
 #-------------------------------
 function VARIABLES1 {
 #-------------------------------
@@ -855,6 +859,7 @@ satellite-installer --scenario satellite -v \
 --enable-foreman-plugin-bootdisk \
 --enable-foreman-plugin-ansible
 }
+
 #--------------------------------------
 function CONFSATDEB {
 #--------------------------------------
@@ -2562,60 +2567,87 @@ read -p "If you have met the minimum requirement from above please Press [Enter]
 echo "************************************"
 echo "installing prereq"
 echo "************************************"
-if grep -q -i "release 7.7" /etc/redhat-release ; then
+if grep -q -i "release 7" /etc/redhat-release ; then
 rhel7only=1
 echo "RHEL 7.7"
+subscrition-manager register --auto-attach
+subscrition-manager reops --disable "*"
+subscrition-manager reops --enable rhel-7-server-rpms
+subscrition-manager reops --enable rhel-server-rhscl-7-rpms
+subscrition-manager reops --enable rhel-7-server-optional-rpms
+subscrition-manager reops --enable --enable rhel-7-server-ansible-2.8-rpms
+yum clean all
+rm -rf /var/cache/yum
+yum-config-manager --setopt=\*.skip_if_unavailable=1 --save \* 
+
 yum --noplugins -q list installed epel-release-latest-7 &>/dev/null && echo "epel-release-latest-7 is installed" || yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm --skip-broken --noplugins
-else
-echo "Not Running RHEL 7.7 !"
-fi
-echo " "
 yum --noplugins -q list installed yum-utils &>/dev/null && echo "yum-utils is installed" || yum install -y yum-utils --skip-broken --noplugins
+yum-config-manager --enable epel 
 yum --noplugins -q list installed ansible &>/dev/null && echo "ansible is installed" || yum install -y ansible --skip-broken --noplugins
 yum --noplugins -q list installed wget &>/dev/null && echo "wget is installed" || yum install -y wget --skip-broken --noplugins
 yum --noplugins -q list installed bash-completion-extras &>/dev/null && echo "bash-completion-extras" || yum install -y bash-completion-extras --skip-broken --noplugins
-yum --noplugins -q list installed openssh-clients &>/dev/null && echo "openssh-clients" || yum install -y openssh-clients --skip-broken --noplugins
-sleep 10
-
-echo " "
-echo '************************************'
-echo 'Creating FILES dir here'
-echo '************************************'
-mkdir -p FILES
-cd FILES
-pwd
-sleep 10
-
-echo " "
-echo '************************************'
-echo 'Wget Ansible Tower'
-echo '************************************'
-if grep -q -i "release 7" /etc/redhat-release ; then
- rhel7only=1
-echo "RHEL 7 supporting latest release"
-wget https://releases.ansible.com/awx/setup/ansible-tower-setup-latest.tar.gz
-else
- echo "Not Running RHEL 7.x !"
-fi
-echo " "
-sleep 10
-
-echo " "
+yum-config-manager --disable epel 
 echo '************************************'
 echo 'Expanding Ansible Tower and installing '
 echo '************************************'
-
-cd FILES
+wget https://releases.ansible.com/ansible-tower/setup-bundle/ansible-tower-setup-bundle-latest.el8.tar.gz
+echo '************************************'
+echo 'Expanding Ansible Tower and installing '
+echo '************************************'
 tar -zxvf ansible-tower-*.tar.gz
 cd ansible-tower*
 sed -i 's/admin_password="''"/admin_password="'redhat'"/g' inventory
 sed -i 's/redis_password="''"/redis_password="'redhat'"/g' inventory
 sed -i 's/pg_password="''"/pg_password="'redhat'"/g' inventory
 sed -i 's/rabbitmq_password="''"/rabbitmq_password="'redhat'"/g' inventory
-sh setup.sh
+sudo ~/Downloads/ansible-tower/setup.sh
+else
+ echo "Not Running RHEL 7.x !"
+fi
+
+echo '************************************'
+echo 'Wget Ansible Tower RHEL 8'
+echo '************************************'
+if grep -q -i "release 8." /etc/redhat-release ; then
+ rhel8only=1
+echo "RHEL 8 supporting latest release"
+subscrition-manager register --auto-attach
+subscrition-manager reops --disable "*"
+subscrition-manager reops --enable ansible-2.8-for-rhel-8-x86_64-rpms
+subscrition-manager reops --enable rhel-8-for-x86_64-appstream-rpms
+subscrition-manager reops --enable rhel-8-for-x86_64-baseos-rpms
+subscrition-manager reops --enable rhel-8-for-x86_64-supplementary-rpms
+subscrition-manager reops --enable rhel-8-for-x86_64-optional-rpms
+yum-config-manager --setopt=\*.skip_if_unavailable=1 --save \* 
+yum --noplugins -q list installed epel-release-latest-8 &>/dev/null && echo "epel-release-latest-8 is installed" || yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm --skip-broken --noplugins
+yum --noplugins -q list installed dnf-utils &>/dev/null && echo "dnf-utils is installed" || yum install -y dnf-utils --skip-broken --noplugins
+yum-config-manager --enable epel 
+yum clean all
+rm -rf /var/cache/yum
+yum --noplugins -q list installed ansible &>/dev/null && echo "ansible is installed" || yum install -y ansible --skip-broken --noplugins
+yum --noplugins -q list installed wget &>/dev/null && echo "wget is installed" || yum install -y wget --skip-broken --noplugins
+yum --noplugins -q list installed bash-completion-extras &>/dev/null && echo "bash-completion-extras" || yum install -y bash-completion-extras --skip-broken --noplugins
+yum-config-manager --disable epel
+echo '************************************'
+echo 'Expanding Ansible Tower and installing '
+echo '************************************'
+wget https://releases.ansible.com/ansible-tower/setup-bundle/ansible-tower-setup-bundle-latest.el8.tar.gz
+echo '************************************'
+echo 'Expanding Ansible Tower and installing '
+echo '************************************'
+tar -zxvf ansible-tower-*.tar.gz
+cd ansible-tower*
+sed -i 's/admin_password="''"/admin_password="'redhat'"/g' inventory
+sed -i 's/redis_password="''"/redis_password="'redhat'"/g' inventory
+sed -i 's/pg_password="''"/pg_password="'redhat'"/g' inventory
+sed -i 's/rabbitmq_password="''"/rabbitmq_password="'redhat'"/g' inventory
+sudo ~/Downloads/ansible-tower/setup.sh
+else
+ echo "Not Running RHEL 8.x !"
+fi
 }
 
-#--------------------------End Primary Functions--------------------------
+#----------------------/----End Primary Functions--------------------------
 
 #-----------------------
 function dMainMenu {
