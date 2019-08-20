@@ -1,5 +1,6 @@
 #!/bin/bash
 #POC/Demo
+#This Script is for setting up a basic Satellite 6.5 or  
 echo -ne "\e[8;40;170t"
 
 # Hammer referance to assist in modifing the script can be found at 
@@ -10,65 +11,16 @@ reset
 
 #--------------------------required packages for script to run----------------------------
 
-echo " "
-echo " "
-echo " "
-echo " "
-echo " "
-echo " "
-echo " "
-echo " "
-echo " "
-echo "
 
-                           P.O.C Satellite 6.X RHEL 7.X KVM or RHEL 7 Physical Host 
-                              THIS SCRIPT CONTAINS NO CONFIDENTIAL INFORMATION
-
-                  This script is designed to set up a basic standalone Satellite 6.X system
-
-             Disclaimer: This script was written for education, evaluation, and/or testing purposes. 
-    This helper script is Licensed under GPL and there is no implied warranty and is not officially supported by anyone.
-                                 
-         ...SHOULD NOT BE USED ON A CURRENTlY OPERATING PRODUCTION SYSTEM - USE AT YOUR OWN RISK...
-
-
-   However the if you have an issue with the products installed and have a valid License please contact Red Hat at:
-
-   RED HAT Inc..
-   1-888-REDHAT-1 or 1-919-754-3700, then select the Menu Prompt for Customer Service
-   Spanish: 1-888-REDHAT-1 Option 5 or 1-919-754-3700 Option 5
-   Fax: 919-754-3701 (General Corporate Fax)
-   Email address: customerservice@redhat.com "
-
-echo " "
-echo " "
-echo " "
-echo " "
-echo " "
-echo " "
-echo " "
-echo " "
-echo " "
-echo " "
-echo " "
-echo " "
-echo " "
-echo " "
-echo " "
-read -p "Press [Enter] to continue"
-clear
-if [ "$(whoami)" != "root" ]
-then
-echo "This script must be run as root - if you do not have the credentials please contact your administrator"
-exit
-fi
 
 #--------------------------required packages for script to run----------------------------
 #------------------
 function SCRIPT {
 #------------------
+HNAME=$(hostname)
+DOM="$(hostname -d)"
 echo "*************************************************************"
-echo " Script configuration requirements installing for this server"
+echo "Installing Script configuration requirements for this server"
 echo "*************************************************************"
 echo "*********************************************************"
 echo "SET SELINUX TO PERMISSIVE FOR THE INSTALL AND CONFIG OF SATELLITE"
@@ -77,8 +29,6 @@ sed -i 's/SELINUX=enforcing/SELINUX=permissive/g' /etc/selinux/config
 setenforce 0
 service firewalld stop
 chkconfig firewalld off
-HNAME=$(hostname)
-DOM="$(hostname -d)"
 service firewalld stop
 setenforce 0
 echo "*********************************************************"
@@ -184,6 +134,63 @@ fi
 #------------------------------------------------------SCRIPT BEGINS-----------------------------------------------------
 #------------------------------------------------------ Functions ------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------------------
+#-------------------------------
+function SATELLITEREADME {
+#-------------------------------
+echo " "
+echo " "
+echo " "
+echo " "
+echo " "
+echo " "
+echo " "
+echo " "
+echo " "
+echo "
+
+                           P.O.C Satellite 6.X RHEL 7.X KVM or RHEL 7 Physical Host 
+                              THIS SCRIPT CONTAINS NO CONFIDENTIAL INFORMATION
+
+                  This script is designed to set up a basic standalone Satellite 6.X system
+
+             Disclaimer: This script was written for education, evaluation, and/or testing purposes. 
+    This helper script is Licensed under GPL and there is no implied warranty and is not officially supported by anyone.
+                                 
+         ...SHOULD NOT BE USED ON A CURRENTlY OPERATING PRODUCTION SYSTEM - USE AT YOUR OWN RISK...
+
+
+   However the if you have an issue with the products installed and have a valid License please contact Red Hat at:
+
+   RED HAT Inc..
+   1-888-REDHAT-1 or 1-919-754-3700, then select the Menu Prompt for Customer Service
+   Spanish: 1-888-REDHAT-1 Option 5 or 1-919-754-3700 Option 5
+   Fax: 919-754-3701 (General Corporate Fax)
+   Email address: customerservice@redhat.com "
+
+echo " "
+echo " "
+echo " "
+echo " "
+echo " "
+echo " "
+echo " "
+echo " "
+echo " "
+echo " "
+echo " "
+echo " "
+echo " "
+echo " "
+echo " "
+read -p "Press [Enter] to continue"
+clear
+if [ "$(whoami)" != "root" ]
+then
+echo "This script must be run as root - if you do not have the credentials please contact your administrator"
+exit
+fi
+}
+
 #-------------------------------
 function REGSAT {
 #-------------------------------
@@ -2836,6 +2843,9 @@ Flag=$(cat $TmpFi)
 case $Flag in
 1) dMsgBx "INSTALL SATELLITE 6.5" \
 sleep 10
+SCRIPT
+SATELLITEREADME
+REGSAT
 VARIABLES1
 IPA
 CAPSULE
@@ -2860,7 +2870,7 @@ DISABLEEXTRAS
 HAMMERCONF
 #CONFIG2
 STOPSPAMMINGVARLOG
-#REQUESTSYNCMGT
+REQUESTSYNCMGT
 #REQUEST5
 #REQUEST6
 REQUEST7
@@ -2904,13 +2914,15 @@ MEDIUM
 #HOSTGROUPS
 #MODPXELINUXDEF
 #ADD_OS_TO_TEMPLATE
-#SATDONE
 #REMOVEUNSUPPORTED
 DISASSOCIATE_TEMPLATES
+#SATUPDATE
+INSIGHTS
+CLEANUP
 echo 'This Script has set up satellite to the point where it should be basicly 
 operational the syntax for some of the items that have been pounded out and require some updating if you plan to use.'
-#SATDONE
-sleep 10 
+SATDONE
+sleep 10
 ;;
 2) dMsgBx "UPGRADE/UPDATE THE SATELLITE 6.X" \
 SATUPDATE
