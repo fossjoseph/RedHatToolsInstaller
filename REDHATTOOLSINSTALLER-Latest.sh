@@ -108,7 +108,7 @@ echo " "
 echo " "
 echo " "
 echo "*********************************************************"
-echo "ENABLE PROEPEL FOR A FEW PACKAGES"
+echo "ENABLE EPEL FOR A FEW PACKAGES"
 echo "*********************************************************"
 yum -q list installed epel-release-latest-7 &>/dev/null && echo "epel-release-latest-7 is installed" || yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm --skip-broken
 yum-config-manager --enable epel  || exit 1
@@ -538,7 +538,7 @@ echo " "
 echo "*********************************************************"
 echo "INSTALLING DEPENDENCIES FOR CONTENT VIEW AUTO PUBLISH"
 echo "*********************************************************"
-yum -y install python-pip rubygem-builder
+yum -y install python-pip python2-pip rubygem-builder --skip-broken
 pip install --upgrade pip
 echo " "
 echo " "
@@ -2518,8 +2518,8 @@ Please register and download your lincense at http://www.ansible.com/tower-trial
 2. Hardware requirement depends, however whether 
   it is a KVM or physical-Tower will require atleast 1 node with:
 
-Min Storage 30 GB
-DirectoryRecommended
+Min Storage 35 GB
+Directorys  Recommended
 /Rest of drive
 /boot  1024MB
 /swap  8192MB
@@ -2586,6 +2586,7 @@ yum-config-manager --enable epel
 yum --noplugins -q list installed ansible &>/dev/null && echo "ansible is installed" || yum install -y ansible --skip-broken --noplugins
 yum --noplugins -q list installed wget &>/dev/null && echo "wget is installed" || yum install -y wget --skip-broken --noplugins
 yum --noplugins -q list installed bash-completion-extras &>/dev/null && echo "bash-completion-extras" || yum install -y bash-completion-extras --skip-broken --noplugins
+yum --noplugins -q list installed python2-pip &>/dev/null && echo "python2-pip" || yum install -y python2-pip --skip-broken --noplugins
 yum-config-manager --disable epel 
 echo '************************************'
 echo 'Expanding Ansible Tower and installing '
@@ -2601,8 +2602,71 @@ sed -i 's/redis_password="''"/redis_password="'redhat'"/g' inventory
 sed -i 's/pg_password="''"/pg_password="'redhat'"/g' inventory
 sed -i 's/rabbitmq_password="''"/rabbitmq_password="'redhat'"/g' inventory
 sudo ~/Downloads/ansible-tower/setup.sh
+sleep 10
+pip install six
+pip install six --upgrade
+pip freeze | grep six
+echo " "
+echo " "
+echo " "
+pip install awscli
+pip install awscli --upgrade 
+pip freeze | grep awscli
+echo " "
+echo " "
+echo " "
+for i in $(pip freeze | grep azure | awk -F '=' '{print $1}') ; do pip install "$i" --upgrade  ; done
+pip install azure
+pip install azure  --upgrade
+pip install azure-common
+pip install azure-common --upgrade
+pip install azure-mgmt-authorization
+pip install azure-mgmt-authorization --upgrade
+pip install azure-mgmt
+pip install azure-mgmt --upgrade 
+pip freeze | grep azure
+echo " "
+echo " "
+echo " "
+pip install boto
+pip install boto --upgrade 
+pip install boto3
+pip install boto3 --upgrade 
+pip install botocore
+pip install botocore --upgrade
+pip freeze | grep boto
+echo " "
+echo " "
+echo " "
+pip install pywinrm
+pip install pywinrm --upgrade
+pip freeze | grep pywinrm
+echo " "
+echo " "
+echo " "
+pip install requests
+pip install requests --upgrade
+pip freeze | grep requests
+echo " "
+echo " "
+echo " "
+pip install requests-credssp
+pip install requests-credssp --upgrade
+pip freeze | grep requests-credssp
+
+echo " "
+echo " "
+echo " "
+echo '************************************'
+echo 'Installing Cloud Requirements (Ignore Errors)'
+echo '************************************'
 else
- echo "Not Running RHEL 7.x !"
+reset
+echo " "
+echo " "
+echo " "
+echo "Not Running RHEL 7.x ! STAND BY TRYING RHEL 8"
+reset
 fi
 
 echo '************************************'
@@ -2627,6 +2691,8 @@ rm -rf /var/cache/yum
 yum --noplugins -q list installed ansible &>/dev/null && echo "ansible is installed" || yum install -y ansible --skip-broken --noplugins
 yum --noplugins -q list installed wget &>/dev/null && echo "wget is installed" || yum install -y wget --skip-broken --noplugins
 yum --noplugins -q list installed bash-completion-extras &>/dev/null && echo "bash-completion-extras" || yum install -y bash-completion-extras --skip-broken --noplugins
+yum --noplugins -q list installed python3-pip &>/dev/null && echo "python3-pip" || yum install -y python3-pip --skip-broken --noplugins
+
 yum-config-manager --disable epel
 echo '************************************'
 echo 'Expanding Ansible Tower and installing '
@@ -2642,6 +2708,64 @@ sed -i 's/redis_password="''"/redis_password="'redhat'"/g' inventory
 sed -i 's/pg_password="''"/pg_password="'redhat'"/g' inventory
 sed -i 's/rabbitmq_password="''"/rabbitmq_password="'redhat'"/g' inventory
 sudo ~/Downloads/ansible-tower/setup.sh
+sleep 10
+echo " "
+echo " "
+echo " "
+echo '************************************'
+echo 'Installing Cloud Requirements (Ignore Errors)'
+echo '************************************'
+source /var/lib/awx/venv/ansible/bin/activate
+pip3 install six
+pip3 install six --upgrade
+pip3 freeze | grep six
+echo " "
+echo " "
+echo " "
+pip3 install awscli
+pip3 install awscli --upgrade 
+pip3 freeze | grep awscli
+echo " "
+echo " "
+echo " "
+for i in $(pip3 freeze | grep azure | awk -F '=' '{print $1}') ; do pip3 install "$i" --upgrade  ; done
+pip3 install azure
+pip3 install azure  --upgrade
+pip3 install azure-common
+pip3 install azure-common --upgrade
+pip3 install azure-mgmt-authorization
+pip3 install azure-mgmt-authorization --upgrade
+pip3 install azure-mgmt
+pip3 install azure-mgmt --upgrade 
+pip3 freeze | grep azure
+echo " "
+echo " "
+echo " "
+pip3 install boto
+pip3 install boto --upgrade 
+pip3 install boto3
+pip3 install boto3 --upgrade 
+pip3 install botocore
+pip3 install botocore --upgrade
+pip3 freeze | grep boto
+echo " "
+echo " "
+echo " "
+pip3 install pywinrm
+pip3 install pywinrm --upgrade
+pip3 freeze | grep pywinrm
+echo " "
+echo " "
+echo " "
+pip3 install requests
+pip3 install requests --upgrade
+pip3 freeze | grep requests
+echo " "
+echo " "
+echo " "
+pip3 install requests-credssp
+pip3 install requests-credssp --upgrade
+pip3 freeze | grep requests-credssp
 else
  echo "Not Running RHEL 8.x !"
 fi
