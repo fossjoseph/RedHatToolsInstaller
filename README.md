@@ -8,10 +8,10 @@ This tool was built to aid in the install Red Hat Satellite 6.5 or the latest An
 This tool was built and tested by the team of :
 
 * Shadd Gallegos of Red Hat 
-
 * Thomas Murphy schonfeld.com
-
 * Rodrique Heron of Red Hat 
+* Kevin Holmes of Red Hat
+* Chris Tjon of Red Hat 
 
 **DISCLAIMER**
 ----------------------------------------------
