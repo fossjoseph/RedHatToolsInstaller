@@ -1,5 +1,6 @@
 #!/bin/bash
 #POC/Demo
+#This Script is for setting up a basic Satellite 6.5 or  
 echo -ne "\e[8;40;170t"
 
 # Hammer referance to assist in modifing the script can be found at 
@@ -10,6 +11,132 @@ reset
 
 #--------------------------required packages for script to run----------------------------
 
+
+
+#--------------------------required packages for script to run----------------------------
+#------------------
+function SCRIPT {
+#------------------
+HNAME=$(hostname)
+DOM="$(hostname -d)"
+echo "*************************************************************"
+echo "Installing Script configuration requirements for this server"
+echo "*************************************************************"
+echo "*********************************************************"
+echo "SET SELINUX TO PERMISSIVE FOR THE INSTALL AND CONFIG OF SATELLITE"
+echo "*********************************************************"
+sed -i 's/SELINUX=enforcing/SELINUX=permissive/g' /etc/selinux/config
+setenforce 0
+service firewalld stop
+chkconfig firewalld off
+service firewalld stop
+setenforce 0
+echo "*********************************************************"
+echo "REGESTERING RHEL SYSTEM"
+echo "*********************************************************"
+subscription-manager register --auto-attach
+echo " "
+echo "*********************************************************"
+echo "SET REPOS ENABLING SCRIPT TO RUN"
+echo "*********************************************************"
+echo " "
+echo "*********************************************************"
+echo "FIRST DISABLE REPOS"
+echo "*********************************************************"
+subscription-manager repos --disable "*" || exit 1
+echo " "
+echo " "
+echo " "
+echo "*********************************************************"
+echo "ENABLE PROPER REPOS"
+echo "*********************************************************"
+subscription-manager repos --enable=rhel-7-server-rpms || exit 1
+subscription-manager repos --enable=rhel-7-server-extras-rpms || exit 1
+subscription-manager repos --enable=rhel-7-server-optional-rpms || exit 1
+subscription-manager repos --enable=rhel-7-server-rpms || exit 1
+echo " "
+echo " "
+echo " "
+echo "*********************************************************"
+echo "ENABLE EPEL FOR A FEW PACKAGES"
+echo "*********************************************************"
+yum -q list installed epel-release-latest-7 &>/dev/null && echo "epel-release-latest-7 is installed" || yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm --skip-broken
+yum-config-manager --enable epel  || exit 1
+subscription-manager repos --enable=rhel-7-server-extras-rpms || exit 1
+yum-config-manager --save --setopt=*.skip_if_unavailable=true
+yum clean all
+rm -fr /var/cache/yum/*
+echo " "
+echo " "
+echo " "
+echo "*********************************************************"
+echo "INSTALLING PACKAGES ENABLING SCRIPT TO RUN"
+echo "*********************************************************"
+yum -q list installed yum-utils &>/dev/null && echo "yum-utils is installed" || yum install -y yum-util* --skip-broken
+yum -q list installed gtk2-devel &>/dev/null && echo "gtk2-devel is installed" || yum install -y gtk2-devel --skip-broken
+yum -q list installed wget &>/dev/null && echo "wget is installed" || yum install -y wget --skip-broken
+yum -q list installed firewalld &>/dev/null && echo "firewalld is installed" || yum install -y firewalld --skip-broken
+yum -q list installed ansible &>/dev/null && echo "ansible is installed" || yum install -y ansible --skip-broken 
+yum -q list installed gnome-terminal &>/dev/null && echo "gnome-terminal is installed" || yum install -y gnome-terminal --skip-broken
+yum -q list installed yum &>/dev/null && echo "yum is installed" || yum install -y yum --skip-broken
+yum -q list installed lynx &>/dev/null && echo "lynx is installed" || yum install -y lynx --skip-broken
+yum -q list installed perl &>/dev/null && echo "perl is installed" || yum install -y perl --skip-broken
+yum -q list installed dialog &>/dev/null && echo "dialog is installed" || yum install -y dialog --skip-broken
+yum -q list installed xdialog &>/dev/null && echo "xdialog is installed" || yum localinstall -y xdialog-2.3.1-13.el7.centos.x86_64.rpm --skip-broken
+yum -q list installed firefox &>/dev/null && echo "firefox is installed" || yum localinstall -y firefox --skip-broken
+yum install -y dconf*
+yum-config-manager --disable epel
+subscription-manager repos --disable=rhel-7-server-extras-rpms
+touch ./SCRIPT
+echo " "
+}
+ls ./SCRIPT
+if [ $? -eq 0 ]; then
+    echo 'The requirements to run this script have been met, proceeding'
+    sleep 5
+else
+    echo "Installing requirements to run script please stand by"
+    SCRIPT
+    sleep 5
+echo " "
+fi
+
+
+#--------------------------Define Env----------------------------
+
+#configures dialog command for proper environment
+
+if [[ -n $DISPLAY ]]
+then
+# Assume script running under X:windows
+DIALOG=`which Xdialog`
+RC=$?
+if [[ $RC != 0 ]]
+then
+DIALOG=`which dialog`
+RC=$?
+if [[ $RC != 0 ]]
+then
+echo "Error:: Could not locate suitable dialog command: Please install dialog or if running in a desktop install Xdialog."
+exit 1
+fi
+fi
+else
+# If Display is not set assume ok to use dialog
+DIALOG=`which dialog`
+RC=$?
+if [[ $RC != 0 ]]
+then
+echo "Error:: Could not locate suitable dialog command: Please install dialog or if running in a desktop install Xdialog."
+exit 1
+fi
+fi
+#------------------------------------------------------SCRIPT BEGINS-----------------------------------------------------
+#------------------------------------------------------ Functions ------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------------------
+#-------------------------------
+function SATELLITEREADME {
+#-------------------------------
 echo " "
 echo " "
 echo " "
@@ -62,108 +189,14 @@ then
 echo "This script must be run as root - if you do not have the credentials please contact your administrator"
 exit
 fi
-
-#--------------------------required packages for script to run----------------------------
-#------------------
-function SCRIPT {
-#------------------
-echo "*************************************************************"
-echo " Script configuration requirements installing for this server"
-echo "*************************************************************"
-echo "*********************************************************"
-echo "SET SELINUX TO PERMISSIVE FOR THE INSTALL AND CONFIG OF SATELLITE"
-echo "*********************************************************"
-sed -i 's/SELINUX=enforcing/SELINUX=permissive/g' /etc/selinux/config
-setenforce 0
-service firewalld stop
-chkconfig firewalld off
-HNAME=$(hostname)
-DOM="$(hostname -d)"
-service firewalld stop
-setenforce 0
-echo "*********************************************************"
-echo "REGESTERING SATELLITE"
-echo "*********************************************************"
-
-subscription-manager register --auto-attach
-subscription-manager attach --pool=`subscription-manager list --available --matches 'Red Hat Satellite Infrastructure Subscription' --pool-only`
-echo " "
-echo "*********************************************************"
-echo "SET REPOS ENABLING SCRIPT TO RUN"
-echo "*********************************************************"
-subscription-manager repos --disable "*" || exit 1
-subscription-manager repos --enable=rhel-7-server-rpms || exit 1
-subscription-manager repos --enable=rhel-7-server-extras-rpms || exit 1
-subscription-manager repos --enable=rhel-7-server-optional-rpms || exit 1
-subscription-manager repos --enable=rhel-7-server-rpms || exit 1
-yum -q list installed epel-release-latest-7 &>/dev/null && echo "epel-release-latest-7 is installed" || yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm --skip-broken
-yum-config-manager --enable epel  || exit 1
-yum-config-manager --save --setopt=*.skip_if_unavailable=true
-rm -fr /var/cache/yum/*
-yum clean all
-echo " "
-echo "*********************************************************"
-echo "INSTALLING PACKAGES ENABLING SCRIPT TO RUN"
-echo "*********************************************************"
-yum -q list installed yum-utils &>/dev/null && echo "yum-utils is installed" || yum install -y yum-util* --skip-broken
-yum -q list installed gtk2-devel &>/dev/null && echo "gtk2-devel is installed" || yum install -y gtk2-devel --skip-broken
-yum -q list installed wget &>/dev/null && echo "wget is installed" || yum install -y wget --skip-broken
-yum -q list installed firewalld &>/dev/null && echo "firewalld is installed" || yum install -y firewalld --skip-broken
-yum -q list installed ansible &>/dev/null && echo "ansible is installed" || yum install -y ansible --skip-broken 
-yum -q list installed gnome-terminal &>/dev/null && echo "gnome-terminal is installed" || yum install -y gnome-terminal --skip-broken
-yum -q list installed yum &>/dev/null && echo "yum is installed" || yum install -y yum --skip-broken
-yum -q list installed lynx &>/dev/null && echo "lynx is installed" || yum install -y lynx --skip-broken
-yum -q list installed perl &>/dev/null && echo "perl is installed" || yum install -y perl --skip-broken
-yum -q list installed dialog &>/dev/null && echo "dialog is installed" || yum install -y *dialog* --skip-broken
-yum -q list installed xdialog &>/dev/null && echo "xdialog is installed" || yum localinstall -y xdialog --skip-broken
-yum -q list installed firefox &>/dev/null && echo "firefox is installed" || yum localinstall -y firefox --skip-broken
-yum install -y dconf*
-touch ./SCRIPT
-echo " "
 }
-ls ./SCRIPT
-if [ $? -eq 0 ]; then
-    echo 'The requirements to run this script have been met, proceeding'
-else
-    echo "Installing requirements to run script please stand by"
-    SCRIPT
-    sleep 5
-echo " "
-fi
 
+#-------------------------------
+function REGSAT {
+#-------------------------------
+subscription-manager attach --pool=`subscription-manager list --available --matches 'Red Hat Satellite Infrastructure Subscription' --pool-only`
+}
 
-#--------------------------Define Env----------------------------
-
-#configures dialog command for proper environment
-
-if [[ -n $DISPLAY ]]
-then
-# Assume script running under X:windows
-DIALOG=`which Xdialog`
-RC=$?
-if [[ $RC != 0 ]]
-then
-DIALOG=`which dialog`
-RC=$?
-if [[ $RC != 0 ]]
-then
-echo "Error:: Could not locate suitable dialog command: Please install dialog or if running in a desktop install Xdialog."
-exit 1
-fi
-fi
-else
-# If Display is no set assume ok to use dialog
-DIALOG=`which dialog`
-RC=$?
-if [[ $RC != 0 ]]
-then
-echo "Error:: Could not locate suitable dialog command: Please install dialog or if running in a desktop install Xdialog."
-exit 1
-fi
-fi
-#------------------------------------------------------SCRIPT BEGINS-----------------------------------------------------
-#------------------------------------------------------ Functions ------------------------------------------------------
-#-----------------------------------------------------------------------------------------------------------------------
 #-------------------------------
 function VARIABLES1 {
 #-------------------------------
@@ -475,7 +508,12 @@ echo "SET REPOS FOR INSTALLING AND UPDATING SATELLITE 6.5"
 echo "*********************************************************"
 echo -ne "\e[8;40;170t"
 subscription-manager repos --disable '*'
-yum-config-manager --disable epel
+echo " "
+echo " "
+echo " "
+echo "*********************************************************"
+echo "ENABLE SATELLITE 6.5 REPOS"
+echo "*********************************************************"
 subscription-manager repos --enable=rhel-7-server-rpms || exit 1
 subscription-manager repos --enable=rhel-server-rhscl-7-rpms || exit 1
 subscription-manager repos --enable=rhel-7-server-optional-rpms || exit 1
@@ -484,24 +522,39 @@ subscription-manager repos --enable=rhel-7-server-satellite-maintenance-6-rpms |
 subscription-manager repos --enable rhel-7-server-ansible-2.8-rpms || exit 1
 yum clean all 
 rm -rf /var/cache/yum
+echo " "
+echo " "
+echo " "
 }
 #------------------------------
 function INSTALLDEPS {
 #------------------------------
 echo "*********************************************************"
-echo "INSTALLING DEPENDENCIES FOR SATELLITE OPERATING ENVIRONMENT"
+echo "INSTALLING DEPENDENCIES AND UPDATING FOR SATELLITE OPERATING ENVIRONMENT"
 echo "*********************************************************"
 echo -ne "\e[8;40;170t"
 yum-config-manager --enable epel
+subscription-manager repos --enable=rhel-7-server-extras-rpms
+yum clean all ; rm -rf /var/cache/yum
 sleep 5
-yum install -y screen yum-utils vim gcc gcc-c++ git rh-nodejs8-npm make automake kernel-devel ruby-devel libvirt-client bind dhcp tftp 
+yum install -y screen yum-utils vim gcc gcc-c++ git rh-nodejs8-npm make automake kernel-devel ruby-devel libvirt-client bind dhcp tftp libvirt augeas
 sleep 5
+echo " "
+echo " "
+echo " "
 echo "*********************************************************"
 echo "INSTALLING DEPENDENCIES FOR CONTENT VIEW AUTO PUBLISH"
 echo "*********************************************************"
-yum -y install python-pip rubygem-builder
-yum-config manager --disable epel
+yum -y install python-pip python2-pip rubygem-builder --skip-broken
 pip install --upgrade pip
+echo " "
+echo " "
+echo " "
+echo "*********************************************************"
+echo "UPGRADING OS"
+echo "*********************************************************"
+yum-config-manager --disable epel
+subscription-manager repos --disable=rhel-7-server-extras-rpms
 yum clean all ; rm -rf /var/cache/yum
 yum upgrade -y; yum update -y
 }
@@ -588,7 +641,7 @@ echo "CHECKING FQDN"
 echo "*********************************************************"
 hostname -f 
 if [ $? -eq 0 ]; then
-    echo 'The FQDN is as expected $(hostname)'
+    echo 'The FQDN is as expected '$(hostname)''
 else
     echo "The FQDN is not defined please correct and try again"
     mv /root/.bashrc.bak /root/.bashrc
@@ -617,34 +670,66 @@ fi
 #  --------------------------------------
 function INSTALLNSAT {
 #  --------------------------------------
-echo "*********************************************************"
-echo "INSTALLING SATELLITE"
-echo "*********************************************************"
 echo -ne "\e[8;40;170t"
 source /root/.bashrc
+echo " "
+echo " "
+echo " "
+echo "*********************************************************"
+echo "VERIFING REPOS FOR SATELLITE 6.5"
+echo "*********************************************************"
 yum-config-manager --disable epel
+subscription-manager repos --disable=rhel-7-server-extras-rpms
+yum clean all
+rm -rf /var/cache/yum
 subscription-manager repos --enable=rhel-7-server-rpms || exit 1
 subscription-manager repos --enable=rhel-server-rhscl-7-rpms || exit 1
 subscription-manager repos --enable=rhel-7-server-optional-rpms || exit 1
 subscription-manager repos --enable=rhel-7-server-satellite-6.5-rpms || exit 1
 subscription-manager repos --enable=rhel-7-server-satellite-maintenance-6-rpms || exit 1
 subscription-manager repos --enable rhel-7-server-ansible-2.8-rpms 
-yum clean all 
+yum clean all
 rm -rf /var/cache/yum
-
+sleep 5
+echo " "
+echo " "
+echo " "
+echo "*********************************************************"
+echo "INSTALLING SATELLITE COMPONENTS"
+echo "*********************************************************"
+echo "INSTALLING SATELLITE"
 yum -q list installed satellite &>/dev/null && echo "satellite is installed" || time yum install satellite -y --skip-broken
+echo " "
+echo " "
+echo " "
+echo "INSTALLING PUPPET"
 yum -q list installed puppetserver &>/dev/null && echo "puppetserver is installed" || time yum install puppetserver -y --skip-broken
 yum -q list installed puppet-agent-oauth &>/dev/null && echo "puppet-agent-oauth is installed" || time yum install puppet-agent-oauth -y --skip-broken
 yum -q list installed puppet-agent &>/dev/null && echo "puppet-agent is installed" || time yum install puppet-agent -y --skip-broken
+yum -q list installed rhel-system-roles &>/dev/null && echo "rhel-system-roles is installed" || time yum install rhel-system-roles -y --skip-broken
+yum -q list installed rh-mongodb34-syspaths &>/dev/null && echo "rh-mongodb34-syspaths is installed" || time yum install rh-mongodb34-syspaths -y --skip-broken
+
+
+echo " "
+echo " "
+echo " "
+echo "INSTALLING ANSIBLE ROLES"
+subscription-manager repos --enable=rhel-7-server-extras-rpms
+yum clean all
+rm -rf /var/cache/yuml 
+yum -q list installed rhel-system-roles &>/dev/null && echo "rhel-system-roles is installed" || time yum install rhel-system-roles -y --skip-broken
 }
 #---END OF SAT 6.X INSTALL SCRIPT---
 
 #---START OF SAT 6.X CONFIGURE SCRIPT---
-#  --------------------------------------
+#--------------------------------------
 function CONFSAT {
-#  --------------------------------------
+#--------------------------------------
 source /root/.bashrc
 echo -ne "\e[8;40;170t"
+echo " "
+echo " "
+echo " "
 echo "*********************************************************"
 echo "CONFIGURING SATELLITE"
 echo "*********************************************************"
@@ -652,9 +737,18 @@ echo " "
 echo "*********************************************************"
 echo "CONFIGURING SATELLITE BASE"
 echo "*********************************************************"
+source /root/.bashrc
+echo -ne "\e[8;40;170t"
+echo " "
+echo " "
+echo " "
+yum clean all
+rm -rf /var/cache/yum
+sleep 5
 satellite-installer --scenario satellite -v \
 --foreman-admin-password=$ADMIN_PASSWORD \
 --foreman-admin-username=$ADMIN \
+--foreman-proxy-plugin-remote-execution-ssh-install-key true \
 --foreman-initial-organization=$ORG \
 --foreman-initial-location=$LOC \
 --foreman-proxy-dns true \
@@ -664,40 +758,92 @@ satellite-installer --scenario satellite -v \
 --foreman-proxy-dns-interface $SAT_INTERFACE \
 --foreman-proxy-dns-zone=$DOM \
 --foreman-proxy-dns-forwarders $DNS \
---foreman-proxy-dns-reverse $DNS_REV 
+--foreman-proxy-dns-reverse $DNS_REV \
+--foreman-proxy-dns-listen-on both \
+--foreman-proxy-bmc-listen-on both \
+--foreman-proxy-logs-listen-on both \
+--foreman-proxy-realm-listen-on both \
+--foreman-proxy-templates-listen-on both
 
 #--foreman-proxy-dns-tsig-principal="foreman-proxy $(hostname)@$DOM" \
 #--foreman-proxy-dns-tsig-keytab=/etc/foreman-proxy/dns.key \
-
+}
+#--------------------------------------
+function CONFSATDHCP {
+#--------------------------------------
+source /root/.bashrc
+echo -ne "\e[8;40;170t"
+echo " "
+echo " "
 echo " "
 echo "*********************************************************"
 echo "CONFIGURING SATELLITE DHCP"
 echo "*********************************************************"
-source /root/.bashrc
+yum clean all
+rm -rf /var/cache/yum
+sleep 5
 satellite-installer --scenario satellite -v \
 --foreman-proxy-dhcp true \
 --foreman-proxy-dhcp-server=$INTERNALIP \
 --foreman-proxy-dhcp-interface=$SAT_INTERFACE \
 --foreman-proxy-dhcp-range="$DHCP_RANGE" \
 --foreman-proxy-dhcp-gateway=$DHCP_GW \
---foreman-proxy-dhcp-nameservers=$DHCP_DNS
+--foreman-proxy-dhcp-nameservers=$DHCP_DNS \
+--foreman-proxy-dhcp-listen-on both
+}
+#--------------------------------------
+function CONFSATTFTP {
+#--------------------------------------
+source /root/.bashrc
+echo -ne "\e[8;40;170t"
+echo " "
+echo " "
 echo " "
 echo "*********************************************************"
 echo "CONFIGURING SATELLITE TFTP"
 echo "*********************************************************"
-source /root/.bashrc
+yum clean all
+rm -rf /var/cache/yum
+sleep 5
 yum -q list installed foreman-discovery-image &>/dev/null && echo "foreman-discovery-image is installed" || yum install -y foreman-discovery-image* --skip-broken
 yum -q list installed rubygem-smart_proxy_discovery &>/dev/null && echo "rubygem-smart_proxy_discovery is installed" || yum install -y rubygem-smart_proxy_discovery* --skip-broken 
-
 satellite-installer --scenario satellite -v \
 --foreman-proxy-tftp true \
+--foreman-proxy-tftp-listen-on both \
 --foreman-proxy-tftp-servername="$(hostname)"
+}
+#--------------------------------------
+function CONFSATPLUGINS {
+#--------------------------------------
+source /root/.bashrc
+echo -ne "\e[8;40;170t"
+echo " "
+echo " "
 echo " "
 echo "*********************************************************"
 echo "CONFIGURING ALL SATELLITE PLUGINS"
 echo "*********************************************************"
+
+subscription-manager repos --enable=rhel-7-server-rpms
+subscription-manager repos --enable=rhel-server-rhscl-7-rpms
+subscription-manager repos --enable=rhel-7-server-optional-rpms
+subscription-manager repos --enable=rhel-7-server-satellite-6.5-rpms
+subscription-manager repos --enable=rhel-7-server-satellite-maintenance-6-rpm
+subscription-manager repos --enable rhel-7-server-ansible-2.8-rpms
+subscription-manager repos --enable=rhel-7-server-extras-rpms
+
+yum clean all 
+rm -rf /var/cache/yum
+sleep 5
 yum groupinstall -y 'Red Hat Satellite'
+sleep 5
 yum -q list installed puppet-foreman_scap_client &>/dev/null && echo "puppet-foreman_scap_client is installed" || yum install -y puppet-foreman_scap_client* --skip-broken
+yum -q list installed tfm-rubygem-foreman_discovery &>/dev/null && echo "tfm-rubygem-foreman_discovery is installed" || yum install -y tfm-rubygem-foreman_discovery* --skip-broken
+yum -q list installed foreman-discovery-image &>/dev/null && echo "foreman-discovery-image_client is installed" || yum install -y foreman-discovery* --skip-broken
+yum -q list installed rubygem-smart_proxy_discovery &>/dev/null && echo "rubygem-smart_proxy_discovery is installed" || yum install -y rubygem-smart_proxy_discovery* --skip-broken
+yum -q list installed rubygem-smart_proxy_discovery_image &>/dev/null && echo "rubygem-smart_proxy_discovery_image y is installed" || yum install -y rubygem-smart_proxy_discovery_image --skip-broken
+yum -q list installed tfm-rubygem-hammer_cli_foreman_discovery &>/dev/null && echo "tfm-rubygem-hammer_cli_foreman_discovery is installed" || yum install -y tfm-rubygem-hammer_cli_foreman_discovery --skip-broken
+yum -q list installed foreman_scap_client &>/dev/null && echo "foreman_scap_client is installed" || yum install -y foreman_scap_client --skip-broken
 
 source /root/.bashrc
 satellite-installer --scenario satellite -v \
@@ -717,33 +863,60 @@ satellite-installer --scenario satellite -v \
 --enable-foreman-compute-ovirt \
 --enable-foreman-compute-rackspace \
 --enable-foreman-compute-vmware \
---enable-foreman-plugin-bootdisk 
+--enable-foreman-plugin-bootdisk \
+--enable-foreman-plugin-ansible
+}
+
+#--------------------------------------
+function CONFSATDEB {
+#--------------------------------------
+source /root/.bashrc
+echo -ne "\e[8;40;170t"
+echo " "
+echo " "
+echo " "
+echo "*********************************************************"
+echo "CONFIGURING DEB SATELLITE PLUGINS"
+echo "*********************************************************"
+yum clean all 
+rm -rf /var/cache/yum
 echo " "
 echo "*********************************************************"
 echo "ENABLE DEB"
 echo "*********************************************************"
-foreman-installer -v --foreman-proxy-content-enable-deb true --katello-enable-deb
+#yum install https://yum.theforeman.org/releases/latest/el7/x86_64/foreman-release.rpm
+#satellite-installer -v  --katello-enable-deb true
+#foreman-installer -v --foreman-proxy-content-enable-deb  --katello-enable-deb
+}
+#--------------------------------------
+function CONFSATCACHE {
+#--------------------------------------
+source /root/.bashrc
+echo -ne "\e[8;40;170t"
 echo " "
-echo "*********************************************************"
-echo "ENABLE Ansible"
-echo "*********************************************************"
-subscription-manager repos --enable=rhel-7-server-extras-rpms
-yum -y install rhel-system-roles
-subscription-manager repos --disable=rhel-7-server-e●●●●●●xtras-rpms
-
-echo " "
+sleep 5
 echo "*********************************************************"
 echo "CONFIGURING SATELLITE CACHE"
 echo "*********************************************************"
 foreman-rake apipie:cache:index --trace
 echo " "
+echo " "
+echo " "
+}
+#--------------------------------------
+function CHECKDHCP {
+#--------------------------------------
+source /root/.bashrc
+echo -ne "\e[8;40;170t"
+echo " "
+sleep 5
 echo "*********************************************************"
-echo "DHCP SATELLITE"
+echo "VERIFYING DHCP IS WANTED FOR NEW SYSTEMS "
 echo "*********************************************************"
 echo " "
 DEFAULTDHCP=y
 COUNTDOWN=15
-read -n1 -p "Would like to use the DHCP server provided by Satellite? y/n " INPUT
+read -n1 -t "$COUNTDOWN" -p "Would like to use the DHCP server provided by Satellite? y/n " INPUT
 INPUT=${INPUT:-$DEFAULTDHCP}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo " "
@@ -760,9 +933,25 @@ echo -e "\n$FMESSAGE\n"
 REQUEST
 fi
 }
+#--------------------------------------
+function DISABLEEXTRAS {
+#--------------------------------------
+echo "*********************************************************"
+echo "DISABLING EXTRA REPO "
+echo "*********************************************************"
+source /root/.bashrc
+echo -ne "\e[8;40;170t"
+echo " "
+subscription-manager repos --disable=rhel-7-server-extras-rpms
+yum clean all 
+rm -rf /var/cache/yum
+}
 #------------------------------
 function HAMMERCONF {
 #------------------------------
+echo " "
+echo " "
+echo " "
 echo "*********************************************************"
 echo "CONFIGURING HAMMER"
 echo "*********************************************************"
@@ -793,22 +982,30 @@ function CONFIG2 {
 #  --------------------------------------
 source /root/.bashrc
 echo -ne "\e[8;40;170t"
-echo ' '
+echo " "
+echo " "
+echo " "
 echo "*********************************************************"
 echo '
 Pulling up the url so you can build and export the manifest
 This must be saved into the /home/admin/Downloads directory
 '
 echo "*********************************************************"
-echo ' '
+echo " "
+echo " "
+echo " "
 read -p "Press [Enter] to continue"
-echo ' '
-echo ' '
+echo " "
+echo " "
+echo " "
 echo "*********************************************************"
 echo 'If you have put your manafest into /home/admin/Downloads/'
 echo "*********************************************************"
 read -p "Press [Enter] to continue"
 sleep 5
+echo " "
+echo " "
+echo " "
 echo "*********************************************************"
 echo 'WHEN PROMPTED PLEASE ENTER YOUR SATELLITE ADMIN USERNAME AND PASSWORD'
 echo "*********************************************************"
@@ -817,11 +1014,17 @@ chown -R admin:admin /home/admin
 source /root/.bashrc
 for i in $(find /home/admin/Downloads/ |grep manifest* ); do sudo -u admin hammer subscription upload --file $i --organization $ORG ; done  || exit 1
 hammer subscription refresh-manifest --organization $ORG
+echo " "
+echo " "
+echo " "
 echo "*********************************************************"
 echo 'REFRESHING THE CAPSULE CONTENT'
 echo "*********************************************************"
 for i in $(hammer capsule list |awk -F '|' '{print $1}' |grep -v ID|grep -v -) ; do hammer capsule refresh-features --id=$i ; done 
 sleep 5
+echo " "
+echo " "
+echo " "
 echo "*********************************************************"
 echo 'SETTING SATELLITE EVN SETTINGS'
 echo "*********************************************************"
@@ -830,8 +1033,13 @@ hammer settings set --name default_organization  --value $ORG
 hammer settings set --name default_location  --value $LOC
 hammer settings set --name discovery_organization  --value $ORG
 hammer settings set --name root_pass --value $NODEPASS
-
+hammer settings set --name query_local_nameservers --value true
+hammer settings set --name host_owner --value $ADMIN
+hammer settings set --name lab_features --value true
 mkdir -p /etc/puppet/environments/production/modules
+echo " "
+echo " "
+echo " "
 }
 #-------------------------------
 function STOPSPAMMINGVARLOG {
@@ -942,12 +1150,11 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "RHEL 5 STANDARD REPOS:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGE5 ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN" -p "$QMESSAGE5 ? Y/N " INPUT
 INPUT=${INPUT:-$RHEL5DEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
 hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='5.11' --name 'Red Hat Enterprise Linux 5 Server (Kickstart)'
-hammer repository update --organization $ORG --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 5 Server (Kickstart)' --download-policy immediate
 time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 5 Server Kickstart x86_64 5.11' 2>/dev/null
 
 hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='5Server' --name 'Red Hat Enterprise Linux 5 Server (RPMs)'
@@ -997,12 +1204,11 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "RHEL 6 STANDARD REPOS:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGE6 ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGE6 ? Y/N " INPUT
 INPUT=${INPUT:-$RHEL6DEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
 hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='6Server' --name 'Red Hat Enterprise Linux 6 Server (Kickstart)'
-hammer repository update --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='6.10' --name 'Red Hat Enterprise Linux 6 Server (Kickstart)' --download-policy immediate
 time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='6.10'--name 'Red Hat Enterprise Linux 6 Server (Kickstart)' 2>/dev/null
 
 hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='6Server' --name 'Red Hat Enterprise Linux 6 Server (RPMs)'
@@ -1055,12 +1261,11 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "RHEL 7 STANDARD REPOS:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGE7 ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGE7 ? Y/N " INPUT
 INPUT=${INPUT:-$RHEL7DEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
 hammer repository-set enable --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='7.6' --name 'Red Hat Enterprise Linux 7 Server (Kickstart)' 
-hammer repository update --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='7.6' --name 'Red Hat Enterprise Linux 7 Server (Kickstart)' --download-policy immediate
 time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 7 Server Kickstart x86_64 7.6' 2>/dev/null
 hammer repository-set enable --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Enterprise Linux 7 Server (RPMs)'
 time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server' 2>/dev/null
@@ -1106,7 +1311,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "JBOSS ENTERPRISE APPLICATION PLATFORM 7:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGEJBOSS ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGEJBOSS ? Y/N " INPUT
 INPUT=${INPUT:-$OTHER7REPOSDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1129,7 +1334,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "RED HAT VIRTUALIZATION 4 MANAGEMENT AGENTS:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGEVIRTAGENT ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGEVIRTAGENT ? Y/N " INPUT
 INPUT=${INPUT:-$OTHER7REPOSDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1152,7 +1357,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "RED HAT SATELLITE 6.5:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGESAT64 ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGESAT64 ? Y/N " INPUT
 INPUT=${INPUT:-$OTHER7REPOSDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1175,7 +1380,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "RED HAT OPENSHIFT CONTAINER PLATFORM 3.10:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGEOSC ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGEOSC ? Y/N " INPUT
 INPUT=${INPUT:-$OTHER7REPOSDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1198,7 +1403,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "RED HAT CEPH:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGECEPH ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGECEPH ? Y/N " INPUT
 INPUT=${INPUT:-$OTHER7REPOSDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1234,7 +1439,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "RED HAT STORAGE NATIVE CLIENT:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGESNC ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGESNC ? Y/N " INPUT
 INPUT=${INPUT:-$OTHER7REPOSDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1258,7 +1463,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "RED HAT CEPH STORAGE:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGECSI ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGECSI ? Y/N " INPUT
 INPUT=${INPUT:-$OTHER7REPOSDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1282,7 +1487,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "OPENSTACK PLATFORM 13:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGEOSP ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGEOSP ? Y/N " INPUT
 INPUT=${INPUT:-$OTHER7REPOSDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1306,7 +1511,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "OPENSTACK PLATFORM 13 OPERATIONAL TOOLS:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGEOSPT ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGEOSPT ? Y/N " INPUT
 NPUT=${INPUT:-$OTHER7REPOSDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1330,7 +1535,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "OPENSTACK PLATFORM 13 DIRECTOR:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGEOSPD ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGEOSPD ? Y/N " INPUT
 INPUT=${INPUT:-$OTHER7REPOSDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1354,7 +1559,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "RHVH:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGERHVH ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGERHVH ? Y/N " INPUT
 INPUT=${INPUT:-$OTHER7REPOSDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1378,7 +1583,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "RHV:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGERHVM ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGERHVM ? Y/N " INPUT
 INPUT=${INPUT:-$OTHER7REPOSDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1402,7 +1607,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "ATOMIC:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGEATOMIC ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGEATOMIC ? Y/N " INPUT
 INPUT=${INPUT:-$OTHER7REPOSDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1426,7 +1631,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "ANSIBLE TOWER:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGETOWER ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGETOWER ? Y/N " INPUT
 INPUT=${INPUT:-$OTHER7REPOSDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1451,7 +1656,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "PUPPET FORGE:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGEPUPPET ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGEPUPPET ? Y/N " INPUT
 INPUT=${INPUT:-$PUPPETDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1476,7 +1681,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "JENKINS:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGEJENKINS ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGEJENKINS ? Y/N " INPUT
 INPUT=${INPUT:-$OTHER7REPOSDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1503,7 +1708,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "MAVEN:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGEMAVEN ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGEMAVEN ? Y/N " INPUT
 INPUT=${INPUT:-$OTHER7REPOSDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1528,7 +1733,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "ICINGA:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGEICINGA ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGEICINGA ? Y/N " INPUT
 INPUT=${INPUT:-$OTHER7REPOSDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1555,7 +1760,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "CentOS Linux 7.6:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGEICENTOS7 ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGEICENTOS7 ? Y/N " INPUT
 INPUT=${INPUT:-$OTHER7REPOSDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1565,7 +1770,6 @@ hammer gpg create --organization $ORG --name  RPM-GPG-KEY-CentOS-Linux-7.6  --ke
 hammer product create --name='CentOS Linux 7.6' --organization $ORG
 
 hammer repository create  --organization $ORG --name='CentOS Linux 7.6 (Kickstart)' --product='CentOS Linux 7.6' --content-type='yum' --gpg-key=RPM-GPG-KEY-CentOS-Linux-7.6 --publish-via-http=true --url=http://mirror.centos.org/centos/7.6.1810/os/x86_64/ 
-hammer repository update --organization "$ORG" --product 'CentOS Linux 7.6' --name='CentOS Linux 7.6 (Kickstart)' --download-policy immediate
 time hammer repository synchronize --organization "$ORG" --product 'CentOS Linux 7.6' --name 'CentOS Linux 7.6 (Kickstart)' 2>/dev/null
 
 hammer repository create  --organization $ORG --name='CentOS Linux 7.6 CentOS Plus' --product='CentOS Linux 7.6' --content-type='yum' --gpg-key=RPM-GPG-KEY-CentOS-Linux-7.6 --publish-via-http=true --url=http://mirror.centos.org/centos/7.6.1810/centosplus/x86_64/ --checksum-type=sha256
@@ -1612,7 +1816,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "CentOS Linux 7.6:"
 echo "*********************************************************"
-read -n1 -t$COUNTDOWN -p "$QMESSAGEISCIENTIFICLINUX7 ? Y/N " INPUT
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGEISCIENTIFICLINUX7 ? Y/N " INPUT
 INPUT=${INPUT:-$OTHER7REPOSDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
@@ -1623,7 +1827,6 @@ hammer gpg create --organization $ORG --name RPM-GPG-KEY-sl7 --key RPM-GPG-KEY-s
 hammer product create --name='Scientific Linux 7.6' --organization $ORG
 
 hammer repository create  --organization $ORG --name='Scientific Linux 7.6 (Kickstart)' --product='Scientific Linux 7.6' --content-type='yum' --gpg-key='RPM-GPG-KEY-sl7' --publish-via-http=true --url=http://mirror.cpsc.ucalgary.ca/mirror/scientificlinux.org/7.6/x86_64/os/
-hammer repository update --organization "$ORG" --product 'Scientific Linux 7.6' --name='Scientific Linux 7.6 (Kickstart)' --download-policy immediate
 time hammer repository synchronize --organization "$ORG" --product='Scientific Linux 7.6' --name='Scientific Linux 7.6 (Kickstart)' 2>/dev/null
 
 hammer repository create  --organization $ORG --name='Scientific Linux 7.6 Updates Fastbugs' --product='Scientific Linux 7.6' --content-type='yum' --gpg-key='RPM-GPG-KEY-sl7' --publish-via-http=true --url=http://mirror.cpsc.ucalgary.ca/mirror/scientificlinux.org/7.6/x86_64/updates/fastbugs/
@@ -1661,7 +1864,7 @@ echo -ne "\e[8;40;170t"
 echo "*********************************************************"
 echo "SYNC ALL REPOSITORIES (WAIT FOR THIS TO COMPLETE BEFORE CONTINUING):"
 echo "*********************************************************"
-for i in $(hammer --csv repository list |grep -i kickstart  |awk -F ',' '{print $1}') ; do hammer repository update --id $i --download-policy immediate ; done
+for i in $(hammer --csv repository list |grep -i kickstart  | awk -F ',' '{print $1}') ; do hammer repository update --id $i --download-policy immediate ; done
 for i in $(hammer --csv repository list --organization $ORG | awk -F, {'print $1'} | grep -vi '^ID'); do hammer repository synchronize --id ${i} --organization $ORG --async; done
 sleep 5
 echo " "
@@ -1709,30 +1912,30 @@ echo "TEST_RHEL_7"
 hammer lifecycle-environment create --name='TEST_RHEL_7' --prior='DEV_RHEL_7' --organization $ORG
 echo "PRODUCTION_RHEL_7"
 hammer lifecycle-environment create --name='PROD_RHEL_7' --prior='TEST_RHEL_7' --organization $ORG
-echo "DEVLOPMENT_RHEL_6"
-hammer lifecycle-environment create --name='DEV_RHEL_6' --prior='Library' --organization $ORG
-echo "TEST_RHEL_6"
-hammer lifecycle-environment create --name='TEST_RHEL_6' --prior='DEV_RHEL_6' --organization $ORG
-echo "PRODUCTION_RHEL_6"
-hammer lifecycle-environment create --name='PROD_RHEL_6' --prior='TEST_RHEL_6' --organization $ORG
-echo "DEVLOPMENT_RHEL_5"
-hammer lifecycle-environment create --name='DEV_RHEL_5' --prior='Library' --organization $ORG
-echo "TEST_RHEL_5"
-hammer lifecycle-environment create --name='TEST_RHEL_5' --prior='DEV_RHEL_5' --organization $ORG
-echo "PRODUCTION_RHEL_5"
-hammer lifecycle-environment create --name='PROD_RHEL_5' --prior='TEST_RHEL_5' --organization $ORG
-echo "DEVLOPMENT_CentOS_7"
-hammer lifecycle-environment create --name='DEV_CentOS_7' --prior='Library' --organization $ORG
-echo "TEST_CentOS_7"
-hammer lifecycle-environment create --name='TEST_CentOS_7' --prior='DEV_CentOS_7' --organization $ORG
-echo "PRODUCTION_CentOS_7"
-hammer lifecycle-environment create --name='PROD_CentOS_7' --prior='TEST_CentOS_7' --organization $ORG
-echo " "
-hammer lifecycle-environment list --organization $ORG
-echo " "
+#echo "DEVLOPMENT_RHEL_6"
+#hammer lifecycle-environment create --name='DEV_RHEL_6' --prior='Library' --organization $ORG
+#echo "TEST_RHEL_6"
+#hammer lifecycle-environment create --name='TEST_RHEL_6' --prior='DEV_RHEL_6' --organization $ORG
+#echo "PRODUCTION_RHEL_6"
+#hammer lifecycle-environment create --name='PROD_RHEL_6' --prior='TEST_RHEL_6' --organization $ORG
+#echo "DEVLOPMENT_RHEL_5"
+#hammer lifecycle-environment create --name='DEV_RHEL_5' --prior='Library' --organization $ORG
+#echo "TEST_RHEL_5"
+#hammer lifecycle-environment create --name='TEST_RHEL_5' --prior='DEV_RHEL_5' --organization $ORG
+#echo "PRODUCTION_RHEL_5"
+#hammer lifecycle-environment create --name='PROD_RHEL_5' --prior='TEST_RHEL_5' --organization $ORG
+#echo "DEVLOPMENT_CentOS_7"
+#hammer lifecycle-environment create --name='DEV_CentOS_7' --prior='Library' --organization $ORG
+#echo "TEST_CentOS_7"
+#hammer lifecycle-environment create --name='TEST_CentOS_7' --prior='DEV_CentOS_7' --organization $ORG
+#echo "PRODUCTION_CentOS_7"
+#hammer lifecycle-environment create --name='PROD_CentOS_7' --prior='TEST_CentOS_7' --organization $ORG
+#echo " "
+#hammer lifecycle-environment list --organization $ORG
+#echo " "
 }
 #-------------------------------
-function DAILYSYNC {
+function SYNCPLANS {
 #-------------------------------
 source /root/.bashrc
 echo -ne "\e[8;40;170t"
@@ -2057,6 +2260,7 @@ echo "*********************************************************"
 echo "Create Media:"
 echo "*********************************************************"
 hammer medium create --path=http://repos/${ORG}/Library/content/dist/rhel/server/7/7.6/x86_64/kickstart/ --organizations=$ORG --locations="$LOC" --os-family=Redhat --name="RHEL 7.6 Kickstart" --operatingsystems="RedHat 7.6"
+hammer medium create --path=http://repos/${ORG}/Library/content/dist/rhel/server/7/7.7/x86_64/kickstart/ --organizations=$ORG --locations="$LOC" --os-family=Redhat --name="RHEL 7.7 Kickstart" --operatingsystems="RedHat 7.7"
 }
 #----------------------------------
 function VARSETUP2 {
@@ -2093,7 +2297,6 @@ cat /root/.bashrc
 echo " "
 sleep 5
 read -p "Press [Enter] to continue"
-
 
 }
 #-----------------------------------
@@ -2264,7 +2467,7 @@ subscription-manager repos --enable=rhel-7-server-satellite-6.5-rpms
 subscription-manager repos --enable=rhel-7-server-satellite-maintenance-6-rpms
 subscription-manager repos --enable rhel-7-server-ansible-2.8-rpms
 yum-config-manager --setopt=\*.skip_if_unavailable=1 --save \* 
-foreman-rake foreman_tasks:cleanup TASK_SEARCH='label = Actions::Katello::Repository::Sync' STATES='paused,pending,stopped,error' VERBOSE=true
+foreman-rake foreman_tasks:cleanup TASK_SEARCH='label = Actions::Katello::Repository::Sync' STATES='paused,pending,stopped' VERBOSE=true
 foreman-rake katello:delete_orphaned_content --trace
 foreman-rake katello:reindex --trace
 katello-service stop
@@ -2322,8 +2525,8 @@ Please register and download your lincense at http://www.ansible.com/tower-trial
 2. Hardware requirement depends, however whether 
   it is a KVM or physical-Tower will require atleast 1 node with:
 
-Min Storage 30 GB
-DirectoryRecommended
+Min Storage 35 GB
+Directorys  Recommended
 /Rest of drive
 /boot  1024MB
 /swap  8192MB
@@ -2350,9 +2553,9 @@ Connection to the internet so the instller can download the required packages
 * Ansible-Tower download will be pulled from https://releases.ansible.com/awx/setup/ansible-tower-setup-latest.tar.gz
 
 6. This install was tested with:
-          * RHEL_7.6 in a KVM environment.
+          * RHEL_7.7 in a KVM environment.
           * Red Hat subscriber channels:
-             rhel-7-server-ansible-2.7-rpms
+             rhel-7-server-ansible-2.8-rpms
              rhel-7-server-extras-rpms
              rhel-7-server-optional-rpms
              rhel-7-server-rpms
@@ -2371,60 +2574,211 @@ read -p "If you have met the minimum requirement from above please Press [Enter]
 echo "************************************"
 echo "installing prereq"
 echo "************************************"
-if grep -q -i "release 7.6" /etc/redhat-release ; then
+if grep -q -i "release 7" /etc/redhat-release ; then
 rhel7only=1
-echo "RHEL 7.6"
+echo "RHEL 7.7"
+subscrition-manager register --auto-attach
+subscrition-manager reops --disable "*"
+subscrition-manager reops --enable rhel-7-server-rpms
+subscrition-manager reops --enable rhel-server-rhscl-7-rpms
+subscrition-manager reops --enable rhel-7-server-optional-rpms
+subscrition-manager reops --enable --enable rhel-7-server-ansible-2.8-rpms
+yum clean all
+rm -rf /var/cache/yum
+yum-config-manager --setopt=\*.skip_if_unavailable=1 --save \* 
+
 yum --noplugins -q list installed epel-release-latest-7 &>/dev/null && echo "epel-release-latest-7 is installed" || yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm --skip-broken --noplugins
-else
-echo "Not Running RHEL 7.x !"
-fi
-echo " "
 yum --noplugins -q list installed yum-utils &>/dev/null && echo "yum-utils is installed" || yum install -y yum-utils --skip-broken --noplugins
+yum-config-manager --enable epel 
 yum --noplugins -q list installed ansible &>/dev/null && echo "ansible is installed" || yum install -y ansible --skip-broken --noplugins
 yum --noplugins -q list installed wget &>/dev/null && echo "wget is installed" || yum install -y wget --skip-broken --noplugins
 yum --noplugins -q list installed bash-completion-extras &>/dev/null && echo "bash-completion-extras" || yum install -y bash-completion-extras --skip-broken --noplugins
-yum --noplugins -q list installed openssh-clients &>/dev/null && echo "openssh-clients" || yum install -y openssh-clients --skip-broken --noplugins
-sleep 10
-
-echo " "
-echo '************************************'
-echo 'Creating FILES dir here'
-echo '************************************'
-mkdir -p FILES
-cd FILES
-pwd
-sleep 10
-
-echo " "
-echo '************************************'
-echo 'Wget Ansible Tower'
-echo '************************************'
-if grep -q -i "release 7" /etc/redhat-release ; then
- rhel7only=1
-echo "RHEL 7 supporting latest release"
-wget https://releases.ansible.com/awx/setup/ansible-tower-setup-latest.tar.gz
-else
- echo "Not Running RHEL 7.x !"
-fi
-echo " "
-sleep 10
-
-echo " "
+yum --noplugins -q list installed python2-pip &>/dev/null && echo "python2-pip" || yum install -y python2-pip --skip-broken --noplugins
+yum-config-manager --disable epel 
 echo '************************************'
 echo 'Expanding Ansible Tower and installing '
 echo '************************************'
-
-cd FILES
+wget https://releases.ansible.com/ansible-tower/setup-bundle/ansible-tower-setup-bundle-latest.el8.tar.gz
+echo '************************************'
+echo 'Expanding Ansible Tower and installing '
+echo '************************************'
 tar -zxvf ansible-tower-*.tar.gz
 cd ansible-tower*
 sed -i 's/admin_password="''"/admin_password="'redhat'"/g' inventory
 sed -i 's/redis_password="''"/redis_password="'redhat'"/g' inventory
 sed -i 's/pg_password="''"/pg_password="'redhat'"/g' inventory
 sed -i 's/rabbitmq_password="''"/rabbitmq_password="'redhat'"/g' inventory
-sh setup.sh
+sudo ~/Downloads/ansible-tower/setup.sh
+sleep 10
+pip install six
+pip install six --upgrade
+pip freeze | grep six
+echo " "
+echo " "
+echo " "
+pip install awscli
+pip install awscli --upgrade 
+pip freeze | grep awscli
+echo " "
+echo " "
+echo " "
+for i in $(pip freeze | grep azure | awk -F '=' '{print $1}') ; do pip install "$i" --upgrade  ; done
+pip install azure
+pip install azure  --upgrade
+pip install azure-common
+pip install azure-common --upgrade
+pip install azure-mgmt-authorization
+pip install azure-mgmt-authorization --upgrade
+pip install azure-mgmt
+pip install azure-mgmt --upgrade 
+pip freeze | grep azure
+echo " "
+echo " "
+echo " "
+pip install boto
+pip install boto --upgrade 
+pip install boto3
+pip install boto3 --upgrade 
+pip install botocore
+pip install botocore --upgrade
+pip freeze | grep boto
+echo " "
+echo " "
+echo " "
+pip install pywinrm
+pip install pywinrm --upgrade
+pip freeze | grep pywinrm
+echo " "
+echo " "
+echo " "
+pip install requests
+pip install requests --upgrade
+pip freeze | grep requests
+echo " "
+echo " "
+echo " "
+pip install requests-credssp
+pip install requests-credssp --upgrade
+pip freeze | grep requests-credssp
+
+echo " "
+echo " "
+echo " "
+echo '************************************'
+echo 'Installing Cloud Requirements (Ignore Errors)'
+echo '************************************'
+else
+reset
+echo " "
+echo " "
+echo " "
+echo "Not Running RHEL 7.x ! STAND BY TRYING RHEL 8"
+reset
+fi
+
+echo '************************************'
+echo 'Wget Ansible Tower RHEL 8'
+echo '************************************'
+if grep -q -i "release 8." /etc/redhat-release ; then
+ rhel8only=1
+echo "RHEL 8 supporting latest release"
+subscrition-manager register --auto-attach
+subscrition-manager reops --disable "*"
+subscrition-manager reops --enable ansible-2.8-for-rhel-8-x86_64-rpms
+subscrition-manager reops --enable rhel-8-for-x86_64-appstream-rpms
+subscrition-manager reops --enable rhel-8-for-x86_64-baseos-rpms
+subscrition-manager reops --enable rhel-8-for-x86_64-supplementary-rpms
+subscrition-manager reops --enable rhel-8-for-x86_64-optional-rpms
+yum-config-manager --setopt=\*.skip_if_unavailable=1 --save \* 
+yum --noplugins -q list installed epel-release-latest-8 &>/dev/null && echo "epel-release-latest-8 is installed" || yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm --skip-broken --noplugins
+yum --noplugins -q list installed dnf-utils &>/dev/null && echo "dnf-utils is installed" || yum install -y dnf-utils --skip-broken --noplugins
+yum-config-manager --enable epel 
+yum clean all
+rm -rf /var/cache/yum
+yum --noplugins -q list installed ansible &>/dev/null && echo "ansible is installed" || yum install -y ansible --skip-broken --noplugins
+yum --noplugins -q list installed wget &>/dev/null && echo "wget is installed" || yum install -y wget --skip-broken --noplugins
+yum --noplugins -q list installed bash-completion-extras &>/dev/null && echo "bash-completion-extras" || yum install -y bash-completion-extras --skip-broken --noplugins
+yum --noplugins -q list installed python3-pip &>/dev/null && echo "python3-pip" || yum install -y python3-pip --skip-broken --noplugins
+
+yum-config-manager --disable epel
+echo '************************************'
+echo 'Expanding Ansible Tower and installing '
+echo '************************************'
+wget https://releases.ansible.com/ansible-tower/setup-bundle/ansible-tower-setup-bundle-latest.el8.tar.gz
+echo '************************************'
+echo 'Expanding Ansible Tower and installing '
+echo '************************************'
+tar -zxvf ansible-tower-*.tar.gz
+cd ansible-tower*
+sed -i 's/admin_password="''"/admin_password="'redhat'"/g' inventory
+sed -i 's/redis_password="''"/redis_password="'redhat'"/g' inventory
+sed -i 's/pg_password="''"/pg_password="'redhat'"/g' inventory
+sed -i 's/rabbitmq_password="''"/rabbitmq_password="'redhat'"/g' inventory
+sudo ~/Downloads/ansible-tower/setup.sh
+sleep 10
+echo " "
+echo " "
+echo " "
+echo '************************************'
+echo 'Installing Cloud Requirements (Ignore Errors)'
+echo '************************************'
+source /var/lib/awx/venv/ansible/bin/activate
+pip3 install six
+pip3 install six --upgrade
+pip3 freeze | grep six
+echo " "
+echo " "
+echo " "
+pip3 install awscli
+pip3 install awscli --upgrade 
+pip3 freeze | grep awscli
+echo " "
+echo " "
+echo " "
+for i in $(pip3 freeze | grep azure | awk -F '=' '{print $1}') ; do pip3 install "$i" --upgrade  ; done
+pip3 install azure
+pip3 install azure  --upgrade
+pip3 install azure-common
+pip3 install azure-common --upgrade
+pip3 install azure-mgmt-authorization
+pip3 install azure-mgmt-authorization --upgrade
+pip3 install azure-mgmt
+pip3 install azure-mgmt --upgrade 
+pip3 freeze | grep azure
+echo " "
+echo " "
+echo " "
+pip3 install boto
+pip3 install boto --upgrade 
+pip3 install boto3
+pip3 install boto3 --upgrade 
+pip3 install botocore
+pip3 install botocore --upgrade
+pip3 freeze | grep boto
+echo " "
+echo " "
+echo " "
+pip3 install pywinrm
+pip3 install pywinrm --upgrade
+pip3 freeze | grep pywinrm
+echo " "
+echo " "
+echo " "
+pip3 install requests
+pip3 install requests --upgrade
+pip3 freeze | grep requests
+echo " "
+echo " "
+echo " "
+pip3 install requests-credssp
+pip3 install requests-credssp --upgrade
+pip3 freeze | grep requests-credssp
+else
+ echo "Not Running RHEL 8.x !"
+fi
 }
 
-#--------------------------End Primary Functions--------------------------
+#----------------------/----End Primary Functions--------------------------
 
 #-----------------------
 function dMainMenu {
@@ -2489,22 +2843,34 @@ Flag=$(cat $TmpFi)
 case $Flag in
 1) dMsgBx "INSTALL SATELLITE 6.5" \
 sleep 10
+#SCRIPT
+SATELLITEREADME
+REGSAT
 VARIABLES1
 IPA
 CAPSULE
 SATLIBVIRT
 SATRHV
 RHVORLIBVIRT
+#SYNCREL5
+#SYNCREL6
 INSTALLREPOS
 INSTALLDEPS
 GENERALSETUP
 SYSCHECK
 INSTALLNSAT
 CONFSAT
+CONFSATDHCP
+CONFSATTFTP
+CONFSATPLUGINS
+#CONFSATDEB
+CONFSATCACHE
+CHECKDHCP
+DISABLEEXTRAS
 HAMMERCONF
-CONFIG2
+#CONFIG2
 STOPSPAMMINGVARLOG
-#REQUESTSYNCMGT
+REQUESTSYNCMGT
 #REQUEST5
 #REQUEST6
 REQUEST7
@@ -2522,19 +2888,20 @@ REQUEST7
 #REQUESTRHVM
 #REQUESTATOMIC
 #REQUESTTOWER
-#REQUESTPUPPET
+REQUESTPUPPET
 #REQUESTJENKINS
 #REQUESTMAVEN
 #REQUESTICINGA
 #REQUESTCENTOS7
+#REQUESTSCIENTIFICLINUX
 SYNC
 SYNCMSG
 PRIDOMAIN
 CREATESUBNET
-#ENVIRONMENTS
-#DAILYSYNC
-#SYNCPLANCOMPONENTS
-#ASSOCPLANTOPRODUCTS
+ENVIRONMENTS
+SYNCPLANS
+SYNCPLANCOMPONENTS
+ASSOCPLANTOPRODUCTS
 #CONTENTVIEWS
 #PUBLISHCONTENT
 #HOSTCOLLECTION
@@ -2547,11 +2914,15 @@ MEDIUM
 #HOSTGROUPS
 #MODPXELINUXDEF
 #ADD_OS_TO_TEMPLATE
+#REMOVEUNSUPPORTED
+DISASSOCIATE_TEMPLATES
+#SATUPDATE
+INSIGHTS
+CLEANUP
 echo 'This Script has set up satellite to the point where it should be basicly 
 operational the syntax for some of the items that have been pounded out and require some updating if you plan to use.'
-#SATDONE
-sleep 10 
-exit
+SATDONE
+sleep 10
 ;;
 2) dMsgBx "UPGRADE/UPDATE THE SATELLITE 6.X" \
 SATUPDATE
