@@ -304,6 +304,8 @@ echo "*********************************************************"
 echo 'DHCP_RANGE=''"'$DHCPSTART' '$DHCPEND'"''' >> /root/.bashrc
 echo 'DHCP_GW='$(ip route list type unicast dev $(ip -o link | head -n 2 | tail -n 1 | awk '{print $2;}' | sed s/:$//) |awk -F " " '{print $7}')'' >> /root/.bashrc
 echo 'DHCP_DNS='$(ifconfig $INTERNAL | grep "inet" | awk -F ' ' '{print $2}' |grep -v f |awk -F . '{print $1"."$2"."$3"."$4}')'' >> /root/.bashrc
+sed -i 's/DHCP_GW=100 /DHCP_GW=/g' /root/.bashrc
+sed -i 's/DNS=100 /DNS=/g' /root/.bashrc
 }
 
 YMESSAGE="Adding to /root/.bashrc vars"
