@@ -233,7 +233,7 @@ yum-config-manager --enable epel
 yum --noplugins -q list installed ansible &>/dev/null && echo "ansible is installed" || yum install -y ansible --skip-broken --noplugins
 yum --noplugins -q list installed wget &>/dev/null && echo "wget is installed" || yum install -y wget --skip-broken --noplugins
 yum --noplugins -q list installed bash-completion-extras &>/dev/null && echo "bash-completion-extras" || yum install -y bash-completion-extras --skip-broken --noplugins
-yum --noplugins -q list installed python2-pip &>/dev/null && echo "python2-pip" || yum install -y python2-pip --skip-broken --noplugins
+yum --noplugins -q list installed python2-pip &>/dev/null && echo "python2-pip is installed" || yum install -y python2-pip --skip-broken --noplugins
 yum-config-manager --disable epel 
 echo '************************************'
 echo 'Expanding Ansible Tower and installing '
@@ -250,6 +250,13 @@ sed -i 's/pg_password="''"/pg_password="'redhat'"/g' inventory
 sed -i 's/rabbitmq_password="''"/rabbitmq_password="'redhat'"/g' inventory
 sudo ~/Downloads/ansible-tower/setup.sh
 sleep 10
+echo " "
+echo " "
+echo " "
+echo '************************************'
+echo 'Installing Cloud Requirements (Ignore Errors)'
+echo '************************************'
+pip install --upgrade pip
 pip install six
 pip install six --upgrade
 pip freeze | grep six
@@ -301,12 +308,7 @@ pip install requests-credssp
 pip install requests-credssp --upgrade
 pip freeze | grep requests-credssp
 
-echo " "
-echo " "
-echo " "
-echo '************************************'
-echo 'Installing Cloud Requirements (Ignore Errors)'
-echo '************************************'
+
 else
 reset
 echo " "
@@ -363,6 +365,8 @@ echo '************************************'
 echo 'Installing Cloud Requirements (Ignore Errors)'
 echo '************************************'
 source /var/lib/awx/venv/ansible/bin/activate
+pip install --upgrade pip
+pip install --upgrade pip3
 pip3 install six
 pip3 install six --upgrade
 pip3 freeze | grep six
