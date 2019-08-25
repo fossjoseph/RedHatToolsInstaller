@@ -1,17 +1,8 @@
 #!/bin/bash
 #POC/Demo
-#This Script is for setting up a basic Satellite 6.5 or  
+#This Script is for setting up a basic Ansible Tower (latest) with Azure and AWS support.
 echo -ne "\e[8;40;170t"
-
-# Hammer referance to assist in modifing the script can be found at 
-# https://www.gitbook.com/book/abradshaw/getting-started-with-satellite-6-command-line/details
-
-
 reset
-
-#--------------------------required packages for script to run----------------------------
-
-
 
 #--------------------------required packages for script to run----------------------------
 #------------------

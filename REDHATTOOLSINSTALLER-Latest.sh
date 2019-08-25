@@ -233,7 +233,6 @@ echo "*********************************************************"
 echo "ADMIN PASSWORD - WRITE OR REMEMBER YOU WILL BE PROMPTED FOR 
 USER: admin AND THIS PASSWORD WHEN WE IMPORT THE MANIFEST"
 echo "*********************************************************"
-sleep 5
 echo 'ADMIN=admin'  >> /root/.bashrc
 echo 'What will the password be for your admin user?'
 read  ADMIN_PASSWORD
@@ -1031,13 +1030,18 @@ echo "*********************************************************"
 echo 'SETTING SATELLITE EVN SETTINGS'
 echo "*********************************************************"
 hammer settings set --name default_download_policy --value on_demand
-hammer settings set --name default_organization  --value $ORG
-hammer settings set --name default_location  --value $LOC
-hammer settings set --name discovery_organization  --value $ORG
-hammer settings set --name root_pass --value $NODEPASS
+hammer settings set --name default_organization  --value "$ORG"
+hammer settings set --name default_location  --value "$LOC"
+hammer settings set --name discovery_organization  --value "$ORG"
+hammer settings set --name root_pass --value "$NODEPASS"
 hammer settings set --name query_local_nameservers --value true
 hammer settings set --name host_owner --value $ADMIN
 hammer settings set --name lab_features --value true
+hammer settings set --name default_puppet_environment --value development
+hammer settings set --name ansible_verbosity --value "Level 1 (-v)"
+hammer settings set --name discovery_location --value "$LOC"
+hammer settings set --name destroy_vm_on_host_delete --value No
+hammer settings set --name remote_execution_by_default --value Yes
 mkdir -p /etc/puppet/environments/production/modules
 echo " "
 echo " "
