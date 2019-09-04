@@ -52,7 +52,7 @@ echo "*********************************************************"
 echo "ENABLE EPEL FOR A FEW PACKAGES"
 echo "*********************************************************"
 yum -q list installed epel-release-latest-7 &>/dev/null && echo "epel-release-latest-7 is installed" || yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm --skip-broken
-yum-config-manager --enable epel  || exit 1
+yum-config-manager --enable epel || exit 1
 subscription-manager repos --enable=rhel-7-server-extras-rpms || exit 1
 yum-config-manager --save --setopt=*.skip_if_unavailable=true
 yum clean all
@@ -213,7 +213,9 @@ subscrition-manager reops --disable "*"
 subscrition-manager reops --enable rhel-7-server-rpms
 subscrition-manager reops --enable rhel-server-rhscl-7-rpms
 subscrition-manager reops --enable rhel-7-server-optional-rpms
-subscrition-manager reops --enable --enable rhel-7-server-ansible-2.8-rpms
+subscrition-manager reops --enable rhel-7-server-ansible-2.8-rpms
+yum-config-manager --enable epel rhui-REGION-client-config-server-7 rhui-REGION-rhel-server-extras rhui-REGION-rhel-server-releases rhui-REGION-rhel-server-rh-common rhui-REGION-rhel-server-rhscl
+
 yum clean all
 rm -rf /var/cache/yum
 yum-config-manager --setopt=\*.skip_if_unavailable=1 --save \* 
@@ -247,59 +249,71 @@ echo " "
 echo '************************************'
 echo 'Installing Cloud Requirements (Ignore Errors)'
 echo '************************************'
-pip install --upgrade pip
-pip install six
-pip install six --upgrade
-pip freeze | grep six
-echo " "
-echo " "
-echo " "
-pip install awscli
-pip install awscli --upgrade 
-pip freeze | grep awscli
-echo " "
-echo " "
-echo " "
-for i in $(pip freeze | grep azure | awk -F '=' '{print $1}') ; do pip install "$i" --upgrade  ; done
-pip install azure
-pip install azure  --upgrade
-pip install azure-common
-pip install azure-common --upgrade
-pip install azure-mgmt-authorization
-pip install azure-mgmt-authorization --upgrade
-pip install azure-mgmt
-pip install azure-mgmt --upgrade 
-pip freeze | grep azure
-echo " "
-echo " "
-echo " "
-pip install boto
-pip install boto --upgrade 
-pip install boto3
-pip install boto3 --upgrade 
-pip install botocore
-pip install botocore --upgrade
+pip install --upgrade pip --force-reinstall
+source /var/lib/awx/venv/ansible/bin/activate
+pip install --upgrade pip 
+pip install s3transfer  
+pip install s3transfer   --upgrade
+pip freeze | grep s3transfer
+pip install boto3 
+pip install boto3  
+pip install botocore  
+pip install botocore  --upgrade
+pip install boto  
+pip install boto  --upgrade
 pip freeze | grep boto
 echo " "
 echo " "
 echo " "
-pip install pywinrm
-pip install pywinrm --upgrade
+pip install six  
+pip install six  --upgrade
+pip freeze | grep six
+echo " "
+echo " "
+echo " "
+pip install awscli  
+pip install awscli  --upgrade
+pip freeze | grep awscli 
+echo " "
+echo " "
+echo " "
+pip install azure  
+pip install azure  --upgrade
+pip install azure-nspkg  --upgrade
+pip install azure-nspkg  --upgrade
+for i in $(pip freeze | grep azure | awk -F '=' '{print $1}') ; do pip install "$i"  ; done
+for i in $(pip freeze | grep azure | awk -F '=' '{print $1}') ; do pip install "$i"  --upgrade ; done
+pip install azure-common 
+pip install azure-common  --upgrade
+pip install azure-mgmt-authorization 
+pip install azure-mgmt-authorization  --upgrade
+pip install azure-mgmt 
+pip install azure-mgmt  --upgrade
+pip freeze | grep azure
+echo " "
+echo " "
+echo " "
+pip install pywinrm 
+pip install pywinrm  --upgrade
 pip freeze | grep pywinrm
 echo " "
 echo " "
 echo " "
-pip install requests
-pip install requests --upgrade
+pip install requests 
+pip install requests  --upgrade
 pip freeze | grep requests
 echo " "
 echo " "
 echo " "
-pip install requests-credssp
-pip install requests-credssp --upgrade
+pip install requests-credssp 
+pip install requests-credssp  --upgrade
 pip freeze | grep requests-credssp
 
+pip install boto  --upgrade --force-reinstall
+pip install boto3  --upgrade --force-reinstall
+pip install botocore  --upgrade --force-reinstall
 
+exit
 else
 reset
 echo " "
@@ -325,7 +339,7 @@ subscrition-manager reops --enable rhel-8-for-x86_64-optional-rpms
 yum-config-manager --setopt=\*.skip_if_unavailable=1 --save \* 
 yum --noplugins -q list installed epel-release-latest-8 &>/dev/null && echo "epel-release-latest-8 is installed" || yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm --skip-broken --noplugins
 yum --noplugins -q list installed dnf-utils &>/dev/null && echo "dnf-utils is installed" || yum install -y dnf-utils --skip-broken --noplugins
-yum-config-manager --enable epel 
+yum-config-manager --enable epel
 yum clean all
 rm -rf /var/cache/yum
 yum --noplugins -q list installed ansible &>/dev/null && echo "ansible is installed" || yum install -y ansible --skip-broken --noplugins
@@ -356,58 +370,61 @@ echo '************************************'
 echo 'Installing Cloud Requirements (Ignore Errors)'
 echo '************************************'
 source /var/lib/awx/venv/ansible/bin/activate
-pip install --upgrade pip
-pip install --upgrade pip3
-pip3 install six
-pip3 install six --upgrade
+pip install --upgrade pip --user
+pip install --upgrade pip3 --user
+pip3 install six --user
+pip3 install six --upgrade --user
 pip3 freeze | grep six
 echo " "
 echo " "
 echo " "
-pip3 install awscli
-pip3 install awscli --upgrade 
+pip3 install awscli --user
+pip3 install awscli --upgrade --user
 pip3 freeze | grep awscli
 echo " "
 echo " "
 echo " "
-for i in $(pip3 freeze | grep azure | awk -F '=' '{print $1}') ; do pip3 install "$i" --upgrade  ; done
-pip3 install azure
-pip3 install azure  --upgrade
-pip3 install azure-common
-pip3 install azure-common --upgrade
-pip3 install azure-mgmt-authorization
-pip3 install azure-mgmt-authorization --upgrade
-pip3 install azure-mgmt
-pip3 install azure-mgmt --upgrade 
+pip3 install azure-nspkg --user --user
+pip3 install azure-nspkg --upgrade --user
+for i in $(pip3 freeze | grep azure | awk -F '=' '{print $1}') ; do pip3 install "$i" --upgrade --user ; done
+pip3 install azure --user
+pip3 install azure --upgrade --user
+pip3 install azure-common --user
+pip3 install azure-common --upgrade --user
+pip3 install azure-mgmt --user
+pip3 install azure-mgmt --upgrade --user
+pip3 install azure-mgmt-authorization --user
+pip3 install azure-mgmt-authorization --upgrade --user
 pip3 freeze | grep azure
 echo " "
 echo " "
 echo " "
-pip3 install boto
-pip3 install boto --upgrade 
-pip3 install boto3
-pip3 install boto3 --upgrade 
-pip3 install botocore
-pip3 install botocore --upgrade
+pip3 install boto --user
+pip3 install boto --upgrade --user
+pip3 install boto3 --user
+pip3 install boto3 --upgrade --user
+pip3 install botocore --user
+pip3 install botocore --upgrade --user
 pip3 freeze | grep boto
 echo " "
 echo " "
 echo " "
-pip3 install pywinrm
-pip3 install pywinrm --upgrade
+pip3 install pywinrm --user
+pip3 install pywinrm --upgrade --user
 pip3 freeze | grep pywinrm
 echo " "
 echo " "
 echo " "
-pip3 install requests
-pip3 install requests --upgrade
+pip3 install requests --user
+pip3 install requests --upgrade --user
 pip3 freeze | grep requests
 echo " "
 echo " "
 echo " "
-pip3 install requests-credssp
-pip3 install requests-credssp --upgrade
+pip3 install requests-credssp --user
+pip3 install requests-credssp --upgrade --user
 pip3 freeze | grep requests-credssp
+exit
 else
  echo "Not Running RHEL 8.x !"
 fi

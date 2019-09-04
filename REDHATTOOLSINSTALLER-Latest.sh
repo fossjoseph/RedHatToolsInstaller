@@ -1967,7 +1967,6 @@ hammer product set-sync-plan --name 'Extra Packages for Enterprise Linux 6' --or
 hammer product set-sync-plan --name 'Extra Packages for Enterprise Linux 5' --organization $ORG --sync-plan 'Weekly_Sync'
 hammer product set-sync-plan --name 'Puppet Forge' --organization $ORG --sync-plan 'Weekly_Sync'
 hammer product set-sync-plan --name 'CentOS Linux 7.6' --organization $ORG --sync-plan 'Weekly_Sync'
-
 hammer sync-plan create --name 'Scientific Linux 7.6 Weekly Sync' --description 'Weekly Sync sl_76 Plan' --organization $ORG --interval weekly --sync-date $(date +"%Y-%m-%d")" 00:00:00" --enabled yes
 hammer product set-sync-plan --name 'Scientific Linux 7.6' --organization $ORG --sync-plan 'Scientific Linux 7.6 Weekly Sync'
 
