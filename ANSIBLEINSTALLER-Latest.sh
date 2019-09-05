@@ -40,10 +40,14 @@ echo "SET REPOS ENABLING SCRIPT TO RUN"
 echo "*********************************************************"
 echo " "
 echo "*********************************************************"
-echo "SETUP ADMIN USER"
+echo "SETUP ADMIN SERVICE ACCOUNT USER"
 echo "*********************************************************"
-groupadd admin
-useradd admin -D --group admin -p $ADMIN
+sudo groupadd admin
+sudo useradd admin -D --group admin -p $ADMIN
+sudo -u admin ssh-keygen -f /home/admin/.ssh/id_rsa -N ''
+sudo chown -R admin:admin /home/admin
+sudo cp /etc/sudoers /etc/sudoers.bak
+sudo echo 'admin ALL = NOPASSWD: ALL' >> /etc/sudoers
 echo " "
 echo "*********************************************************"
 echo "FIRST DISABLE REPOS"
@@ -478,17 +482,17 @@ $DIALOG --title "$1" --inputbox "$2" 20 80 "$3"
 
 #----------------------------------End-Functions-------------------------------
 ######################
-#### MAIN LOGIC ####
+##### MAIN LOGIC #####
 ######################
 #set -o xtrace
-clear
+reset
 # Sets a time value for Xdialog
 [[ -z $DISPLAY ]] || TV=3000
 $DIALOG --infobox "
 
-**************************
-**** Red Hat - Config Tools****
-**************************
+**************************************
+****  Red Hat  Ansible Installer  ****
+**************************************
 
 `hostname`" 20 80 $TV
 [[ -z $DISPLAY ]] && sleep 2 
@@ -505,7 +509,7 @@ RC=$?
 [[ $RC -ne 0 ]] && break
 Flag=$(cat $TmpFi)
 case $Flag in
-1) dMsgBx "INSTALL SATELLITE 6.5" \
+1) dMsgBx "INSTALL ANSIBLE TOWER" \
 sleep 10
 ANSIBLETOWER
 INSIGHTS
