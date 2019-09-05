@@ -42,6 +42,8 @@ echo " "
 echo "*********************************************************"
 echo "SETUP ADMIN SERVICE ACCOUNT USER"
 echo "*********************************************************"
+source /root/.bashrc
+echo -ne "\e[8;40;170t"
 sudo groupadd admin
 sudo useradd admin -D --group admin -p $ADMIN
 sudo -u admin ssh-keygen -f /home/admin/.ssh/id_rsa -N ''
@@ -146,9 +148,9 @@ fi
 #-------------------------------
 function INSIGHTS {
 #-------------------------------
-yum update python-requests -y
-yum install redhat-access-insights -y
-redhat-access-insights --register
+sudo yum update python-requests -y
+sudo yum install redhat-access-insights -y
+sudo redhat-access-insights --register
 }
 
 #-----------------------------------------------------------------------------------------------------------------------
