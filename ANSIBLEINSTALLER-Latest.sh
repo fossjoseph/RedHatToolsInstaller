@@ -10,6 +10,16 @@ function SCRIPT {
 #------------------
 HNAME=$(hostname)
 DOM="$(hostname -d)"
+wget -q --tries=10 --timeout=20 --spider http://google.com
+if [[ $? -eq 0 ]]; then
+        echo "Online"
+else
+        echo "Offline"
+        echo "This script requires access to 
+              the network to run please fix your settings and try again"
+              sleep 5
+        exit 1
+fi
 echo "*********************************************************"
 echo "ADMIN PASSWORD"
 echo "*********************************************************"
@@ -205,12 +215,12 @@ Connection to the internet so the instller can download the required packages
 * Ansible-Tower download will be pulled from https://releases.ansible.com/awx/setup/ansible-tower-setup-latest.tar.gz
 
 6. This install was tested with:
-     * RHEL_7.7 in a KVM environment.
+     * RHEL7 or 8 in a KVM environment.
      * Red Hat subscriber channels:
-        rhel-7-server-ansible-2.8-rpms
-        rhel-7-server-extras-rpms
-        rhel-7-server-optional-rpms
-        rhel-7-server-rpms
+        rhel-X-server-ansible-2.8-rpms
+        rhel-X-server-extras-rpms
+        rhel-X-server-optional-rpms
+        rhel-X-server-rpms
           https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
 
 

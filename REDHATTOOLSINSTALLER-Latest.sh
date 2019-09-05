@@ -8,6 +8,16 @@ echo -ne "\e[8;40;170t"
 
 
 reset
+wget -q --tries=10 --timeout=20 --spider http://google.com
+if [[ $? -eq 0 ]]; then
+        echo "Online"
+else
+        echo "Offline"
+        echo "This script requires access to 
+              the network to run please fix your settings and try again"
+              sleep 5
+        exit 1
+fi
 
 #--------------------------required packages for script to run----------------------------
 
