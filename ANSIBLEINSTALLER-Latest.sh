@@ -80,7 +80,6 @@ sudo subscription-manager repos --enable=rhel-7-server-rpms || exit 1
 sudo subscription-manager repos --enable=rhel-7-server-extras-rpms || exit 1
 sudo subscription-manager repos --enable=rhel-7-server-optional-rpms || exit 1
 sudo subscription-manager repos --enable=rhel-7-server-rpms || exit 1
-if grep -q -i "release 8." /etc/redhat-release ; then
 else
  echo "Not Running RHEL 7 !"
 fi
