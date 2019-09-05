@@ -538,7 +538,7 @@ yum-config-manager --enable epel
 subscription-manager repos --enable=rhel-7-server-extras-rpms
 yum clean all ; rm -rf /var/cache/yum
 sleep 5
-yum install -y screen syslinux yum-utils vim gcc gcc-c++ git rh-nodejs8-npm make automake kernel-devel ruby-devel libvirt-client bind dhcp tftp libvirt augeas
+yum install -y screen syslinux yum-utils vim gcc gcc-c++ git rh-nodejs8-npm make automake kernel-devel ruby-devel libvirt-client bind dhcp tftp libvirt augeas --skip-broken
 sleep 5
 echo " "
 echo " "
@@ -546,18 +546,18 @@ echo " "
 echo "*********************************************************"
 echo "INSTALLING DEPENDENCIES FOR CONTENT VIEW AUTO PUBLISH"
 echo "*********************************************************"
-yum -y install python-pip python2-pip rubygem-builder --skip-broken
-pip install --upgrade pip
+sudo yum -y install python-pip python2-pip rubygem-builder --skip-broken
+sudo pip install --upgrade pip
 echo " "
 echo " "
 echo " "
 echo "*********************************************************"
 echo "UPGRADING OS"
 echo "*********************************************************"
-yum-config-manager --disable epel
-subscription-manager repos --disable=rhel-7-server-extras-rpms
-yum clean all ; rm -rf /var/cache/yum
-yum upgrade -y; yum update -y
+sudo yum-config-manager --disable epel
+sudo subscription-manager repos --disable=rhel-7-server-extras-rpms
+sudo yum clean all ; rm -rf /var/cache/yum
+sudo yum upgrade -y; yum update -y
 }
 #----------------------------------
 function GENERALSETUP {
@@ -576,7 +576,7 @@ echo "*********************************************************"
 echo "SETTING UP ADMIN"
 echo "*********************************************************"
 groupadd admin
-useradd admin --group admin -m -p $ADMIN
+useradd admin --group admin -p $ADMIN
 mkdir -p /home/admin/.ssh
 mkdir -p /home/admin/git
 chown -R admin:admin /home/admin
@@ -586,7 +586,7 @@ echo " "
 echo "*********************************************************"
 echo "SETTING UP FOREMAN-PROXY"
 echo "*********************************************************"
-useradd -M foreman-proxy
+useradd foreman-proxy -m /usr/share/foreman-proxy/ 
 usermod -L foreman-proxy
 mkdir -p /usr/share/foreman-proxy/.ssh
 sudo -u foreman-proxy ssh-keygen -f /usr/share/foreman-proxy/.ssh/id_rsa_foreman_proxy -N ''
@@ -2475,10 +2475,10 @@ yum-config-manager --setopt=\*.skip_if_unavailable=1 --save \*
 foreman-rake foreman_tasks:cleanup TASK_SEARCH='label = Actions::Katello::Repository::Sync' STATES='paused,pending,stopped' VERBOSE=true
 foreman-rake katello:delete_orphaned_content --trace
 foreman-rake katello:reindex --trace
-katello-service stop
 katello-selinux-disable
 setenforce 0
 service firewalld stop 
+katello-service stop
 yum upgrade -y --skip-broken --setopt=protected_multilib=false ; yum update -y --skip-broken --setopt=protected_multilib=false
 yum -q list installed puppetserver &>/dev/null && echo "puppetserver is installed" || time yum install puppetserver -y --skip-broken --setopt=protected_multilib=false
 yum -q list installed puppet-agent-oauth &>/dev/null && echo "puppet-agent-oauth is installed" || time yum install puppet-agent-oauth -y --skip-broken --setopt=protected_multilib=false
@@ -2582,12 +2582,12 @@ echo "************************************"
 if grep -q -i "release 7" /etc/redhat-release ; then
 rhel7only=1
 echo "RHEL 7.7"
-subscrition-manager register --auto-attach
-subscrition-manager reops --disable "*"
-subscrition-manager reops --enable rhel-7-server-rpms
-subscrition-manager reops --enable rhel-server-rhscl-7-rpms
-subscrition-manager reops --enable rhel-7-server-optional-rpms
-subscrition-manager reops --enable --enable rhel-7-server-ansible-2.8-rpms
+subscription-manager register --auto-attach
+subscription-manager reops --disable "*"
+subscription-manager repos --enable rhel-7-server-rpms
+subscription-manager repos --enable rhel-server-rhscl-7-rpms
+subscription-manager repos --enable rhel-7-server-optional-rpms
+subscription-manager repos --enable --enable rhel-7-server-ansible-2.8-rpms
 yum clean all
 rm -rf /var/cache/yum
 yum-config-manager --setopt=\*.skip_if_unavailable=1 --save \* 
@@ -2687,13 +2687,13 @@ echo '************************************'
 if grep -q -i "release 8." /etc/redhat-release ; then
  rhel8only=1
 echo "RHEL 8 supporting latest release"
-subscrition-manager register --auto-attach
-subscrition-manager reops --disable "*"
-subscrition-manager reops --enable ansible-2.8-for-rhel-8-x86_64-rpms
-subscrition-manager reops --enable rhel-8-for-x86_64-appstream-rpms
-subscrition-manager reops --enable rhel-8-for-x86_64-baseos-rpms
-subscrition-manager reops --enable rhel-8-for-x86_64-supplementary-rpms
-subscrition-manager reops --enable rhel-8-for-x86_64-optional-rpms
+subscription-manager register --auto-attach
+subscription-manager reops --disable "*"
+subscription-manager repos --enable ansible-2.8-for-rhel-8-x86_64-rpms
+subscription-manager repos --enable rhel-8-for-x86_64-appstream-rpms
+subscription-manager repos --enable rhel-8-for-x86_64-baseos-rpms
+subscription-manager repos --enable rhel-8-for-x86_64-supplementary-rpms
+subscription-manager repos --enable rhel-8-for-x86_64-optional-rpms
 yum-config-manager --setopt=\*.skip_if_unavailable=1 --save \* 
 yum --noplugins -q list installed epel-release-latest-8 &>/dev/null && echo "epel-release-latest-8 is installed" || yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm --skip-broken --noplugins
 yum --noplugins -q list installed dnf-utils &>/dev/null && echo "dnf-utils is installed" || yum install -y dnf-utils --skip-broken --noplugins
@@ -2778,6 +2778,7 @@ echo " "
 pip3 install requests-credssp
 pip3 install requests-credssp --upgrade
 pip3 freeze | grep requests-credssp
+for i in $(pip3 freeze | grep boto | awk -F '=' '{print $1}') ; do pip3 install "$i" --upgrade  ; done
 else
  echo "Not Running RHEL 8.x !"
 fi
