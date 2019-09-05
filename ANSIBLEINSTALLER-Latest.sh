@@ -8,6 +8,7 @@ reset
 #------------------
 function SCRIPT {
 #------------------
+echo "Checking if prereq have been met to run this script"
 HNAME=$(hostname)
 DOM="$(hostname -d)"
 wget -q --tries=10 --timeout=20 --spider http://google.com
@@ -55,7 +56,7 @@ echo "*********************************************************"
 source /root/.bashrc
 echo -ne "\e[8;40;170t"
 sudo groupadd admin
-sudo useradd admin -D --group admin -p $ADMIN
+sudo useradd admin -d /home/admin --group admin -p $ADMIN
 sudo -u admin ssh-keygen -f /home/admin/.ssh/id_rsa -N ''
 sudo chown -R admin:admin /home/admin
 sudo cp /etc/sudoers /etc/sudoers.bak
@@ -71,10 +72,25 @@ echo " "
 echo "*********************************************************"
 echo "ENABLE PROPER REPOS"
 echo "*********************************************************"
+if grep -q -i "release 7" /etc/redhat-release ; then
+rhel7only=1
+echo "RHEL 7.7"
 sudo subscription-manager repos --enable=rhel-7-server-rpms || exit 1
 sudo subscription-manager repos --enable=rhel-7-server-extras-rpms || exit 1
 sudo subscription-manager repos --enable=rhel-7-server-optional-rpms || exit 1
 sudo subscription-manager repos --enable=rhel-7-server-rpms || exit 1
+if grep -q -i "release 8." /etc/redhat-release ; then
+ rhel8only=1
+echo "RHEL 8 supporting latest release"
+sudo subscrition-manager register --auto-attach
+sudo subscrition-manager reops --disable "*"
+sudo subscrition-manager reops --enable ansible-2.8-for-rhel-8-x86_64-rpms
+sudo subscrition-manager reops --enable rhel-8-for-x86_64-appstream-rpms
+sudo subscrition-manager reops --enable rhel-8-for-x86_64-baseos-rpms
+sudo subscrition-manager reops --enable rhel-8-for-x86_64-supplementary-rpms
+sudo subscrition-manager reops --enable rhel-8-for-x86_64-optional-rpms
+sudo yum-config-manager --setopt=\*.skip_if_unavailable=1 --save \* 
+
 echo " "
 echo " "
 echo " "
@@ -111,7 +127,7 @@ sudo subscription-manager repos --disable=rhel-7-server-extras-rpms
 touch ./SCRIPT
 echo " "
 }
-ls ./SCRIPT
+ls ./SCRIPT &>/dev/null
 if [ $? -eq 0 ]; then
   echo 'The requirements to run this script have been met, proceeding'
   sleep 5
@@ -231,7 +247,10 @@ Connection to the internet so the instller can download the required packages
 echo " "
 echo " "
 read -p "If you have met the minimum requirement from above please Press [Enter] to continue"
-
+}
+#-------------------------------
+function PREREQ {
+#-------------------------------
 echo "************************************"
 echo "installing prereq"
 echo "************************************"
@@ -257,6 +276,7 @@ sudo yum --noplugins -q list installed bash-completion-extras &>/dev/null && ech
 sudo yum --noplugins -q list installed python2-pip &>/dev/null && echo "python2-pip is installed" || sudo yum install -y python2-pip --skip-broken --noplugins
 sudo pip install --upgrade pip 
 sudo yum-config-manager --disable epel 
+
 echo '************************************'
 echo 'Expanding Ansible Tower and installing '
 echo '************************************'
@@ -524,6 +544,7 @@ case $Flag in
 1) dMsgBx "INSTALL ANSIBLE TOWER" \
 sleep 10
 ANSIBLETOWER
+PREREQ
 INSIGHTS
 ;;
 2) dMsgBx "*** EXITING - THANK YOU ***"
