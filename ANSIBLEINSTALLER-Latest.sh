@@ -44,7 +44,7 @@ setenforce 0
 echo "*********************************************************"
 echo "REGESTERING RHEL SYSTEM"
 echo "*********************************************************"
-subscription-manager register --auto-attach
+subscription-manager register 
 echo " "
 echo "*********************************************************"
 echo "SET REPOS ENABLING SCRIPT TO RUN"
@@ -66,7 +66,7 @@ echo " "
 echo "*********************************************************"
 echo "FIRST DISABLE REPOS"
 echo "*********************************************************"
-sudo subscription-manager repos --disable "*" || exit 1
+#sudo subscription-manager repos --disable '*' || exit 1
 echo " "
 echo " "
 echo " "
@@ -80,19 +80,35 @@ sudo subscription-manager repos --enable=rhel-7-server-rpms || exit 1
 sudo subscription-manager repos --enable=rhel-7-server-extras-rpms || exit 1
 sudo subscription-manager repos --enable=rhel-7-server-optional-rpms || exit 1
 sudo subscription-manager repos --enable=rhel-7-server-rpms || exit 1
+echo "*********************************************************"
+echo "ENABLE EPEL FOR A FEW PACKAGES"
+echo "*********************************************************"
+sudo yum clean all 
+sudo yum -q list installed epel-release-latest-7 &>/dev/null && echo "epel-release-latest-7 is installed" || sudo yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm --skip-broken
+sudo yum-config-manager --enable epel || exit 1
+sudo subscription-manager repos --enable=rhel-7-server-extras-rpms || exit 1
+sudo yum-config-manager --save --setopt=*.skip_if_unavailable=true
+sudo yum clean all
+sudo rm -fr /var/cache/yum/*
 else
  echo "Not Running RHEL 7 !"
 fi
-grep -q -i "release 8" /etc/redhat-release ; then
+
+if grep -q -i "release 8" /etc/redhat-release ; then
  rhel8only=1
 echo "RHEL 8 supporting latest release"
-sudo subscrition-manager register --auto-attach
-sudo subscrition-manager reops --disable "*"
-sudo subscrition-manager reops --enable ansible-2.8-for-rhel-8-x86_64-rpms
-sudo subscrition-manager reops --enable rhel-8-for-x86_64-appstream-rpms
-sudo subscrition-manager reops --enable rhel-8-for-x86_64-baseos-rpms
-sudo subscrition-manager reops --enable rhel-8-for-x86_64-supplementary-rpms
-sudo subscrition-manager reops --enable rhel-8-for-x86_64-optional-rpms
+yum clean all
+subscription-manager reops --enable ansible-2.8-for-rhel-8-x86_64-rpms
+subscription-manager reops --enable rhel-8-for-x86_64-appstream-rpms
+subscription-manager reops --enable rhel-8-for-x86_64-baseos-rpms
+subscription-manager reops --enable rhel-8-for-x86_64-supplementary-rpms
+sudo yum --noplugins -q list installed epel-release-latest-8 &>/dev/null && echo "epel-release-latest-8 is installed" || sudo yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm --skip-broken --noplugins
+sudo yum --noplugins -q list installed dnf-utils &>/dev/null && echo "dnf-utils is installed" || sudo yum install -y dnf-utils --skip-broken --noplugins
+sudo yum-config-manager --enable epel || exit 1
+sudo subscription-manager repos --enable=rhel-7-server-extras-rpms || exit 1
+sudo yum-config-manager --save --setopt=*.skip_if_unavailable=true
+sudo yum clean all
+sudo rm -fr /var/cache/yum/*
 else
  echo "Not Running RHEL 8 !"
 fi
@@ -101,15 +117,7 @@ fi
 echo " "
 echo " "
 echo " "
-echo "*********************************************************"
-echo "ENABLE EPEL FOR A FEW PACKAGES"
-echo "*********************************************************"
-sudo yum -q list installed epel-release-latest-7 &>/dev/null && echo "epel-release-latest-7 is installed" || sudo yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm --skip-broken
-sudo yum-config-manager --enable epel || exit 1
-sudo subscription-manager repos --enable=rhel-7-server-extras-rpms || exit 1
-sudo yum-config-manager --save --setopt=*.skip_if_unavailable=true
-sudo yum clean all
-sudo rm -fr /var/cache/yum/*
+
 echo " "
 echo " "
 echo " "
@@ -128,6 +136,7 @@ sudo yum -q list installed perl &>/dev/null && echo "perl is installed" || sudo 
 sudo yum -q list installed dialog &>/dev/null && echo "dialog is installed" || sudo yum install -y dialog --skip-broken
 sudo yum -q list installed xdialog &>/dev/null && echo "xdialog is installed" || yum localinstall -y xdialog-2.3.1-13.el7.centos.x86_64.rpm --skip-broken
 sudo yum -q list installed firefox &>/dev/null && echo "firefox is installed" || yum localinstall -y firefox --skip-broken
+
 sudo yum install -y dconf*
 sudo yum-config-manager --disable epel
 sudo subscription-manager repos --disable=rhel-7-server-extras-rpms
@@ -261,9 +270,9 @@ echo "************************************"
 if grep -q -i "release 7" /etc/redhat-release ; then
 rhel7only=1
 echo "RHEL 7.7"
-sudo sudo subscrition-manager register --auto-attach
-sudo sudo subscrition-manager reops --disable "*"
-sudo sudo subscrition-manager reops --enable rhel-7-server-rpms --enable rhel-server-rhscl-7-rpms --enable rhel-7-server-optional-rpms --enable rhel-7-server-ansible-2.8-rpms
+sudo subscription-manager register --auto-attach
+sudo subscription-manager reops --disable "*"
+sudo subscription-manager reops --enable rhel-7-server-rpms --enable rhel-server-rhscl-7-rpms --enable rhel-7-server-optional-rpms --enable rhel-7-server-ansible-2.8-rpms
 #If in AWS
 sudo yum-config-manager --enable epel rhui-REGION-client-config-server-7 rhui-REGION-rhel-server-extras rhui-REGION-rhel-server-releases rhui-REGION-rhel-server-rh-common rhui-REGION-rhel-server-rhscl
 
@@ -381,16 +390,13 @@ echo '************************************'
 if grep -q -i "release 8." /etc/redhat-release ; then
  rhel8only=1
 echo "RHEL 8 supporting latest release"
-sudo subscrition-manager register --auto-attach
-sudo subscrition-manager reops --disable "*"
-sudo subscrition-manager reops --enable ansible-2.8-for-rhel-8-x86_64-rpms
-sudo subscrition-manager reops --enable rhel-8-for-x86_64-appstream-rpms
-sudo subscrition-manager reops --enable rhel-8-for-x86_64-baseos-rpms
-sudo subscrition-manager reops --enable rhel-8-for-x86_64-supplementary-rpms
-sudo subscrition-manager reops --enable rhel-8-for-x86_64-optional-rpms
+subscription-manager register --auto-attach
+subscription-manager reops --disable "*"
+subscription-manager repos --enable ansible-2.8-for-rhel-8-x86_64-rpms
+subscription-manager reops --enable rhel-8-for-x86_64-baseos-rpms
+subscription-manager reops --enable rhel-8-for-x86_64-supplementary-rpms
+subscription-manager reops --enable rhel-8-for-x86_64-optional-rpms
 sudo yum-config-manager --setopt=\*.skip_if_unavailable=1 --save \* 
-sudo yum --noplugins -q list installed epel-release-latest-8 &>/dev/null && echo "epel-release-latest-8 is installed" || sudo yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm --skip-broken --noplugins
-sudo yum --noplugins -q list installed dnf-utils &>/dev/null && echo "dnf-utils is installed" || sudo yum install -y dnf-utils --skip-broken --noplugins
 sudo yum-config-manager --enable epel
 sudo yum clean all
 sudo rm -rf /var/cache/yum

@@ -10,7 +10,7 @@ echo -ne "\e[8;40;170t"
 reset
 wget -q --tries=10 --timeout=20 --spider http://google.com
 if [[ $? -eq 0 ]]; then
-        echo "Online"
+        echo "Online: Continuing to Install"
 else
         echo "Offline"
         echo "This script requires access to 
