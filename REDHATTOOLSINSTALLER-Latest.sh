@@ -8,6 +8,16 @@ echo -ne "\e[8;40;170t"
 
 
 reset
+wget -q --tries=10 --timeout=20 --spider http://google.com
+if [[ $? -eq 0 ]]; then
+        echo "Online: Continuing to Install"
+else
+        echo "Offline"
+        echo "This script requires access to 
+              the network to run please fix your settings and try again"
+              sleep 5
+        exit 1
+fi
 
 #--------------------------required packages for script to run----------------------------
 
@@ -233,7 +243,6 @@ echo "*********************************************************"
 echo "ADMIN PASSWORD - WRITE OR REMEMBER YOU WILL BE PROMPTED FOR 
 USER: admin AND THIS PASSWORD WHEN WE IMPORT THE MANIFEST"
 echo "*********************************************************"
-sleep 5
 echo 'ADMIN=admin'  >> /root/.bashrc
 echo 'What will the password be for your admin user?'
 read  ADMIN_PASSWORD
@@ -304,6 +313,8 @@ echo "*********************************************************"
 echo 'DHCP_RANGE=''"'$DHCPSTART' '$DHCPEND'"''' >> /root/.bashrc
 echo 'DHCP_GW='$(ip route list type unicast dev $(ip -o link | head -n 2 | tail -n 1 | awk '{print $2;}' | sed s/:$//) |awk -F " " '{print $7}')'' >> /root/.bashrc
 echo 'DHCP_DNS='$(ifconfig $INTERNAL | grep "inet" | awk -F ' ' '{print $2}' |grep -v f |awk -F . '{print $1"."$2"."$3"."$4}')'' >> /root/.bashrc
+sed -i 's/DHCP_GW=100 /DHCP_GW=/g' /root/.bashrc
+sed -i 's/DNS=100 /DNS=/g' /root/.bashrc
 }
 
 YMESSAGE="Adding to /root/.bashrc vars"
@@ -537,7 +548,7 @@ yum-config-manager --enable epel
 subscription-manager repos --enable=rhel-7-server-extras-rpms
 yum clean all ; rm -rf /var/cache/yum
 sleep 5
-yum install -y screen yum-utils vim gcc gcc-c++ git rh-nodejs8-npm make automake kernel-devel ruby-devel libvirt-client bind dhcp tftp libvirt augeas
+yum install -y screen syslinux yum-utils vim gcc gcc-c++ git rh-nodejs8-npm make automake kernel-devel ruby-devel libvirt-client bind dhcp tftp libvirt augeas --skip-broken
 sleep 5
 echo " "
 echo " "
@@ -545,18 +556,18 @@ echo " "
 echo "*********************************************************"
 echo "INSTALLING DEPENDENCIES FOR CONTENT VIEW AUTO PUBLISH"
 echo "*********************************************************"
-yum -y install python-pip python2-pip rubygem-builder --skip-broken
-pip install --upgrade pip
+sudo yum -y install python-pip python2-pip rubygem-builder --skip-broken
+sudo pip install --upgrade pip
 echo " "
 echo " "
 echo " "
 echo "*********************************************************"
 echo "UPGRADING OS"
 echo "*********************************************************"
-yum-config-manager --disable epel
-subscription-manager repos --disable=rhel-7-server-extras-rpms
-yum clean all ; rm -rf /var/cache/yum
-yum upgrade -y; yum update -y
+sudo yum-config-manager --disable epel
+sudo subscription-manager repos --disable=rhel-7-server-extras-rpms
+sudo yum clean all ; rm -rf /var/cache/yum
+sudo yum upgrade -y; yum update -y
 }
 #----------------------------------
 function GENERALSETUP {
@@ -575,7 +586,7 @@ echo "*********************************************************"
 echo "SETTING UP ADMIN"
 echo "*********************************************************"
 groupadd admin
-useradd admin --group admin -m -p $ADMIN
+useradd admin --group admin -p $ADMIN
 mkdir -p /home/admin/.ssh
 mkdir -p /home/admin/git
 chown -R admin:admin /home/admin
@@ -585,7 +596,7 @@ echo " "
 echo "*********************************************************"
 echo "SETTING UP FOREMAN-PROXY"
 echo "*********************************************************"
-useradd -M foreman-proxy
+useradd foreman-proxy -m /usr/share/foreman-proxy/ 
 usermod -L foreman-proxy
 mkdir -p /usr/share/foreman-proxy/.ssh
 sudo -u foreman-proxy ssh-keygen -f /usr/share/foreman-proxy/.ssh/id_rsa_foreman_proxy -N ''
@@ -1029,13 +1040,18 @@ echo "*********************************************************"
 echo 'SETTING SATELLITE EVN SETTINGS'
 echo "*********************************************************"
 hammer settings set --name default_download_policy --value on_demand
-hammer settings set --name default_organization  --value $ORG
-hammer settings set --name default_location  --value $LOC
-hammer settings set --name discovery_organization  --value $ORG
-hammer settings set --name root_pass --value $NODEPASS
+hammer settings set --name default_organization  --value "$ORG"
+hammer settings set --name default_location  --value "$LOC"
+hammer settings set --name discovery_organization  --value "$ORG"
+hammer settings set --name root_pass --value "$NODEPASS"
 hammer settings set --name query_local_nameservers --value true
 hammer settings set --name host_owner --value $ADMIN
 hammer settings set --name lab_features --value true
+hammer settings set --name default_puppet_environment --value development
+hammer settings set --name ansible_verbosity --value "Level 1 (-v)"
+hammer settings set --name discovery_location --value "$LOC"
+hammer settings set --name destroy_vm_on_host_delete --value No
+hammer settings set --name remote_execution_by_default --value Yes
 mkdir -p /etc/puppet/environments/production/modules
 echo " "
 echo " "
@@ -1265,8 +1281,8 @@ read -n1 -t "$COUNTDOWN"  -p "$QMESSAGE7 ? Y/N " INPUT
 INPUT=${INPUT:-$RHEL7DEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
-hammer repository-set enable --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='7.6' --name 'Red Hat Enterprise Linux 7 Server (Kickstart)' 
-time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 7 Server Kickstart x86_64 7.6' 2>/dev/null
+hammer repository-set enable --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='7.7' --name 'Red Hat Enterprise Linux 7 Server (Kickstart)' 
+hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 7 Server Kickstart x86_64 7.7' 2>/dev/null
 hammer repository-set enable --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Enterprise Linux 7 Server (RPMs)'
 time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server' 2>/dev/null
 hammer repository-set enable --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Enterprise Linux 7 Server - Supplementary (RPMs)'
@@ -1961,7 +1977,6 @@ hammer product set-sync-plan --name 'Extra Packages for Enterprise Linux 6' --or
 hammer product set-sync-plan --name 'Extra Packages for Enterprise Linux 5' --organization $ORG --sync-plan 'Weekly_Sync'
 hammer product set-sync-plan --name 'Puppet Forge' --organization $ORG --sync-plan 'Weekly_Sync'
 hammer product set-sync-plan --name 'CentOS Linux 7.6' --organization $ORG --sync-plan 'Weekly_Sync'
-
 hammer sync-plan create --name 'Scientific Linux 7.6 Weekly Sync' --description 'Weekly Sync sl_76 Plan' --organization $ORG --interval weekly --sync-date $(date +"%Y-%m-%d")" 00:00:00" --enabled yes
 hammer product set-sync-plan --name 'Scientific Linux 7.6' --organization $ORG --sync-plan 'Scientific Linux 7.6 Weekly Sync'
 
@@ -2016,7 +2031,7 @@ echo "CREATE A CONTENT VIEW FOR RHEL 7:"
 echo "***********************************************"
 hammer content-view create --organization $ORG --name 'RHEL7' --label RHEL7 --description 'RHEL 7'
 hammer content-view add-repository --organization $ORG --name 'RHEL7' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server'
-hammer content-view add-repository --organization $ORG --name 'RHEL7' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Enterprise Linux 7 Server Kickstart x86_64 7.6'
+hammer content-view add-repository --organization $ORG --name 'RHEL7' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Enterprise Linux 7 Server Kickstart x86_64 7.7'
 hammer content-view add-repository --organization $ORG --name 'RHEL7' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Satellite Tools 6.5 for RHEL7 Server RPMs x86_64'
 hammer content-view add-repository --organization $ORG --name 'RHEL7' --product 'Red Hat Software Collections for RHEL Server' --repository 'Red Hat Software Collections RPMs for Red Hat Enterprise Linux 7 Server x86_64 7Server'
 hammer content-view add-repository --organization $ORG --name 'RHEL7' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Enterprise Linux 7 Server - Supplementary RPMs x86_64 7Server'
@@ -2034,7 +2049,7 @@ echo "CREATE A CONTENT VIEW FOR RHEL 7 CAPSULES:"
 echo "***********************************************"
 hammer content-view create --organization $ORG --name 'RHEL7-Capsule' --label 'RHEL7-Capsule' --description 'Satellite Capsule'
 hammer content-view add-repository --organization $ORG --name 'RHEL7-Capsule' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server'
-hammer content-view add-repository --organization $ORG --name 'RHEL7-Capsule' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Enterprise Linux 7 Server Kickstart x86_64 7.6'
+hammer content-view add-repository --organization $ORG --name 'RHEL7-Capsule' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Enterprise Linux 7 Server Kickstart x86_64 7.7'
 hammer content-view add-repository --organization $ORG --name 'RHEL7-Capsule' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Satellite Tools 6.5 for RHEL 7 Server RPMs x86_64'
 hammer content-view add-repository --organization $ORG --name 'RHEL7-Capsule' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Enterprise Linux 7 Server - Optional RPMs x86_64 7Server'
 hammer content-view add-repository --organization $ORG --name 'RHEL7-Capsule' --product 'Red Hat Software Collections for RHEL Server' --repository 'Red Hat Software Collections RPMs for Red Hat Enterprise Linux 7 Server x86_64 7Server'
@@ -2063,7 +2078,7 @@ echo "CREATE A CONTENT VIEW FOR RHEL 7 Builder:"
 echo "***********************************************"
 hammer content-view create --organization $ORG --name 'RHEL7-Builder' --label RHEL7-Builder --description 'RHEL7-Builder'
 hammer content-view add-repository --organization $ORG --name 'RHEL7-Builder' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server'
-hammer content-view add-repository --organization $ORG --name 'RHEL7-Builder' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Enterprise Linux 7 Server Kickstart x86_64 7.6'
+hammer content-view add-repository --organization $ORG --name 'RHEL7-Builder' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Enterprise Linux 7 Server Kickstart x86_64 7.7'
 hammer content-view add-repository --organization $ORG --name 'RHEL7-Builder' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Satellite Tools 6.5 for RHEL 7 Server RPMs x86_64'
 hammer content-view add-repository --organization $ORG --name 'RHEL7-Builder' --product 'Red Hat Software Collections for RHEL Server' --repository 'Red Hat Software Collections RPMs for Red Hat Enterprise Linux 7 Server x86_64 7Server'
 hammer content-view add-repository --organization $ORG --name 'RHEL7-Builder' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Enterprise Linux 7 Server - Supplementary RPMs x86_64 7Server'
@@ -2274,11 +2289,11 @@ echo -ne "\e[8;40;170t"
 ENVIROMENT=$(hammer --csv environment list |awk -F "," {'print $2'}|grep -v Name |grep -v production)
 LEL=$(hammer --csv lifecycle-environment list  |awk -F "," {'print $2'} |grep -v NAME)
 echo "CAID=1" >> /root/.bashrc
-echo "MEDID1=$(hammer --csv medium list |grep 'RHEL 7.6' |awk -F "," {'print $1'} |grep -v Id)" >> /root/.bashrc
+echo "MEDID1=$(hammer --csv medium list |grep 'RHEL 7.7' |awk -F "," {'print $1'} |grep -v Id)" >> /root/.bashrc
 #echo "MEDID2=$(hammer --csv medium list |grep 'CentOS 7' |awk -F "," {'print $1'} |grep -v Id)" >> /root/.bashrc
 echo "SUBNETID=$(hammer --csv subnet list |awk -F "," {'print $1'}| grep -v Id)" >> /root/.bashrc
-echo "OSID1=$(hammer os list |grep -i "RedHat 7.6"  |awk -F "|" {'print $1'})" >> /root/.bashrc
-#echo "OSID2=$(hammer os list |grep -i "CentOS 7.6"  |awk -F "|" {'print $1'})" >> /root/.bashrc
+echo "OSID1=$(hammer os list |grep -i "RedHat 7.7"  |awk -F "|" {'print $1'})" >> /root/.bashrc
+#echo "OSID2=$(hammer os list |grep -i "CentOS 7.7"  |awk -F "|" {'print $1'})" >> /root/.bashrc
 echo "PROXYID=$(hammer --csv proxy list |awk -F "," {'print $1'} |grep -v Id)" >> /root/.bashrc
 echo "PARTID=$(hammer --csv partition-table list | grep "Kickstart default" | grep -i -v thin |cut -d, -f1)" >> /root/.bashrc
 echo "PXEID=$(hammer --csv template list --per-page=1000 | grep "Kickstart default PXELinux" | cut -d, -f1)" >> /root/.bashrc
@@ -2328,8 +2343,8 @@ echo "*********************************************************"
 #MAKES ROOTPASSWORD ON NODES rreeddhhaatt BECAUSE THE SYSTEM REQUIRES IT TO BE 8+ CHAR (--root-pass rreeddhhaatt)
 ENVIROMENT=$(hammer --csv lifecycle-environment list |awk -F "," {'print $2'}|grep -v Name |grep -v production)
 LEL=$(hammer --csv environment list  |awk -F "," {'print $2'}|grep -v Name)
-for i in $LEL; do for j in $(hammer --csv environment list |awk -F "," {'print $2'}| awk -F "_" {'print $1'}|grep -v Name); do hammer hostgroup create --name RHEL-7.6-$j --environment $i --architecture-id $ARCHID --content-view-id $CVID --domain-id $DOMID --location-ids $LOCID --medium-id $MEDID1 --operatingsystem-id $OSID1 --organization-id=$ORGID  --partition-table-id $PARTID --puppet-ca-proxy-id $PROXYID --subnet-id $SUBNETID --root-pass=rreeddhhaatt ; done; done
-#for i in $LEL; do for j in $(hammer --csv environment list |awk -F "," {'print $2'}| awk -F "_" {'print $1'}|grep -v Name); do hammer hostgroup create --name CentOS Linux 7.6.6-$j --environment $i --architecture-id $ARCHID --content-view-id $CVID --domain-id $DOMID --location-ids $LOCID --medium-id $MEDID2 --operatingsystem-id $OSID2 --organization-id=$ORGID  --partition-table-id $PARTID --puppet-ca-proxy-id $PROXYID --subnet-id $SUBNETID --root-pass=redhat ; done; done
+for i in $LEL; do for j in $(hammer --csv environment list |awk -F "," {'print $2'}| awk -F "_" {'print $1'}|grep -v Name); do hammer hostgroup create --name RHEL-7.7-$j --environment $i --architecture-id $ARCHID --content-view-id $CVID --domain-id $DOMID --location-ids $LOCID --medium-id $MEDID1 --operatingsystem-id $OSID1 --organization-id=$ORGID  --partition-table-id $PARTID --puppet-ca-proxy-id $PROXYID --subnet-id $SUBNETID --root-pass=rreeddhhaatt ; done; done
+#for i in $LEL; do for j in $(hammer --csv environment list |awk -F "," {'print $2'}| awk -F "_" {'print $1'}|grep -v Name); do hammer hostgroup create --name CentOS Linux 7.6-$j --environment $i --architecture-id $ARCHID --content-view-id $CVID --domain-id $DOMID --location-ids $LOCID --medium-id $MEDID2 --operatingsystem-id $OSID2 --organization-id=$ORGID  --partition-table-id $PARTID --puppet-ca-proxy-id $PROXYID --subnet-id $SUBNETID --root-pass=redhat ; done; done
 }
 #-------------------------------
 function MODPXELINUXDEF {
@@ -2470,10 +2485,10 @@ yum-config-manager --setopt=\*.skip_if_unavailable=1 --save \*
 foreman-rake foreman_tasks:cleanup TASK_SEARCH='label = Actions::Katello::Repository::Sync' STATES='paused,pending,stopped' VERBOSE=true
 foreman-rake katello:delete_orphaned_content --trace
 foreman-rake katello:reindex --trace
-katello-service stop
 katello-selinux-disable
 setenforce 0
 service firewalld stop 
+katello-service stop
 yum upgrade -y --skip-broken --setopt=protected_multilib=false ; yum update -y --skip-broken --setopt=protected_multilib=false
 yum -q list installed puppetserver &>/dev/null && echo "puppetserver is installed" || time yum install puppetserver -y --skip-broken --setopt=protected_multilib=false
 yum -q list installed puppet-agent-oauth &>/dev/null && echo "puppet-agent-oauth is installed" || time yum install puppet-agent-oauth -y --skip-broken --setopt=protected_multilib=false
@@ -2577,12 +2592,12 @@ echo "************************************"
 if grep -q -i "release 7" /etc/redhat-release ; then
 rhel7only=1
 echo "RHEL 7.7"
-subscrition-manager register --auto-attach
-subscrition-manager reops --disable "*"
-subscrition-manager reops --enable rhel-7-server-rpms
-subscrition-manager reops --enable rhel-server-rhscl-7-rpms
-subscrition-manager reops --enable rhel-7-server-optional-rpms
-subscrition-manager reops --enable --enable rhel-7-server-ansible-2.8-rpms
+subscription-manager register --auto-attach
+subscription-manager reops --disable "*"
+subscription-manager repos --enable rhel-7-server-rpms
+subscription-manager repos --enable rhel-server-rhscl-7-rpms
+subscription-manager repos --enable rhel-7-server-optional-rpms
+subscription-manager repos --enable --enable rhel-7-server-ansible-2.8-rpms
 yum clean all
 rm -rf /var/cache/yum
 yum-config-manager --setopt=\*.skip_if_unavailable=1 --save \* 
@@ -2682,13 +2697,13 @@ echo '************************************'
 if grep -q -i "release 8." /etc/redhat-release ; then
  rhel8only=1
 echo "RHEL 8 supporting latest release"
-subscrition-manager register --auto-attach
-subscrition-manager reops --disable "*"
-subscrition-manager reops --enable ansible-2.8-for-rhel-8-x86_64-rpms
-subscrition-manager reops --enable rhel-8-for-x86_64-appstream-rpms
-subscrition-manager reops --enable rhel-8-for-x86_64-baseos-rpms
-subscrition-manager reops --enable rhel-8-for-x86_64-supplementary-rpms
-subscrition-manager reops --enable rhel-8-for-x86_64-optional-rpms
+subscription-manager register --auto-attach
+subscription-manager reops --disable "*"
+subscription-manager repos --enable ansible-2.8-for-rhel-8-x86_64-rpms
+subscription-manager repos --enable rhel-8-for-x86_64-appstream-rpms
+subscription-manager repos --enable rhel-8-for-x86_64-baseos-rpms
+subscription-manager repos --enable rhel-8-for-x86_64-supplementary-rpms
+subscription-manager repos --enable rhel-8-for-x86_64-optional-rpms
 yum-config-manager --setopt=\*.skip_if_unavailable=1 --save \* 
 yum --noplugins -q list installed epel-release-latest-8 &>/dev/null && echo "epel-release-latest-8 is installed" || yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm --skip-broken --noplugins
 yum --noplugins -q list installed dnf-utils &>/dev/null && echo "dnf-utils is installed" || yum install -y dnf-utils --skip-broken --noplugins
@@ -2773,6 +2788,7 @@ echo " "
 pip3 install requests-credssp
 pip3 install requests-credssp --upgrade
 pip3 freeze | grep requests-credssp
+for i in $(pip3 freeze | grep boto | awk -F '=' '{print $1}') ; do pip3 install "$i" --upgrade  ; done
 else
  echo "Not Running RHEL 8.x !"
 fi
