@@ -327,13 +327,13 @@ echo " "
 echo " "
 echo " "
 sudo pip install six 
-sudo pip install six --upgrade
+sudo pip install six --upgrade --force-reinstall
 sudo pipfreeze | grep six
 echo " "
 echo " "
 echo " "
 sudo pip install awscli 
-sudo pip install awscli --upgrade
+sudo pip install awscli --upgrade --force-reinstall
 sudo pipfreeze | grep awscli 
 echo " "
 echo " "
@@ -347,27 +347,27 @@ for i in $(sudo pipfreeze | grep azure | awk -F '=' '{print $1}') ; do sudo pip 
 sudo pip install azure-common 
 sudo pip install azure-common --upgrade
 sudo pip install azure-mgmt-authorization 
-sudo pip install azure-mgmt-authorization --upgrade
+sudo pip install azure-mgmt-authorization --upgrade --force-reinstall
 sudo pip install azure-mgmt 
-sudo pip install azure-mgmt --upgrade
+sudo pip install azure-mgmt --upgrade --force-reinstall
 sudo pipfreeze | grep azure
 echo " "
 echo " "
 echo " "
 sudo pip install pywinrm 
-sudo pip install pywinrm --upgrade
+sudo pip install pywinrm --upgrade --force-reinstall
 sudo pipfreeze | grep pywinrm
 echo " "
 echo " "
 echo " "
 sudo pip install requests 
-sudo pip install requests --upgrade
+sudo pip install requests --upgrade --force-reinstall
 sudo pipfreeze | grep requests
 echo " "
 echo " "
 echo " "
 sudo pip install requests-credssp 
-sudo pip install requests-credssp --upgrade
+sudo pip install requests-credssp --upgrade --force-reinstall
 sudo pipfreeze | grep requests-credssp
 
 sudo pip install boto --user --upgrade --force-reinstall
