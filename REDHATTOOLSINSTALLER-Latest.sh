@@ -530,7 +530,7 @@ subscription-manager repos --enable=rhel-server-rhscl-7-rpms || exit 1
 subscription-manager repos --enable=rhel-7-server-optional-rpms || exit 1
 subscription-manager repos --enable=rhel-7-server-satellite-6.6-rpms || exit 1
 subscription-manager repos --enable=rhel-7-server-satellite-maintenance-6-rpms || exit 1
-subscription-manager repos --enable rhel-7-server-ansible-2.8-rpms || exit 1
+subscription-manager repos --enable rhel-7-server-ansible-2.9-rpms || exit 1
 yum clean all 
 rm -rf /var/cache/yum
 echo " "
@@ -698,7 +698,7 @@ subscription-manager repos --enable=rhel-server-rhscl-7-rpms || exit 1
 subscription-manager repos --enable=rhel-7-server-optional-rpms || exit 1
 subscription-manager repos --enable=rhel-7-server-satellite-6.6-rpms || exit 1
 subscription-manager repos --enable=rhel-7-server-satellite-maintenance-6-rpms || exit 1
-subscription-manager repos --enable rhel-7-server-ansible-2.8-rpms 
+subscription-manager repos --enable rhel-7-server-ansible-2.9-rpms 
 yum clean all
 rm -rf /var/cache/yum
 sleep 5
@@ -840,7 +840,7 @@ subscription-manager repos --enable=rhel-server-rhscl-7-rpms
 subscription-manager repos --enable=rhel-7-server-optional-rpms
 subscription-manager repos --enable=rhel-7-server-satellite-6.6-rpms
 subscription-manager repos --enable=rhel-7-server-satellite-maintenance-6-rpm
-subscription-manager repos --enable rhel-7-server-ansible-2.8-rpms
+subscription-manager repos --enable rhel-7-server-ansible-2.9-rpms
 subscription-manager repos --enable=rhel-7-server-extras-rpms
 
 yum clean all 
@@ -1882,6 +1882,8 @@ echo "SYNC ALL REPOSITORIES (WAIT FOR THIS TO COMPLETE BEFORE CONTINUING):"
 echo "*********************************************************"
 for i in $(hammer --csv repository list |grep -i kickstart  | awk -F ',' '{print $1}') ; do hammer repository update --id $i --download-policy immediate ; done
 for i in $(hammer --csv repository list --organization $ORG | awk -F, {'print $1'} | grep -vi '^ID'); do hammer repository synchronize --id ${i} --organization $ORG --async; done
+
+
 sleep 5
 echo " "
 }
@@ -2274,8 +2276,13 @@ echo " "
 echo "*********************************************************"
 echo "Create Media:"
 echo "*********************************************************"
+#RHEL 7
 hammer medium create --path=http://repos/${ORG}/Library/content/dist/rhel/server/7/7.6/x86_64/kickstart/ --organizations=$ORG --locations="$LOC" --os-family=Redhat --name="RHEL 7.6 Kickstart" --operatingsystems="RedHat 7.6"
 hammer medium create --path=http://repos/${ORG}/Library/content/dist/rhel/server/7/7.7/x86_64/kickstart/ --organizations=$ORG --locations="$LOC" --os-family=Redhat --name="RHEL 7.7 Kickstart" --operatingsystems="RedHat 7.7"
+
+#RHEL 8
+hammer medium create --path=http://repos/${ORG}/Library/content/dist/rhel8/8.0/x86_64/baseos/kickstart --organizations=$ORG --locations="$LOC" --os-family=Redhat --name="RHEL 8.0 Kickstart" --operatingsystems="RedHat 8.0"
+hammer medium create --path=http://repos/${ORG}/Library/content/dist/rhel8/8.1/x86_64/baseos/kickstart --organizations=$ORG --locations="$LOC" --os-family=Redhat --name="RHEL 8.1 Kickstart" --operatingsystems="RedHat 8.1"
 }
 #----------------------------------
 function VARSETUP2 {
@@ -2482,7 +2489,7 @@ subscription-manager repos --enable=rhel-7-server-rpms
 subscription-manager repos --enable=rhel-server-rhscl-7-rpms
 subscription-manager repos --enable=rhel-7-server-satellite-6.6-rpms
 subscription-manager repos --enable=rhel-7-server-satellite-maintenance-6-rpms
-subscription-manager repos --enable rhel-7-server-ansible-2.8-rpms
+subscription-manager repos --enable=rhel-7-server-ansible-2.9-rpms
 yum clean all
 yum-config-manager --setopt=\*.skip_if_unavailable=1 --save \* 
 foreman-rake foreman_tasks:cleanup TASK_SEARCH='label = Actions::Katello::Repository::Sync' STATES='paused,pending,stopped' VERBOSE=true
@@ -2497,7 +2504,7 @@ yum upgrade -y --skip-broken --setopt=protected_multilib=false ; yum update -y -
 yum -q list installed puppetserver &>/dev/null && echo "puppetserver is installed" || time yum install puppetserver -y --skip-broken --setopt=protected_multilib=false
 yum -q list installed puppet-agent-oauth &>/dev/null && echo "puppet-agent-oauth is installed" || time yum install puppet-agent-oauth -y --skip-broken --setopt=protected_multilib=false
 yum -q list installed puppet-agent &>/dev/null && echo "puppet-agent is installed" || time yum install puppet-agent -y --skip-broken --setopt=protected_multilib=false
-satellite-installer -v --scenario satellite --upgrade
+satellite-installer -vv --scenario satellite --upgrade
 foreman-rake db:migrate
 foreman-rake db:seed
 foreman-rake apipie:cache:index
@@ -2574,7 +2581,7 @@ Connection to the internet so the instller can download the required packages
 6. This install was tested with:
           * RHEL_7.7 in a KVM environment.
           * Red Hat subscriber channels:
-             rhel-7-server-ansible-2.8-rpms
+             rhel-7-server-ansible-2.9-rpms
              rhel-7-server-extras-rpms
              rhel-7-server-optional-rpms
              rhel-7-server-rpms
@@ -2601,7 +2608,7 @@ subscription-manager reops --disable "*"
 subscription-manager repos --enable rhel-7-server-rpms
 subscription-manager repos --enable rhel-server-rhscl-7-rpms
 subscription-manager repos --enable rhel-7-server-optional-rpms
-subscription-manager repos --enable --enable rhel-7-server-ansible-2.8-rpms
+subscription-manager repos --enable --enable rhel-7-server-ansible-2.9-rpms
 yum clean all
 rm -rf /var/cache/yum
 yum-config-manager --setopt=\*.skip_if_unavailable=1 --save \* 
@@ -2703,14 +2710,18 @@ if grep -q -i "release 8." /etc/redhat-release ; then
 echo "RHEL 8 supporting latest release"
 subscription-manager register --auto-attach
 subscription-manager reops --disable "*"
-subscription-manager repos --enable ansible-2.8-for-rhel-8-x86_64-rpms
+subscription-manager repos --enable ansible-2.9-for-rhel-8-x86_64-rpms
 subscription-manager repos --enable rhel-8-for-x86_64-appstream-rpms
 subscription-manager repos --enable rhel-8-for-x86_64-baseos-rpms
 subscription-manager repos --enable rhel-8-for-x86_64-supplementary-rpms
 subscription-manager repos --enable rhel-8-for-x86_64-optional-rpms
+echo " "
+echo " "
 yum-config-manager --setopt=\*.skip_if_unavailable=1 --save \* 
 yum --noplugins -q list installed epel-release-latest-8 &>/dev/null && echo "epel-release-latest-8 is installed" || yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm --skip-broken --noplugins
 yum --noplugins -q list installed dnf-utils &>/dev/null && echo "dnf-utils is installed" || yum install -y dnf-utils --skip-broken --noplugins
+echo " "
+echo " "
 yum-config-manager --enable epel 
 yum clean all
 rm -rf /var/cache/yum
@@ -2718,7 +2729,8 @@ yum --noplugins -q list installed ansible &>/dev/null && echo "ansible is instal
 yum --noplugins -q list installed wget &>/dev/null && echo "wget is installed" || yum install -y wget --skip-broken --noplugins
 yum --noplugins -q list installed bash-completion-extras &>/dev/null && echo "bash-completion-extras" || yum install -y bash-completion-extras --skip-broken --noplugins
 yum --noplugins -q list installed python3-pip &>/dev/null && echo "python3-pip" || yum install -y python3-pip --skip-broken --noplugins
-
+echo " "
+echo " "
 yum-config-manager --disable epel
 echo '************************************'
 echo 'Expanding Ansible Tower and installing '
