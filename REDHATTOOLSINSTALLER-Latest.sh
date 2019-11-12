@@ -2634,8 +2634,9 @@ sed -i 's/admin_password="''"/admin_password="'redhat'"/g' inventory
 sed -i 's/redis_password="''"/redis_password="'redhat'"/g' inventory
 sed -i 's/pg_password="''"/pg_password="'redhat'"/g' inventory
 sed -i 's/rabbitmq_password="''"/rabbitmq_password="'redhat'"/g' inventory
-sudo ~/Downloads/ansible-tower/setup.sh
+sh setup.sh
 sleep 10
+source /var/lib/awx/venv/ansible/bin/activate
 pip install six
 pip install six --upgrade
 pip freeze | grep six
