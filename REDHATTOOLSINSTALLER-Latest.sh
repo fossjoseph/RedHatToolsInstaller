@@ -1,6 +1,6 @@
 #!/bin/bash
 #POC/Demo
-#This Script is for setting up a basic Satellite 6.5 or  
+#This Script is for setting up a basic Satellite 6.6 or  
 echo -ne "\e[8;40;170t"
 
 # Hammer referance to assist in modifing the script can be found at 
@@ -515,7 +515,7 @@ fi
 function INSTALLREPOS {
 #------------------------------
 echo "*********************************************************"
-echo "SET REPOS FOR INSTALLING AND UPDATING SATELLITE 6.5"
+echo "SET REPOS FOR INSTALLING AND UPDATING Satellite 6.6"
 echo "*********************************************************"
 echo -ne "\e[8;40;170t"
 subscription-manager repos --disable '*'
@@ -523,14 +523,14 @@ echo " "
 echo " "
 echo " "
 echo "*********************************************************"
-echo "ENABLE SATELLITE 6.5 REPOS"
+echo "ENABLE Satellite 6.6 REPOS"
 echo "*********************************************************"
 subscription-manager repos --enable=rhel-7-server-rpms || exit 1
 subscription-manager repos --enable=rhel-server-rhscl-7-rpms || exit 1
 subscription-manager repos --enable=rhel-7-server-optional-rpms || exit 1
-subscription-manager repos --enable=rhel-7-server-satellite-6.5-rpms || exit 1
+subscription-manager repos --enable=rhel-7-server-satellite-6.6-rpms || exit 1
 subscription-manager repos --enable=rhel-7-server-satellite-maintenance-6-rpms || exit 1
-subscription-manager repos --enable rhel-7-server-ansible-2.8-rpms || exit 1
+subscription-manager repos --enable rhel-7-server-ansible-2.9-rpms || exit 1
 yum clean all 
 rm -rf /var/cache/yum
 echo " "
@@ -687,7 +687,7 @@ echo " "
 echo " "
 echo " "
 echo "*********************************************************"
-echo "VERIFING REPOS FOR SATELLITE 6.5"
+echo "VERIFING REPOS FOR Satellite 6.6"
 echo "*********************************************************"
 yum-config-manager --disable epel
 subscription-manager repos --disable=rhel-7-server-extras-rpms
@@ -696,9 +696,9 @@ rm -rf /var/cache/yum
 subscription-manager repos --enable=rhel-7-server-rpms || exit 1
 subscription-manager repos --enable=rhel-server-rhscl-7-rpms || exit 1
 subscription-manager repos --enable=rhel-7-server-optional-rpms || exit 1
-subscription-manager repos --enable=rhel-7-server-satellite-6.5-rpms || exit 1
+subscription-manager repos --enable=rhel-7-server-satellite-6.6-rpms || exit 1
 subscription-manager repos --enable=rhel-7-server-satellite-maintenance-6-rpms || exit 1
-subscription-manager repos --enable rhel-7-server-ansible-2.8-rpms 
+subscription-manager repos --enable rhel-7-server-ansible-2.9-rpms 
 yum clean all
 rm -rf /var/cache/yum
 sleep 5
@@ -838,9 +838,9 @@ echo "*********************************************************"
 subscription-manager repos --enable=rhel-7-server-rpms
 subscription-manager repos --enable=rhel-server-rhscl-7-rpms
 subscription-manager repos --enable=rhel-7-server-optional-rpms
-subscription-manager repos --enable=rhel-7-server-satellite-6.5-rpms
+subscription-manager repos --enable=rhel-7-server-satellite-6.6-rpms
 subscription-manager repos --enable=rhel-7-server-satellite-maintenance-6-rpm
-subscription-manager repos --enable rhel-7-server-ansible-2.8-rpms
+subscription-manager repos --enable rhel-7-server-ansible-2.9-rpms
 subscription-manager repos --enable=rhel-7-server-extras-rpms
 
 yum clean all 
@@ -1075,7 +1075,7 @@ QMESSAGE5="Would you like to enable and sync RHEL 5 Content
 This will enable
  Red Hat Enterprise Linux 5 Server (Kickstart)
  Red Hat Enterprise Linux 5 Server
- Red Hat Satellite Tools 6.5 (for RHEL 5 Server)
+ Red Hat Satellite Tools 6.6 (for RHEL 5 Server)
  Red Hat Software Collections RPMs for Red Hat Enterprise Linux 5 Server
  Red Hat Enterprise Linux 5 Server - Extras
  Red Hat Enterprise Linux 5 Server - Optional
@@ -1087,7 +1087,7 @@ QMESSAGE6="Would you like to enable and sync RHEL 6 Content
 This will enable
  Red Hat Enterprise Linux 6 Server (Kickstart)
  Red Hat Enterprise Linux 6 Server
- Red Hat Satellite Tools 6.5 (for RHEL 6 Server)
+ Red Hat Satellite Tools 6.6 (for RHEL 6 Server)
  Red Hat Software Collections RPMs for Red Hat Enterprise Linux 6 Server
  Red Hat Enterprise Linux 6 Server - Extras
  Red Hat Enterprise Linux 6 Server - Optional
@@ -1099,7 +1099,7 @@ QMESSAGE7="Would you like to enable and sync RHEL 7 Content
 This will enable:
  Red Hat Enterprise Linux 7 Server (Kickstart)
  Red Hat Enterprise Linux 7 Server
- Red Hat Satellite Tools 6.5 (for RHEL 7 Server)
+ Red Hat Satellite Tools 6.6 (for RHEL 7 Server)
  Red Hat Software Collections RPMs for Red Hat Enterprise Linux 7 Server
  Red Hat Enterprise Linux 7 Server - Extras
  Red Hat Enterprise Linux 7 Server - Optional
@@ -1109,8 +1109,8 @@ This will enable:
 
 QMESSAGEJBOSS="Would you like to download JBoss Enterprise Application Platform 7 (RHEL 7 Server) content"
 QMESSAGEVIRTAGENT="Would you like to download Red Hat Virtualization 4 Management Agents for RHEL 7 content"
-QMESSAGESAT65="Would you like to download Red Hat Satellite 6.5 (for RHEL 7 Server) content"
-QMESSAGECAP65="Would you like to download Red Hat Satellite Capsule 6.5 (for RHEL 7 Server) content"
+QMESSAGESAT65="Would you like to download Red Hat Satellite 6.6 (for RHEL 7 Server) content"
+QMESSAGECAP65="Would you like to download Red Hat Satellite Capsule 6.6 (for RHEL 7 Server) content"
 QMESSAGEOSC="Would you like to download Red Hat OpenShift Container Platform 3.10 content"
 QMESSAGECEPH="Would you like to download Red Hat Ceph Storage Tools 3.0 for Red Hat Enterprise Linux 7 Server content"
 QMESSAGESNC="Would you like to download Red Hat Storage Native Client for RHEL 7 content"
@@ -1147,7 +1147,7 @@ echo "*********************************************************"
 echo "*********************************************************"
 echo "BY DEFAULT IF YOU JUST LET THIS SCRIPT RUN YOU WILL 
 ONLY SYNC THE  CORE RHEL 7 (KICKSTART, 7SERVER, OPTIONAL, EXTRAS,
- SAT 6.5 TOOLS, SUPPLAMENTRY, AND RH COMMON ) THE PROGRESS 
+ SAT 6.6 TOOLS, SUPPLAMENTRY, AND RH COMMON ) THE PROGRESS 
  TO THIS STEP CAN BE TRACKED AT $(hostname)/katello/sync_management :"
 echo "*********************************************************"
 if ! xset q &>/dev/null; then
@@ -1176,8 +1176,8 @@ time hammer repository synchronize --organization "$ORG" --product 'Red Hat Ente
 hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='5Server' --name 'Red Hat Enterprise Linux 5 Server (RPMs)'
 time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 5 Server (RPMs)' 2>/dev/null
 
-hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --name 'Red Hat Satellite Tools 6.5 (for RHEL 5 Server) (RPMs)'
-time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Satellite Tools 6.5 (for RHEL 5 Server) (RPMs)' 2>/dev/null
+hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --name 'Red Hat Satellite Tools 6.6 (for RHEL 5 Server) (RPMs)'
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Satellite Tools 6.6 (for RHEL 5 Server) (RPMs)' 2>/dev/null
 
 hammer repository-set enable --organization $ORG --product 'Red Hat Software Collections for RHEL Server' --basearch='x86_64' --releasever='5Server' --name 'Red Hat Software Collections RPMs for Red Hat Enterprise Linux 5 Server'
 time hammer repository synchronize --organization "$ORG" --product 'Red Hat Software Collections for RHEL Server' --name 'Red Hat Software Collections RPMs for Red Hat Enterprise Linux 5 Server' 2>/dev/null
@@ -1230,8 +1230,8 @@ time hammer repository synchronize --organization "$ORG" --product 'Red Hat Ente
 hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='6Server' --name 'Red Hat Enterprise Linux 6 Server (RPMs)'
 time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 6 Server (RPMs)' 2>/dev/null
 
-hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --name 'Red Hat Satellite Tools 6.5 (for RHEL 6 Server) (RPMs)'
-time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Satellite Tools 6.5 (for RHEL 6 Server) (RPMs)' 2>/dev/null
+hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --name 'Red Hat Satellite Tools 6.6 (for RHEL 6 Server) (RPMs)'
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Satellite Tools 6.6 (for RHEL 6 Server) (RPMs)' 2>/dev/null
 
 hammer repository-set enable --organization $ORG --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='6Server' --name 'Red Hat Enterprise Linux 6 Server - Optional (RPMs)'
 time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 6 Server - Optional (RPMs)' 2>/dev/null
@@ -1291,8 +1291,8 @@ hammer repository-set enable --organization "$ORG" --product 'Red Hat Enterprise
 time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 7 Server - Optional RPMs x86_64 7Server' 2>/dev/null
 hammer repository-set enable --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --name 'Red Hat Enterprise Linux 7 Server - Extras (RPMs)'
 time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 7 Server - Extras RPMs x86_64' 2>/dev/null
-hammer repository-set enable --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --name 'Red Hat Satellite Tools 6.5 (for RHEL 7 Server) (RPMs)'
-time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Satellite Tools 6.5 for RHEL 7 Server RPMs x86_64'
+hammer repository-set enable --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --name 'Red Hat Satellite Tools 6.6 (for RHEL 7 Server) (RPMs)'
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Satellite Tools 6.6 for RHEL 7 Server RPMs x86_64'
 hammer repository-set enable --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Enterprise Linux 7 Server - RH Common (RPMs)'
 time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 7 Server - RH Common RPMs x86_64 7Server' 2>/dev/null
 hammer repository-set enable --organization "$ORG" --product 'Red Hat Software Collections (for RHEL Server)' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Software Collections RPMs for Red Hat Enterprise Linux 7 Server'
@@ -1371,14 +1371,14 @@ function REQUESTSAT64 {
 source /root/.bashrc
 echo -ne "\e[8;40;170t"
 echo "*********************************************************"
-echo "RED HAT SATELLITE 6.5:"
+echo "RED HAT Satellite 6.6:"
 echo "*********************************************************"
 read -n1 -t "$COUNTDOWN"  -p "$QMESSAGESAT64 ? Y/N " INPUT
 INPUT=${INPUT:-$OTHER7REPOSDEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
-hammer repository-set enable --organization $ORG --product 'Red Hat Satellite' --basearch='x86_64' --name 'Red Hat Satellite 6.5 (for RHEL 7 Server) (RPMs)'
-time hammer repository synchronize --organization "$ORG" --product 'Red Hat Satellite' --name 'Red Hat Satellite 6.5 (for RHEL 7 Server) (RPMs)' 2>/dev/null
+hammer repository-set enable --organization $ORG --product 'Red Hat Satellite' --basearch='x86_64' --name 'Red Hat Satellite 6.6 (for RHEL 7 Server) (RPMs)'
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat Satellite' --name 'Red Hat Satellite 6.6 (for RHEL 7 Server) (RPMs)' 2>/dev/null
 #COMMANDEXECUTION
 elif [ "$INPUT" = "n" -o "$INPUT" = "N" ] ;then
 echo -e "\n$NMESSAGE\n"
@@ -1882,6 +1882,8 @@ echo "SYNC ALL REPOSITORIES (WAIT FOR THIS TO COMPLETE BEFORE CONTINUING):"
 echo "*********************************************************"
 for i in $(hammer --csv repository list |grep -i kickstart  | awk -F ',' '{print $1}') ; do hammer repository update --id $i --download-policy immediate ; done
 for i in $(hammer --csv repository list --organization $ORG | awk -F, {'print $1'} | grep -vi '^ID'); do hammer repository synchronize --id ${i} --organization $ORG --async; done
+
+
 sleep 5
 echo " "
 }
@@ -2032,7 +2034,7 @@ echo "***********************************************"
 hammer content-view create --organization $ORG --name 'RHEL7' --label RHEL7 --description 'RHEL 7'
 hammer content-view add-repository --organization $ORG --name 'RHEL7' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server'
 hammer content-view add-repository --organization $ORG --name 'RHEL7' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Enterprise Linux 7 Server Kickstart x86_64 7.7'
-hammer content-view add-repository --organization $ORG --name 'RHEL7' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Satellite Tools 6.5 for RHEL7 Server RPMs x86_64'
+hammer content-view add-repository --organization $ORG --name 'RHEL7' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Satellite Tools 6.6 for RHEL7 Server RPMs x86_64'
 hammer content-view add-repository --organization $ORG --name 'RHEL7' --product 'Red Hat Software Collections for RHEL Server' --repository 'Red Hat Software Collections RPMs for Red Hat Enterprise Linux 7 Server x86_64 7Server'
 hammer content-view add-repository --organization $ORG --name 'RHEL7' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Enterprise Linux 7 Server - Supplementary RPMs x86_64 7Server'
 hammer content-view add-repository --organization $ORG --name 'RHEL7' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Enterprise Linux 7 Server - RH Common RPMs x86_64 7Server'
@@ -2050,11 +2052,11 @@ echo "***********************************************"
 hammer content-view create --organization $ORG --name 'RHEL7-Capsule' --label 'RHEL7-Capsule' --description 'Satellite Capsule'
 hammer content-view add-repository --organization $ORG --name 'RHEL7-Capsule' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server'
 hammer content-view add-repository --organization $ORG --name 'RHEL7-Capsule' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Enterprise Linux 7 Server Kickstart x86_64 7.7'
-hammer content-view add-repository --organization $ORG --name 'RHEL7-Capsule' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Satellite Tools 6.5 for RHEL 7 Server RPMs x86_64'
+hammer content-view add-repository --organization $ORG --name 'RHEL7-Capsule' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Satellite Tools 6.6 for RHEL 7 Server RPMs x86_64'
 hammer content-view add-repository --organization $ORG --name 'RHEL7-Capsule' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Enterprise Linux 7 Server - Optional RPMs x86_64 7Server'
 hammer content-view add-repository --organization $ORG --name 'RHEL7-Capsule' --product 'Red Hat Software Collections for RHEL Server' --repository 'Red Hat Software Collections RPMs for Red Hat Enterprise Linux 7 Server x86_64 7Server'
-hammer content-view add-repository --organization $ORG --name 'RHEL7-Capsule' --product 'Red Hat Satellite Capsule' --repository 'Red Hat Satellite Capsule 6.5 for RHEL 7 Server RPMs x86_64'
-hammer content-view add-repository --organization $ORG --name 'RHEL7-Capsule' --product 'Red Hat Satellite Capsule' --repository 'Red Hat Satellite Capsule 6.5 - Puppet 4 for RHEL 7 Server RPMs x86_64'
+hammer content-view add-repository --organization $ORG --name 'RHEL7-Capsule' --product 'Red Hat Satellite Capsule' --repository 'Red Hat Satellite Capsule 6.6 for RHEL 7 Server RPMs x86_64'
+hammer content-view add-repository --organization $ORG --name 'RHEL7-Capsule' --product 'Red Hat Satellite Capsule' --repository 'Red Hat Satellite Capsule 6.6 - Puppet 4 for RHEL 7 Server RPMs x86_64'
 hammer content-view puppet-module add --organization $ORG --content-view 'RHEL7-Capsule' --author puppetlabs --name stdlib
 hammer content-view puppet-module add --organization $ORG --content-view 'RHEL7-Capsule' --author puppetlabs --name concat
 hammer content-view puppet-module add --organization $ORG --content-view 'RHEL7-Capsule' --author puppetlabs --name ntp
@@ -2066,7 +2068,7 @@ echo "CREATE A CONTENT VIEW FOR RHEL 7 Hypervisor:"
 echo "***********************************************"
 hammer content-view create --organization $ORG --name 'RHEL7-Hypervisor' --label 'RHEL7-Hypervisor' --description ''
 hammer content-view add-repository --organization $ORG --name 'RHEL7-Hypervisor' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server'
-hammer content-view add-repository --organization $ORG --name 'RHEL7-Hypervisor' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Satellite Tools 6.5 for RHEL 7 Server RPMs x86_64'
+hammer content-view add-repository --organization $ORG --name 'RHEL7-Hypervisor' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Satellite Tools 6.6 for RHEL 7 Server RPMs x86_64'
 hammer content-view add-repository --organization $ORG --name 'RHEL7-Hypervisor' --product 'Red Hat Virtualization' --repository 'Red Hat Virtualization 4 Management Agents for RHEL 7 RPMs x86_64 7Server'
 hammer content-view puppet-module add --organization $ORG --content-view 'RHEL7-Hypervisor' --author puppetlabs --name stdlib
 hammer content-view puppet-module add --organization $ORG --content-view 'RHEL7-Hypervisor' --author puppetlabs --name concat
@@ -2079,7 +2081,7 @@ echo "***********************************************"
 hammer content-view create --organization $ORG --name 'RHEL7-Builder' --label RHEL7-Builder --description 'RHEL7-Builder'
 hammer content-view add-repository --organization $ORG --name 'RHEL7-Builder' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server'
 hammer content-view add-repository --organization $ORG --name 'RHEL7-Builder' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Enterprise Linux 7 Server Kickstart x86_64 7.7'
-hammer content-view add-repository --organization $ORG --name 'RHEL7-Builder' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Satellite Tools 6.5 for RHEL 7 Server RPMs x86_64'
+hammer content-view add-repository --organization $ORG --name 'RHEL7-Builder' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Satellite Tools 6.6 for RHEL 7 Server RPMs x86_64'
 hammer content-view add-repository --organization $ORG --name 'RHEL7-Builder' --product 'Red Hat Software Collections for RHEL Server' --repository 'Red Hat Software Collections RPMs for Red Hat Enterprise Linux 7 Server x86_64 7Server'
 hammer content-view add-repository --organization $ORG --name 'RHEL7-Builder' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Enterprise Linux 7 Server - Supplementary RPMs x86_64 7Server'
 hammer content-view add-repository --organization $ORG --name 'RHEL7-Builder' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Enterprise Linux 7 Server - RH Common RPMs x86_64 7Server'
@@ -2105,7 +2107,7 @@ echo "CREATE A CONTENT VIEW FOR RHEL 7 OSCP:"
 echo "***********************************************"
 hammer content-view create --organization $ORG --name 'RHEL7-Oscp' --label 'RHEL7-Oscp' --description ''
 hammer content-view add-repository --organization $ORG --name 'RHEL7-Oscp' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server'
-hammer content-view add-repository --organization $ORG --name 'RHEL7-Oscp' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Satellite Tools 6.5 for RHEL 7 Server RPMs x86_64'
+hammer content-view add-repository --organization $ORG --name 'RHEL7-Oscp' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Satellite Tools 6.6 for RHEL 7 Server RPMs x86_64'
 hammer content-view add-repository --organization $ORG --name 'RHEL7-Oscp' --product 'Red Hat Software Collections for RHEL Server' --repository 'Red Hat Software Collections RPMs for Red Hat Enterprise Linux 7 Server x86_64 7Server'
 hammer content-view add-repository --organization $ORG --name 'RHEL7-Oscp' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Enterprise Linux 7 Server - Optional RPMs x86_64 7Server'
 hammer content-view add-repository --organization $ORG --name 'RHEL7-Oscp' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Enterprise Linux 7 Server - Extras RPMs x86_64'
@@ -2125,7 +2127,7 @@ echo "CREATE A CONTENT VIEW FOR RHEL 7 DOCKER:"
 echo "***********************************************"
 hammer content-view create --organization $ORG --name 'RHEL7-Docker' --label 'RHEL7-Docker' --description ''
 hammer content-view add-repository --organization $ORG --name 'RHEL7-Docker' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server'
-hammer content-view add-repository --organization $ORG --name 'RHEL7-Docker' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Satellite Tools 6.5 for RHEL 7 Server RPMs x86_64'
+hammer content-view add-repository --organization $ORG --name 'RHEL7-Docker' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Satellite Tools 6.6 for RHEL 7 Server RPMs x86_64'
 hammer content-view add-repository --organization $ORG --name 'RHEL7-Docker' --product 'Red Hat Software Collections for RHEL Server' --repository 'Red Hat Software Collections RPMs for Red Hat Enterprise Linux 7 Server x86_64 7Server'
 hammer content-view add-repository --organization $ORG --name 'RHEL7-Docker' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Enterprise Linux 7 Server - Optional RPMs x86_64 7Server'
 hammer content-view add-repository --organization $ORG --name 'RHEL7-Docker' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Enterprise Linux 7 Server - Extras RPMs x86_64'
@@ -2147,7 +2149,7 @@ echo 'RHEL6 CONTENT VIEW'
 echo '#-------------------------------'
 hammer content-view create --organization $ORG --name 'RHEL6' --label 'RHEL6' --description 'Core Build for RHEL 6'
 hammer content-view add-repository --organization $ORG --name 'RHEL6_Base' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Enterprise Linux 6 Server RPMs x86_64 6Server'
-hammer content-view add-repository --organization $ORG --name 'RHEL6_Base' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Satellite Tools 6.5 for RHEL 6 Server RPMs x86_64'
+hammer content-view add-repository --organization $ORG --name 'RHEL6_Base' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Satellite Tools 6.6 for RHEL 6 Server RPMs x86_64'
 hammer content-view puppet-module add --organization $ORG --content-view 'RHEL6_Base' --author puppetlabs --name stdlib
 hammer content-view puppet-module add --organization $ORG --content-view 'RHEL6_Base' --author puppetlabs --name concat
 hammer content-view puppet-module add --organization $ORG --content-view 'RHEL6_Base' --author puppetlabs --name ntp
@@ -2159,7 +2161,7 @@ echo 'RHEL5 CONTENT VIEW'
 echo '#-------------------------------'
 hammer content-view create --organization $ORG --name 'RHEL5_Base' --label 'RHEL5_Base' --description 'Core Build for RHEL 5'
 hammer content-view add-repository --organization $ORG --name 'RHEL5_Base' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Enterprise Linux 5 Server RPMs x86_64 6Server'
-hammer content-view add-repository --organization $ORG --name 'RHEL5_Base' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Satellite Tools 6.5 for RHEL 5 Server RPMs x86_64'
+hammer content-view add-repository --organization $ORG --name 'RHEL5_Base' --product 'Red Hat Enterprise Linux Server' --repository 'Red Hat Satellite Tools 6.6 for RHEL 5 Server RPMs x86_64'
 hammer content-view puppet-module add --organization $ORG --content-view 'RHEL5_Base' --author puppetlabs --name stdlib
 hammer content-view puppet-module add --organization $ORG --content-view 'RHEL5_Base' --author puppetlabs --name concat
 hammer content-view puppet-module add --organization $ORG --content-view 'RHEL5_Base' --author puppetlabs --name ntp
@@ -2274,8 +2276,13 @@ echo " "
 echo "*********************************************************"
 echo "Create Media:"
 echo "*********************************************************"
+#RHEL 7
 hammer medium create --path=http://repos/${ORG}/Library/content/dist/rhel/server/7/7.6/x86_64/kickstart/ --organizations=$ORG --locations="$LOC" --os-family=Redhat --name="RHEL 7.6 Kickstart" --operatingsystems="RedHat 7.6"
 hammer medium create --path=http://repos/${ORG}/Library/content/dist/rhel/server/7/7.7/x86_64/kickstart/ --organizations=$ORG --locations="$LOC" --os-family=Redhat --name="RHEL 7.7 Kickstart" --operatingsystems="RedHat 7.7"
+
+#RHEL 8
+hammer medium create --path=http://repos/${ORG}/Library/content/dist/rhel8/8.0/x86_64/baseos/kickstart --organizations=$ORG --locations="$LOC" --os-family=Redhat --name="RHEL 8.0 Kickstart" --operatingsystems="RedHat 8.0"
+hammer medium create --path=http://repos/${ORG}/Library/content/dist/rhel8/8.1/x86_64/baseos/kickstart --organizations=$ORG --locations="$LOC" --os-family=Redhat --name="RHEL 8.1 Kickstart" --operatingsystems="RedHat 8.1"
 }
 #----------------------------------
 function VARSETUP2 {
@@ -2472,15 +2479,18 @@ function SATUPDATE {
 #-------------------------------
 echo " "
 echo "*********************************************************"
-echo "Upgrading/Updating Satellite 6.5 to 6.5"
+echo "Upgrading/Updating Satellite 6.5 to 6.6"
 echo "*********************************************************"
 echo " "
 subscription-manager repos --disable '*'
+echo " "
+echo " "
 subscription-manager repos --enable=rhel-7-server-rpms
 subscription-manager repos --enable=rhel-server-rhscl-7-rpms
-subscription-manager repos --enable=rhel-7-server-satellite-6.5-rpms
+subscription-manager repos --enable=rhel-7-server-satellite-6.6-rpms
 subscription-manager repos --enable=rhel-7-server-satellite-maintenance-6-rpms
-subscription-manager repos --enable rhel-7-server-ansible-2.8-rpms
+subscription-manager repos --enable=rhel-7-server-ansible-2.9-rpms
+yum clean all
 yum-config-manager --setopt=\*.skip_if_unavailable=1 --save \* 
 foreman-rake foreman_tasks:cleanup TASK_SEARCH='label = Actions::Katello::Repository::Sync' STATES='paused,pending,stopped' VERBOSE=true
 foreman-rake katello:delete_orphaned_content --trace
@@ -2489,11 +2499,12 @@ katello-selinux-disable
 setenforce 0
 service firewalld stop 
 katello-service stop
+yum groupinstall -y 'Red Hat Satellite' --skip-broken --setopt=protected_multilib=false
 yum upgrade -y --skip-broken --setopt=protected_multilib=false ; yum update -y --skip-broken --setopt=protected_multilib=false
 yum -q list installed puppetserver &>/dev/null && echo "puppetserver is installed" || time yum install puppetserver -y --skip-broken --setopt=protected_multilib=false
 yum -q list installed puppet-agent-oauth &>/dev/null && echo "puppet-agent-oauth is installed" || time yum install puppet-agent-oauth -y --skip-broken --setopt=protected_multilib=false
 yum -q list installed puppet-agent &>/dev/null && echo "puppet-agent is installed" || time yum install puppet-agent -y --skip-broken --setopt=protected_multilib=false
-satellite-installer -v --scenario satellite --upgrade
+satellite-installer -vv --scenario satellite --upgrade
 foreman-rake db:migrate
 foreman-rake db:seed
 foreman-rake apipie:cache:index
@@ -2570,7 +2581,7 @@ Connection to the internet so the instller can download the required packages
 6. This install was tested with:
           * RHEL_7.7 in a KVM environment.
           * Red Hat subscriber channels:
-             rhel-7-server-ansible-2.8-rpms
+             rhel-7-server-ansible-2.9-rpms
              rhel-7-server-extras-rpms
              rhel-7-server-optional-rpms
              rhel-7-server-rpms
@@ -2597,7 +2608,7 @@ subscription-manager reops --disable "*"
 subscription-manager repos --enable rhel-7-server-rpms
 subscription-manager repos --enable rhel-server-rhscl-7-rpms
 subscription-manager repos --enable rhel-7-server-optional-rpms
-subscription-manager repos --enable --enable rhel-7-server-ansible-2.8-rpms
+subscription-manager repos --enable --enable rhel-7-server-ansible-2.9-rpms
 yum clean all
 rm -rf /var/cache/yum
 yum-config-manager --setopt=\*.skip_if_unavailable=1 --save \* 
@@ -2623,8 +2634,9 @@ sed -i 's/admin_password="''"/admin_password="'redhat'"/g' inventory
 sed -i 's/redis_password="''"/redis_password="'redhat'"/g' inventory
 sed -i 's/pg_password="''"/pg_password="'redhat'"/g' inventory
 sed -i 's/rabbitmq_password="''"/rabbitmq_password="'redhat'"/g' inventory
-sudo ~/Downloads/ansible-tower/setup.sh
+sh setup.sh
 sleep 10
+source /var/lib/awx/venv/ansible/bin/activate
 pip install six
 pip install six --upgrade
 pip freeze | grep six
@@ -2699,14 +2711,18 @@ if grep -q -i "release 8." /etc/redhat-release ; then
 echo "RHEL 8 supporting latest release"
 subscription-manager register --auto-attach
 subscription-manager reops --disable "*"
-subscription-manager repos --enable ansible-2.8-for-rhel-8-x86_64-rpms
+subscription-manager repos --enable ansible-2.9-for-rhel-8-x86_64-rpms
 subscription-manager repos --enable rhel-8-for-x86_64-appstream-rpms
 subscription-manager repos --enable rhel-8-for-x86_64-baseos-rpms
 subscription-manager repos --enable rhel-8-for-x86_64-supplementary-rpms
 subscription-manager repos --enable rhel-8-for-x86_64-optional-rpms
+echo " "
+echo " "
 yum-config-manager --setopt=\*.skip_if_unavailable=1 --save \* 
 yum --noplugins -q list installed epel-release-latest-8 &>/dev/null && echo "epel-release-latest-8 is installed" || yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm --skip-broken --noplugins
 yum --noplugins -q list installed dnf-utils &>/dev/null && echo "dnf-utils is installed" || yum install -y dnf-utils --skip-broken --noplugins
+echo " "
+echo " "
 yum-config-manager --enable epel 
 yum clean all
 rm -rf /var/cache/yum
@@ -2714,7 +2730,8 @@ yum --noplugins -q list installed ansible &>/dev/null && echo "ansible is instal
 yum --noplugins -q list installed wget &>/dev/null && echo "wget is installed" || yum install -y wget --skip-broken --noplugins
 yum --noplugins -q list installed bash-completion-extras &>/dev/null && echo "bash-completion-extras" || yum install -y bash-completion-extras --skip-broken --noplugins
 yum --noplugins -q list installed python3-pip &>/dev/null && echo "python3-pip" || yum install -y python3-pip --skip-broken --noplugins
-
+echo " "
+echo " "
 yum-config-manager --disable epel
 echo '************************************'
 echo 'Expanding Ansible Tower and installing '
@@ -2799,8 +2816,8 @@ fi
 #-----------------------
 function dMainMenu {
 #-----------------------
-$DIALOG --stdout --title "Red Hat Sat 6.5 P.O.C. - RHEL 7.X" --menu "********** Red Hat Tools Menu ********* \n Please choose [1 -> 6]?" 30 90 10 \
-1 "INSTALL SATELLITE 6.5" \
+$DIALOG --stdout --title "Red Hat Sat 6.6 P.O.C. - RHEL 7.X" --menu "********** Red Hat Tools Menu ********* \n Please choose [1 -> 6]?" 30 90 10 \
+1 "INSTALL SATELLITE 6.6" \
 2 "UPGRADE/UPDATE THE SATELLITE 6.X" \
 3 "SYNC ALL ACTIVATED REPOSITORIES" \
 4 "LATEST ANSIBLE TOWER INSTALL" \
@@ -2857,7 +2874,7 @@ RC=$?
 [[ $RC -ne 0 ]] && break
 Flag=$(cat $TmpFi)
 case $Flag in
-1) dMsgBx "INSTALL SATELLITE 6.5" \
+1) dMsgBx "INSTALL SATELLITE 6.6" \
 sleep 10
 #SCRIPT
 SATELLITEREADME
