@@ -1,17 +1,6 @@
 ---
 - hosts: all
-#  remote_user: root
   become: root
-#ansible all -m command -a "subscription-manager register --username={{rhn_username}} --password={{rhn_password}}$ --force"
-#ansible all -m command -a "subscription-manager unregister "
-
-# in tower you will use a survy function to prompt users for information  to accomplish the prompts https://<YourTower>/#/templates/job_template/5
-#  vars_prompt:
-#    - name: "rhn_username"
-#      prompt: "Enter Red Hat Network username"
-#    - name: "rhn_password"
-#      prompt: "Enter Red Hat Networt password"
-#      private: yes
    
   tasks:
     - name: Registering nodes to Red Hat Network with username "{{ rhn_username }}"
