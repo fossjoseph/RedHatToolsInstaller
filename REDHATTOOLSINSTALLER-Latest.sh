@@ -93,9 +93,11 @@ yum -q list installed lynx &>/dev/null && echo "lynx is installed" || yum instal
 yum -q list installed perl &>/dev/null && echo "perl is installed" || yum install -y perl --skip-broken
 yum -q list installed dialog &>/dev/null && echo "dialog is installed" || yum install -y dialog --skip-broken
 yum -q list installed xdialog &>/dev/null && echo "xdialog is installed" || yum localinstall -y xdialog-2.3.1-13.el7.centos.x86_64.rpm --skip-broken
-yum -q list installed firefox &>/dev/null && echo "firefox is installed" || yum localinstall -y firefox --skip-broken
-yum -q list installed python-deltarpm &>/dev/null && echo "python-deltarpm is installed" || yum localinstall -y python-deltarpm --skip-broken
-yum -q list installed deltarpm &>/dev/null && echo "deltarpm is installed" || yum localinstall -y deltarpm --skip-broken
+yum -q list installed firefox &>/dev/null && echo "firefox is installed" || yum install -y firefox --skip-broken
+yum -q list installed python-deltarpm &>/dev/null && echo "python-deltarpm is installed" || yum install -y python-deltarpm --skip-broken
+yum -q list installed deltarpm &>/dev/null && echo "deltarpm is installed" || yum install -y deltarpm --skip-broken
+yum -q list installed ruby &>/dev/null && echo "ruby is installed" || yum install -y ruby --skip-broken
+
 
 yum install -y dconf*
 yum-config-manager --disable epel
@@ -551,7 +553,7 @@ yum-config-manager --enable epel
 subscription-manager repos --enable=rhel-7-server-extras-rpms
 yum clean all ; rm -rf /var/cache/yum
 sleep 5
-yum install -y screen syslinux yum-utils vim gcc gcc-c++ git rh-nodejs8-npm make automake kernel-devel ruby-devel libvirt-client bind dhcp tftp libvirt augeas --skip-broken
+yum install -y screen syslinux yum-utils vim gcc gcc-c++ git rh-nodejs8-npm make automake kernel-devel ruby-devel libvirt-client bind dhcp tftp libvirt augeas ruby --skip-broken
 sleep 5
 echo " "
 echo " "
