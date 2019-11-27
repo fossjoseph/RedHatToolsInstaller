@@ -767,7 +767,9 @@ yum clean all
 rm -rf /var/cache/yum
 sleep 5
 satellite-installer --scenario satellite -v \
--foreman-initial-admin-username=$ADMIN \
+--foreman-cli-username=$ADMIN \
+--foreman-cli-password=$ADMIN_PASSWORD \
+--foreman-initial-admin-username=$ADMIN \
 --foreman-initial-admin-password=$ADMIN_PASSWORD \
 --foreman-proxy-plugin-remote-execution-ssh-install-key true \
 --foreman-initial-organization=$ORG \
