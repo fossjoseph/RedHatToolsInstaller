@@ -102,10 +102,11 @@ yum -q list installed ruby &>/dev/null && echo "ruby is installed" || yum instal
 yum install -y dconf*
 yum-config-manager --disable epel
 subscription-manager repos --disable=rhel-7-server-extras-rpms
-touch ./SCRIPT
+mkdir sat_6.6/
+touch sat_6.6/SCRIPT
 echo " "
 }
-ls ./SCRIPT
+ls sat_6.6/SCRIPT
 if [ $? -eq 0 ]; then
     echo 'The requirements to run this script have been met, proceeding'
     sleep 5
@@ -210,6 +211,7 @@ fi
 function REGSAT {
 #-------------------------------
 subscription-manager attach --pool=`subscription-manager list --available --matches 'Red Hat Satellite Infrastructure Subscription' --pool-only`
+touch sat_6.6/REGSAT
 }
 
 #-------------------------------
@@ -320,6 +322,8 @@ echo 'DHCP_GW='$(ip route list type unicast dev $(ip -o link | head -n 2 | tail 
 echo 'DHCP_DNS='$(ifconfig $INTERNAL | grep "inet" | awk -F ' ' '{print $2}' |grep -v f |awk -F . '{print $1"."$2"."$3"."$4}')'' >> /root/.bashrc
 sed -i 's/DHCP_GW=100 /DHCP_GW=/g' /root/.bashrc
 sed -i 's/DNS=100 /DNS=/g' /root/.bashrc
+
+touch sat_6.6/VARIABLES1
 }
 
 YMESSAGE="Adding to /root/.bashrc vars"
