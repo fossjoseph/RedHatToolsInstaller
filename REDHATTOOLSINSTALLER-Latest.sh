@@ -870,21 +870,35 @@ yum -q list installed foreman_scap_client &>/dev/null && echo "foreman_scap_clie
 
 source /root/.bashrc
 satellite-installer --scenario satellite -v \
---foreman-plugin-tasks-automatic-cleanup true \
---foreman-proxy-content-enable-ostree true \
---enable-foreman-plugin-hooks \
---enable-foreman-plugin-openscap \
---enable-foreman-plugin-templates \
---enable-foreman-plugin-tasks \
---enable-foreman-compute-ec2 \
---enable-foreman-compute-gce \
---enable-foreman-compute-libvirt \
---enable-foreman-compute-openstack \
---enable-foreman-compute-ovirt \
---enable-foreman-compute-rackspace \
---enable-foreman-compute-vmware \
---enable-foreman-plugin-bootdisk \
---enable-foreman-plugin-ansible
+--true-foreman-cli-kubevirt true / 
+--true-foreman-compute-ec2 true / 
+--true-foreman-compute-gce true / 
+--true-foreman-compute-libvirt true / 
+--true-foreman-compute-openstack true / 
+--true-foreman-compute-ovirt true / 
+--true-foreman-compute-rackspace true / 
+--true-foreman-compute-vmware true / 
+--true-foreman-plugin-ansible true / 
+--true-foreman-plugin-bootdisk true / 
+--true-foreman-plugin-discovery true / 
+--true-foreman-plugin-hooks true / 
+--true-foreman-plugin-kubevirt true / 
+--true-foreman-plugin-openscap true / 
+--true-foreman-plugin-remote-execution true / 
+--true-foreman-plugin-tasks true / 
+--true-foreman-plugin-templates true / 
+--true-foreman-proxy true / 
+--true-foreman-proxy-content true / 
+--true-foreman-proxy-plugin-ansible true / 
+--true-foreman-proxy-plugin-dhcp-infoblox true / 
+--true-foreman-proxy-plugin-dhcp-remote-isc true / 
+--true-foreman-proxy-plugin-discovery true / 
+--true-foreman-proxy-plugin-dns-infoblox true / 
+--true-foreman-proxy-plugin-openscap true / 
+--true-foreman-proxy-plugin-pulp true / 
+--true-foreman-proxy-plugin-remote-execution-ssh true / 
+--true-katello true / 
+--true-puppet true
 }
 
 #--------------------------------------
@@ -2320,7 +2334,7 @@ echo "ARCH=$(uname -i)" >> /root/.bashrc
 echo "ARCHID=$(hammer --csv architecture list|grep x86_64 |awk -F "," {'print $1'})"  >> /root/.bashrc
 echo "DOMID=$(hammer --csv domain list |grep -v Id |grep -v Name |awk -F "," {'print $1'})"  >> /root/.bashrc
 echo "SUBNETID=$(hammer --csv subnet list |awk -F "," {'print $1'}| grep -v Id)" >> /root/.bashrc
-echo "CVID=$(hammer --csv content-view list --organization $ORG |grep 'RHEL 7' |awk -F "," {'print $1'})" >>  /root/.bashrc
+echo "CVID=$(hammer --csv content-view list --organization $ORG |grep 'RHEL 7' |awk -F "," {'print $1'})" >> /root/.bashrc
 echo "*********************************************************"
 echo "VERIFY VARIABLES IN /root/.bashrc"
 echo "*********************************************************"
