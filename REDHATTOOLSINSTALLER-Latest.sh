@@ -553,7 +553,7 @@ yum-config-manager --enable epel
 subscription-manager repos --enable=rhel-7-server-extras-rpms
 yum clean all ; rm -rf /var/cache/yum
 sleep 5
-yum install -y screen syslinux yum-utils vim gcc gcc-c++ git rh-nodejs8-npm make automake kernel-devel ruby-devel libvirt-client bind dhcp tftp libvirt augeas ruby --skip-broken
+yum install -y screen syslinux rubygems yum-utils vim gcc gcc-c++ git rh-nodejs8-npm make automake kernel-devel ruby-devel libvirt-client bind dhcp tftp libvirt augeas ruby --skip-broken
 sleep 5
 echo " "
 echo " "
@@ -563,6 +563,7 @@ echo "INSTALLING DEPENDENCIES FOR CONTENT VIEW AUTO PUBLISH"
 echo "*********************************************************"
 sudo yum -y install python-pip python2-pip rubygem-builder --skip-broken
 sudo pip install --upgrade pip
+gem install bundler
 echo " "
 echo " "
 echo " "
@@ -762,8 +763,8 @@ yum clean all
 rm -rf /var/cache/yum
 sleep 5
 satellite-installer --scenario satellite -v \
---foreman-admin-password=$ADMIN_PASSWORD \
---foreman-admin-username=$ADMIN \
+-foreman-initial-admin-username=$ADMIN \
+--foreman-initial-admin-password=$ADMIN_PASSWORD \
 --foreman-proxy-plugin-remote-execution-ssh-install-key true \
 --foreman-initial-organization=$ORG \
 --foreman-initial-location=$LOC \
@@ -863,11 +864,8 @@ yum -q list installed foreman_scap_client &>/dev/null && echo "foreman_scap_clie
 
 source /root/.bashrc
 satellite-installer --scenario satellite -v \
---foreman-proxy-plugin-discovery-install-images true \
---enable-foreman-plugin-discovery \
 --foreman-plugin-tasks-automatic-cleanup true \
 --foreman-proxy-content-enable-ostree true \
---enable-foreman-plugin-docker \
 --enable-foreman-plugin-hooks \
 --enable-foreman-plugin-openscap \
 --enable-foreman-plugin-templates \
