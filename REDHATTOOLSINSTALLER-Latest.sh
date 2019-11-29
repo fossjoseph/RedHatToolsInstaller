@@ -606,8 +606,7 @@ echo " "
 echo "*********************************************************"
 echo "SETTING UP FOREMAN-PROXY"
 echo "*********************************************************"
-useradd foreman-proxy -m /usr/share/foreman-proxy/ 
-usermod -L foreman-proxy
+useradd foreman-proxy -U -d /usr/share/foreman-proxy/ 
 mkdir -p /usr/share/foreman-proxy/.ssh
 sudo -u foreman-proxy ssh-keygen -f /usr/share/foreman-proxy/.ssh/id_rsa_foreman_proxy -N ''
 chown -R foreman-proxy:foreman-proxy /usr/share/foreman-proxy
@@ -767,6 +766,7 @@ yum clean all
 rm -rf /var/cache/yum
 sleep 5
 satellite-installer --scenario satellite -v \
+--no-lock-package-versions \
 --foreman-cli-username=$ADMIN \
 --foreman-cli-password=$ADMIN_PASSWORD \
 --foreman-initial-admin-username=$ADMIN \
@@ -786,7 +786,10 @@ satellite-installer --scenario satellite -v \
 --foreman-proxy-bmc-listen-on both \
 --foreman-proxy-logs-listen-on both \
 --foreman-proxy-realm-listen-on both \
+--foreman-proxy-plugin-remote-execution-ssh-install-key \
 --foreman-proxy-templates-listen-on both
+
+foreman-maintain packages unlock
 
 #--foreman-proxy-dns-tsig-principal="foreman-proxy $(hostname)@$DOM" \
 #--foreman-proxy-dns-tsig-keytab=/etc/foreman-proxy/dns.key \
@@ -805,7 +808,9 @@ echo "*********************************************************"
 yum clean all
 rm -rf /var/cache/yum
 sleep 5
+foreman-maintain packages unlock
 satellite-installer --scenario satellite -v \
+--no-lock-package-versions \
 --foreman-proxy-dhcp true \
 --foreman-proxy-dhcp-server=$INTERNALIP \
 --foreman-proxy-dhcp-interface=$SAT_INTERFACE \
@@ -828,9 +833,11 @@ echo "*********************************************************"
 yum clean all
 rm -rf /var/cache/yum
 sleep 5
-yum -q list installed foreman-discovery-image &>/dev/null && echo "foreman-discovery-image is installed" || yum install -y foreman-discovery-image* --skip-broken
+foreman-maintain packages unlock
+yum -q list installed foreman-discovery* &>/dev/null && echo "foreman-discovery-image is installed" || yum install -y foreman-discovery-image* --skip-broken
 yum -q list installed rubygem-smart_proxy_discovery &>/dev/null && echo "rubygem-smart_proxy_discovery is installed" || yum install -y rubygem-smart_proxy_discovery* --skip-broken 
 satellite-installer --scenario satellite -v \
+--no-lock-package-versions \
 --foreman-proxy-tftp true \
 --foreman-proxy-tftp-listen-on both \
 --foreman-proxy-tftp-servername="$(hostname)"
@@ -846,7 +853,7 @@ echo " "
 echo "*********************************************************"
 echo "CONFIGURING ALL SATELLITE PLUGINS"
 echo "*********************************************************"
-
+foreman-maintain packages unlock
 subscription-manager repos --enable=rhel-7-server-rpms
 subscription-manager repos --enable=rhel-server-rhscl-7-rpms
 subscription-manager repos --enable=rhel-7-server-optional-rpms
@@ -858,7 +865,8 @@ subscription-manager repos --enable=rhel-7-server-extras-rpms
 yum clean all 
 rm -rf /var/cache/yum
 sleep 5
-yum groupinstall -y 'Red Hat Satellite'
+foreman-maintain packages unlock
+yum groupinstall -y 'Red Hat Satellite' --skip-broken
 sleep 5
 yum -q list installed puppet-foreman_scap_client &>/dev/null && echo "puppet-foreman_scap_client is installed" || yum install -y puppet-foreman_scap_client* --skip-broken
 yum -q list installed tfm-rubygem-foreman_discovery &>/dev/null && echo "tfm-rubygem-foreman_discovery is installed" || yum install -y tfm-rubygem-foreman_discovery* --skip-broken
@@ -866,39 +874,42 @@ yum -q list installed foreman-discovery-image &>/dev/null && echo "foreman-disco
 yum -q list installed rubygem-smart_proxy_discovery &>/dev/null && echo "rubygem-smart_proxy_discovery is installed" || yum install -y rubygem-smart_proxy_discovery* --skip-broken
 yum -q list installed rubygem-smart_proxy_discovery_image &>/dev/null && echo "rubygem-smart_proxy_discovery_image y is installed" || yum install -y rubygem-smart_proxy_discovery_image --skip-broken
 yum -q list installed tfm-rubygem-hammer_cli_foreman_discovery &>/dev/null && echo "tfm-rubygem-hammer_cli_foreman_discovery is installed" || yum install -y tfm-rubygem-hammer_cli_foreman_discovery --skip-broken
-yum -q list installed foreman_scap_client &>/dev/null && echo "foreman_scap_client is installed" || yum install -y foreman_scap_client --skip-broken
+yum -q list installed OpenScap_client &>/dev/null && echo "OpenScap is installed" || yum install -y openscap-* scap-* --skip-broken
 
 source /root/.bashrc
+foreman-maintain packages unlock
+
 satellite-installer --scenario satellite -v \
---true-foreman-cli-kubevirt true / 
---true-foreman-compute-ec2 true / 
---true-foreman-compute-gce true / 
---true-foreman-compute-libvirt true / 
---true-foreman-compute-openstack true / 
---true-foreman-compute-ovirt true / 
---true-foreman-compute-rackspace true / 
---true-foreman-compute-vmware true / 
---true-foreman-plugin-ansible true / 
---true-foreman-plugin-bootdisk true / 
---true-foreman-plugin-discovery true / 
---true-foreman-plugin-hooks true / 
---true-foreman-plugin-kubevirt true / 
---true-foreman-plugin-openscap true / 
---true-foreman-plugin-remote-execution true / 
---true-foreman-plugin-tasks true / 
---true-foreman-plugin-templates true / 
---true-foreman-proxy true / 
---true-foreman-proxy-content true / 
---true-foreman-proxy-plugin-ansible true / 
---true-foreman-proxy-plugin-dhcp-infoblox true / 
---true-foreman-proxy-plugin-dhcp-remote-isc true / 
---true-foreman-proxy-plugin-discovery true / 
---true-foreman-proxy-plugin-dns-infoblox true / 
---true-foreman-proxy-plugin-openscap true / 
---true-foreman-proxy-plugin-pulp true / 
---true-foreman-proxy-plugin-remote-execution-ssh true / 
---true-katello true / 
---true-puppet true
+--no-lock-package-versions \
+--enable-foreman-cli-kubevirt true \ 
+--enable-foreman-compute-ec2 true \ 
+--enable-foreman-compute-gce true \ 
+--enable-foreman-compute-libvirt true \ 
+--enable-foreman-compute-openstack true \ 
+--enable-foreman-compute-ovirt true \ 
+--enable-foreman-compute-rackspace true \ 
+--enable-foreman-compute-vmware true \ 
+--enable-foreman-plugin-ansible true \ 
+--enable-foreman-plugin-bootdisk true \ 
+--enable-foreman-plugin-discovery true \ 
+--enable-foreman-plugin-hooks true \ 
+--enable-foreman-plugin-kubevirt true \ 
+--enable-foreman-plugin-openscap true \ 
+--enable-foreman-plugin-remote-execution true \ 
+--enable-foreman-plugin-tasks true \ 
+--enable-foreman-plugin-templates true \ 
+--enable-foreman-proxy true \ 
+--enable-foreman-proxy-content true \ 
+--enable-foreman-proxy-plugin-ansible true \ 
+--enable-foreman-proxy-plugin-dhcp-infoblox true \ 
+--enable-foreman-proxy-plugin-dhcp-remote-isc true \ 
+--enable-foreman-proxy-plugin-discovery true \ 
+--enable-foreman-proxy-plugin-dns-infoblox true \ 
+--enable-foreman-proxy-plugin-openscap true \ 
+--enable-foreman-proxy-plugin-pulp true \ 
+--enable-foreman-proxy-plugin-remote-execution-ssh true \ 
+--enable-katello true \ 
+--enable-puppet true
 }
 
 #--------------------------------------
@@ -906,6 +917,7 @@ function CONFSATDEB {
 #--------------------------------------
 source /root/.bashrc
 echo -ne "\e[8;40;170t"
+foreman-maintain packages unlock
 echo " "
 echo " "
 echo " "
