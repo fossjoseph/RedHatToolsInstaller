@@ -210,6 +210,9 @@ fi
 #-------------------------------
 function REGSAT {
 #-------------------------------
+subscription-manager unregister
+subscription-managER clean
+subscription-manager register
 subscription-manager attach --pool=`subscription-manager list --available --matches 'Red Hat Satellite Infrastructure Subscription' --pool-only`
 touch sat_6.6/REGSAT
 }
