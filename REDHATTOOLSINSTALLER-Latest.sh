@@ -879,35 +879,33 @@ foreman-maintain packages unlock
 
 satellite-installer --scenario satellite -v \
 --no-lock-package-versions \
---enable-foreman-cli-kubevirt true \ 
---enable-foreman-compute-ec2 true \ 
---enable-foreman-compute-gce true \ 
---enable-foreman-compute-libvirt true \ 
---enable-foreman-compute-openstack true \ 
---enable-foreman-compute-ovirt true \ 
---enable-foreman-compute-rackspace true \ 
---enable-foreman-compute-vmware true \ 
---enable-foreman-plugin-ansible true \ 
---enable-foreman-plugin-bootdisk true \ 
---enable-foreman-plugin-discovery true \ 
---enable-foreman-plugin-hooks true \ 
---enable-foreman-plugin-kubevirt true \ 
---enable-foreman-plugin-openscap true \ 
---enable-foreman-plugin-remote-execution true \ 
---enable-foreman-plugin-tasks true \ 
---enable-foreman-plugin-templates true \ 
---enable-foreman-proxy true \ 
---enable-foreman-proxy-content true \ 
---enable-foreman-proxy-plugin-ansible true \ 
---enable-foreman-proxy-plugin-dhcp-infoblox true \ 
---enable-foreman-proxy-plugin-dhcp-remote-isc true \ 
---enable-foreman-proxy-plugin-discovery true \ 
---enable-foreman-proxy-plugin-dns-infoblox true \ 
---enable-foreman-proxy-plugin-openscap true \ 
---enable-foreman-proxy-plugin-pulp true \ 
---enable-foreman-proxy-plugin-remote-execution-ssh true \ 
---enable-katello true \ 
---enable-puppet true
+--enable-foreman-cli-kubevirt \
+--enable-foreman-compute-ec2 \
+--enable-foreman-compute-gce \
+--enable-foreman-compute-libvirt \
+--enable-foreman-compute-openstack \
+--enable-foreman-compute-ovirt \
+--enable-foreman-compute-rackspace \
+--enable-foreman-compute-vmware \
+--enable-foreman-plugin-ansible \
+--enable-foreman-plugin-bootdisk \
+--enable-foreman-plugin-discovery \
+--enable-foreman-plugin-hooks \
+--enable-foreman-plugin-kubevirt \
+--enable-foreman-plugin-openscap \
+--enable-foreman-plugin-remote-execution \
+--enable-foreman-plugin-tasks \
+--enable-foreman-plugin-templates \
+--enable-foreman-proxy \
+--enable-foreman-proxy-content \
+--enable-foreman-proxy-plugin-ansible \
+--enable-foreman-proxy-plugin-dhcp-remote-isc \
+--enable-foreman-proxy-plugin-discovery \
+--enable-foreman-proxy-plugin-openscap \
+--enable-foreman-proxy-plugin-pulp \
+--enable-foreman-proxy-plugin-remote-execution-ssh \
+--enable-katello \
+--enable-puppet 
 }
 
 #--------------------------------------
