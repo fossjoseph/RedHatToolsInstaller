@@ -788,6 +788,10 @@ satellite-installer --scenario satellite -v \
 --foreman-proxy-templates-listen-on both
 
 foreman-maintain packages unlock
+systemctl enable named.service
+systemctl start named.service
+
+read -p "Please take note of you Login credentials then, Press [Enter] to continue"
 
 #--foreman-proxy-dns-tsig-principal="foreman-proxy $(hostname)@$DOM" \
 #--foreman-proxy-dns-tsig-keytab=/etc/foreman-proxy/dns.key \
@@ -816,6 +820,9 @@ satellite-installer --scenario satellite -v \
 --foreman-proxy-dhcp-gateway=$DHCP_GW \
 --foreman-proxy-dhcp-nameservers=$DHCP_DNS \
 --foreman-proxy-dhcp-listen-on both
+
+systemctl enable dhcpd.service
+systemctl start dhcpd.service
 }
 #--------------------------------------
 function CONFSATTFTP {
@@ -839,6 +846,9 @@ satellite-installer --scenario satellite -v \
 --foreman-proxy-tftp true \
 --foreman-proxy-tftp-listen-on both \
 --foreman-proxy-tftp-servername="$(hostname)"
+
+systemctl start tftp.service
+systemctl enable tftp.service
 }
 #--------------------------------------
 function CONFSATPLUGINS {
@@ -926,6 +936,7 @@ echo " "
 echo "*********************************************************"
 echo "ENABLE DEB"
 echo "*********************************************************"
+foreman-maintain packages unlock
 #yum install https://yum.theforeman.org/releases/latest/el7/x86_64/foreman-release.rpm
 #satellite-installer -v  --katello-enable-deb true
 #foreman-installer -v --foreman-proxy-content-enable-deb  --katello-enable-deb
