@@ -724,10 +724,7 @@ echo "INSTALLING PUPPET"
 yum -q list installed puppetserver &>/dev/null && echo "puppetserver is installed" || time yum install puppetserver -y --skip-broken
 yum -q list installed puppet-agent-oauth &>/dev/null && echo "puppet-agent-oauth is installed" || time yum install puppet-agent-oauth -y --skip-broken
 yum -q list installed puppet-agent &>/dev/null && echo "puppet-agent is installed" || time yum install puppet-agent -y --skip-broken
-yum -q list installed rhel-system-roles &>/dev/null && echo "rhel-system-roles is installed" || time yum install rhel-system-roles -y --skip-broken
 yum -q list installed rh-mongodb34-syspaths &>/dev/null && echo "rh-mongodb34-syspaths is installed" || time yum install rh-mongodb34-syspaths -y --skip-broken
-
-
 echo " "
 echo " "
 echo " "
@@ -736,6 +733,9 @@ subscription-manager repos --enable=rhel-7-server-extras-rpms
 yum clean all
 rm -rf /var/cache/yuml 
 yum -q list installed rhel-system-roles &>/dev/null && echo "rhel-system-roles is installed" || time yum install rhel-system-roles -y --skip-broken
+sleep 2
+subscription-manager repos --enable=rhel-7-server-extras-rpms
+yum-configmanager --disable epel
 }
 #---END OF SAT 6.X INSTALL SCRIPT---
 
