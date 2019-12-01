@@ -538,11 +538,6 @@ echo "*********************************************************"
 echo "ENABLE Satellite 6.6 REPOS"
 echo "*********************************************************"
 subscription-manager repos --enable=rhel-7-server-rpms || exit 1
-subscription-manager repos --enable=rhel-server-rhscl-7-rpms || exit 1
-subscription-manager repos --enable=rhel-7-server-optional-rpms || exit 1
-subscription-manager repos --enable=rhel-7-server-satellite-6.6-rpms || exit 1
-subscription-manager repos --enable=rhel-7-server-satellite-maintenance-6-rpms || exit 1
-subscription-manager repos --enable rhel-7-server-ansible-2.9-rpms || exit 1
 yum clean all 
 rm -rf /var/cache/yum
 echo " "
@@ -560,7 +555,7 @@ yum-config-manager --enable epel
 subscription-manager repos --enable=rhel-7-server-extras-rpms
 yum clean all ; rm -rf /var/cache/yum
 sleep 5
-yum install -y screen syslinux rubygems yum-utils vim gcc gcc-c++ git rh-nodejs8-npm make automake kernel-devel ruby-devel libvirt-client bind dhcp tftp libvirt augeas ruby --skip-broken
+yum install -y screen syslinux python27-python-pip python3-pip rubygems yum-utils vim gcc gcc-c++ git rh-nodejs8-npm make automake kernel-devel ruby-devel libvirt-client bind dhcp tftp libvirt augeas ruby --skip-broken
 sleep 5
 echo " "
 echo " "
@@ -568,8 +563,8 @@ echo " "
 echo "*********************************************************"
 echo "INSTALLING DEPENDENCIES FOR CONTENT VIEW AUTO PUBLISH"
 echo "*********************************************************"
-sudo yum -y install python-pip python2-pip rubygem-builder --skip-broken
-sudo pip install --upgrade pip
+ yum -y install python-pip python2-pip rubygem-builder --skip-broken
+ pip install --upgrade pip
 gem install bundler
 echo " "
 echo " "
@@ -577,10 +572,10 @@ echo " "
 echo "*********************************************************"
 echo "UPGRADING OS"
 echo "*********************************************************"
-sudo yum-config-manager --disable epel
-sudo subscription-manager repos --disable=rhel-7-server-extras-rpms
-sudo yum clean all ; rm -rf /var/cache/yum
-sudo yum upgrade -y; yum update -y
+ yum-config-manager --disable epel
+ subscription-manager repos --disable=rhel-7-server-extras-rpms
+ yum clean all ; rm -rf /var/cache/yum
+ yum upgrade -y; yum update -y
 }
 #----------------------------------
 function GENERALSETUP {
