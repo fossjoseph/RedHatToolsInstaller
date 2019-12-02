@@ -605,7 +605,9 @@ echo "*********************************************************"
 echo "SETTING UP FOREMAN-PROXY"
 echo "*********************************************************"
 useradd foreman-proxy -U -d /usr/share/foreman-proxy/ 
+sleep 2
 mkdir -p /usr/share/foreman-proxy/.ssh
+sleep 2
 sudo -u foreman-proxy ssh-keygen -f /usr/share/foreman-proxy/.ssh/id_rsa_foreman_proxy -N ''
 chown -R foreman-proxy:foreman-proxy /usr/share/foreman-proxy
 echo " "
@@ -768,10 +770,10 @@ satellite-installer --scenario satellite -v \
 --foreman-cli-username=$ADMIN \
 --foreman-cli-password=$ADMIN_PASSWORD \
 --foreman-initial-admin-username=$ADMIN \
---foreman-initial-admin-password=$ADMIN_PASSWORD \
+--foreman-initial-admin-password=$ADMIN_PASSWORD
 --foreman-proxy-plugin-remote-execution-ssh-install-key true \
 --foreman-initial-organization=$ORG \
---foreman-initial-location=$LOC \
+--foreman-initial-location=$LOC
 --foreman-proxy-dns true \
 --foreman-proxy-dns-managed=true \
 --foreman-proxy-dns-provider=nsupdate \
@@ -780,12 +782,11 @@ satellite-installer --scenario satellite -v \
 --foreman-proxy-dns-zone=$DOM \
 --foreman-proxy-dns-forwarders $DNS \
 --foreman-proxy-dns-reverse $DNS_REV \
---foreman-proxy-dns-listen-on both \
+--foreman-proxy-dns-listen-on both
 --foreman-proxy-bmc-listen-on both \
 --foreman-proxy-logs-listen-on both \
 --foreman-proxy-realm-listen-on both \
---foreman-proxy-plugin-remote-execution-ssh-install-key \
---foreman-proxy-templates-listen-on both
+--foreman-proxy-plugin-remote-execution-ssh-install-key 
 
 foreman-maintain packages unlock
 systemctl enable named.service
