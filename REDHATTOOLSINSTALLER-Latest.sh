@@ -555,7 +555,7 @@ yum-config-manager --enable epel
 subscription-manager repos --enable=rhel-7-server-extras-rpms
 yum clean all ; rm -rf /var/cache/yum
 sleep 5
-yum install -y screen syslinux python27-python-pip python3-pip rubygems yum-utils vim gcc gcc-c++ git rh-nodejs8-npm make automake kernel-devel ruby-devel libvirt-client bind dhcp tftp libvirt augeas ruby --skip-broken
+yum install -y screen syslinux python-pip python3-pip rubygems yum-utils vim gcc gcc-c++ git rh-node*-npm make automake kernel-devel ruby-devel libvirt-client bind dhcp tftp libvirt augeas ruby --skip-broken
 sleep 5
 echo " "
 echo " "
@@ -2996,7 +2996,7 @@ CONFSATCACHE
 CHECKDHCP
 DISABLEEXTRAS
 HAMMERCONF
-#CONFIG2
+CONFIG2
 STOPSPAMMINGVARLOG
 REQUESTSYNCMGT
 #REQUEST5
