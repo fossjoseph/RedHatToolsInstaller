@@ -1153,6 +1153,16 @@ This will enable:
  Red Hat Enterprise Linux 7 Server - RH Common
  Extra Packages for Enterprise Linux 7"
 
+QMESSAGE8="Would you like to enable and sync RHEL 8 Content
+This will enable:
+Red Hat Storage Native Client for RHEL 8 (RPMs)
+Red Hat Enterprise Linux 8 for x86_64 - AppStream (RPMs)
+Red Hat Enterprise Linux 8 for x86_64 - BaseOS (Kickstart)
+Red Hat Enterprise Linux 8 for x86_64 - AppStream (Kickstart)
+Red Hat Enterprise Linux 8 for x86_64 - Supplementary (RPMs)
+Red Hat Enterprise Linux 8 for x86_64 - BaseOS (RPMs)
+Red Hat Satellite Tools 6.6 for RHEL 8 x86_64 (RPMs)"
+
 QMESSAGEJBOSS="Would you like to download JBoss Enterprise Application Platform 7 (RHEL 7 Server) content"
 QMESSAGEVIRTAGENT="Would you like to download Red Hat Virtualization 4 Management Agents for RHEL 7 content"
 QMESSAGESAT65="Would you like to download Red Hat Satellite 6.6 (for RHEL 7 Server) content"
@@ -1328,21 +1338,21 @@ INPUT=${INPUT:-$RHEL7DEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
 hammer repository-set enable --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='7.7' --name 'Red Hat Enterprise Linux 7 Server (Kickstart)' 
-hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 7 Server Kickstart x86_64 7.7' 2>/dev/null
+#hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 7 Server Kickstart x86_64 7.7' 2>/dev/null
 hammer repository-set enable --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Enterprise Linux 7 Server (RPMs)'
-time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server' 2>/dev/null
+#time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server' 2>/dev/null
 hammer repository-set enable --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Enterprise Linux 7 Server - Supplementary (RPMs)'
-time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 7 Server - Supplementary RPMs x86_64 7Server' 2>/dev/null
+#time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 7 Server - Supplementary RPMs x86_64 7Server' 2>/dev/null
 hammer repository-set enable --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Enterprise Linux 7 Server - Optional (RPMs)'
-time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 7 Server - Optional RPMs x86_64 7Server' 2>/dev/null
+#time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 7 Server - Optional RPMs x86_64 7Server' 2>/dev/null
 hammer repository-set enable --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --name 'Red Hat Enterprise Linux 7 Server - Extras (RPMs)'
-time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 7 Server - Extras RPMs x86_64' 2>/dev/null
+#time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 7 Server - Extras RPMs x86_64' 2>/dev/null
 hammer repository-set enable --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --name 'Red Hat Satellite Tools 6.6 (for RHEL 7 Server) (RPMs)'
-time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Satellite Tools 6.6 for RHEL 7 Server RPMs x86_64'
+#time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Satellite Tools 6.6 for RHEL 7 Server RPMs x86_64'
 hammer repository-set enable --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Enterprise Linux 7 Server - RH Common (RPMs)'
-time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 7 Server - RH Common RPMs x86_64 7Server' 2>/dev/null
+#time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 7 Server - RH Common RPMs x86_64 7Server' 2>/dev/null
 hammer repository-set enable --organization "$ORG" --product 'Red Hat Software Collections (for RHEL Server)' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Software Collections RPMs for Red Hat Enterprise Linux 7 Server'
-time hammer repository synchronize --organization "$ORG" --product 'Red Hat Software Collections (for RHEL Server)' --name 'Red Hat Software Collections RPMs for Red Hat Enterprise Linux 7 Server x86_64 7Server' 2>/dev/null
+#time hammer repository synchronize --organization "$ORG" --product 'Red Hat Software Collections (for RHEL Server)' --name 'Red Hat Software Collections RPMs for Red Hat Enterprise Linux 7 Server x86_64 7Server' 2>/dev/null
 wget -q https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7 -O /root/RPM-GPG-KEY-EPEL-7
 wget -q https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7Server -O /root/RPM-GPG-KEY-EPEL-7Server
 sleep 10
@@ -1353,9 +1363,46 @@ hammer product create --name='Extra Packages for Enterprise Linux 7' --organizat
 hammer product create --name='Extra Packages for Enterprise Linux 7Server' --organization $ORG
 sleep 10
 hammer repository create --name='Extra Packages for Enterprise Linux 7' --organization $ORG --product='Extra Packages for Enterprise Linux 7' --content-type yum --publish-via-http=true --url=https://dl.fedoraproject.org/pub/epel/7/x86_64/
-time hammer repository synchronize --organization "$ORG" --product 'Extra Packages for Enterprise Linux 7' --name 'Extra Packages for Enterprise Linux 7' 2>/dev/null
-hammer repository create --name='Extra Packages for Enterprise Linux 7Server' --organization $ORG --product='Extra Packages for Enterprise Linux 7Server' --content-type yum --publish-via-http=true --url=https://dl.fedoraproject.org/pub/epel/7Server/x86_64/
-time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Extra Packages for Enterprise Linux 7Server' 2>/dev/null
+#time hammer repository synchronize --organization "$ORG" --product 'Extra Packages for Enterprise Linux 7' --name 'Extra Packages for Enterprise Linux 7' 2>/dev/null
+#hammer repository create --name='Extra Packages for Enterprise Linux 7Server' --organization $ORG --product='Extra Packages for Enterprise Linux 7Server' --content-type yum --publish-via-http=true --url=https://dl.fedoraproject.org/pub/epel/7Server/x86_64/
+#time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Extra Packages for Enterprise Linux 7Server' 2>/dev/null
+#COMMANDEXECUTION
+elif [ "$INPUT" = "n" -o "$INPUT" = "N" ] ;then
+echo -e "\n$NMESSAGE\n"
+#COMMANDEXECUTION
+else
+echo -e "\n$FMESSAGE\n"
+REQUEST
+fi
+}
+
+#-------------------------------
+function REQUEST8 {
+#-------------------------------
+source /root/.bashrc
+echo -ne "\e[8;40;170t"
+echo "*********************************************************"
+echo "RHEL 8 STANDARD REPOS:"
+echo "*********************************************************"
+read -n1 -t "$COUNTDOWN"  -p "$QMESSAGE8 ? Y/N " INPUT
+INPUT=${INPUT:-$RHEL8DEFAULTVALUE}
+if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
+echo -e "\n$YMESSAGE\n"
+hammer repository-set enable --organization "$ORG" --product 'Red Hat Enterprise Linux for x86_64' --basearch='x86_64' --releasever='8.1' --name 'Red Hat Enterprise Linux 8 for x86_64 - BaseOS (Kickstart)' 
+hammer repository-set enable --organization "$ORG" --product 'Red Hat Enterprise Linux for x86_64' --basearch='x86_64' --releasever='8.1' --name 'Red Hat Enterprise Linux 8 for x86_64 - AppStream (Kickstart)'
+hammer repository-set enable --organization "$ORG" --product 'Red Hat Enterprise Linux for x86_64' --basearch='x86_64' --releasever='8.1' --name 'Red Hat Enterprise Linux 8 for x86_64 - Supplementary (RPMs)'
+hammer repository-set enable --organization "$ORG" --product 'Red Hat Enterprise Linux for x86_64' --basearch='x86_64' --releasever='8.1' --name 'Red Hat Enterprise Linux 8 for x86_64 - BaseOS (RPMs)'
+hammer repository-set enable --organization "$ORG" --product 'Red Hat Enterprise Linux for x86_64' --basearch='x86_64' --name 'Red Hat Satellite Tools 6.6 for RHEL 8 x86_64 (RPMs)' 
+hammer repository-set enable --organization "$ORG" --product 'Red Hat Enterprise Linux for x86_64' --basearch='x86_64' --name 'Red Hat Storage Native Client for RHEL 8 (RPMs)'
+hammer repository-set enable --organization "$ORG" --product 'Red Hat Enterprise Linux for x86_64' --basearch='x86_64' --releasever='8.1' --name 'Red Hat Enterprise Linux 8 for x86_64 - AppStream (RPMs'
+
+wget -q https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-8 -O /root/RPM-GPG-KEY-EPEL-8
+sleep 10
+hammer gpg create --key /root/RPM-GPG-KEY-EPEL-8  --name 'RPM-GPG-KEY-EPEL-8' --organization $ORG
+sleep 10
+hammer product create --name='Extra Packages for Enterprise Linux 8' --organization $ORG
+sleep 10
+hammer repository create --name='Extra Packages for Enterprise Linux 8' --organization $ORG --product='Extra Packages for Enterprise Linux 8' --content-type yum --publish-via-http=true --url=https://dl.fedoraproject.org/pub/epel/8/Everything/x86_64/
 #COMMANDEXECUTION
 elif [ "$INPUT" = "n" -o "$INPUT" = "N" ] ;then
 echo -e "\n$NMESSAGE\n"
@@ -1948,7 +1995,7 @@ echo " "
 #-------------------------------
 function PRIDOMAIN {
 #------------------------------
-hammer domain update --id 1 --organizations $ORG --locations $LOC
+for i in $(hammer --csv domain list |grep -v Id | awk -F ',' '{print $1}') ; do hammer domain update --id $i ; done
 }
 #-------------------------------
 function CREATESUBNET {
@@ -1959,7 +2006,7 @@ echo "*********************************************************"
 echo "CREATE THE FIRST OR PRIMARY SUBNET TO CONNECT THE NODES TO THE SATELLITE:"
 echo "*********************************************************"
 echo " "
-hammer subnet create --name $SUBNET_NAME --network $INTERNALNETWORK --mask $SUBNET_MASK --gateway $DHCP_GW --dns-primary $DNS --ipam 'Internal DB' --from $SUBNET_IPAM_BEGIN --to $SUBNET_IPAM_END --tftp-id 1 --dhcp-id 1 --dns-id 1 --domain-ids 1 --organizations $ORG --locations "$LOC"
+hammer subnet create --name $SUBNET_NAME --network $INTERNALNETWORK --mask $SUBNET_MASK --gateway $DHCP_GW --dns-primary $DNS --ipam 'Internal DB' --from $SUBNET_IPAM_BEGIN --to $SUBNET_IPAM_END --tftp-id 1 --dhcp-id 1 --domain-ids 1 --organizations $ORG --locations "$LOC"
 }
 #-------------------------------
 function ENVIRONMENTS {
@@ -2021,6 +2068,7 @@ echo -ne "\e[8;40;170t"
 echo " "
 hammer product set-sync-plan --name 'Red Hat Enterprise Linux Server' --organization $ORG --sync-plan 'Weekly_Sync'
 hammer product set-sync-plan --name 'Extra Packages for Enterprise Linux 7' --organization $ORG --sync-plan 'Weekly_Sync'
+hammer product set-sync-plan --name 'Red Hat Enterprise Linux for x86_64' --organization $ORG --sync-plan 'Weekly_Sync'
 hammer product set-sync-plan --name 'Extra Packages for Enterprise Linux 6' --organization $ORG --sync-plan 'Weekly_Sync'
 hammer product set-sync-plan --name 'Extra Packages for Enterprise Linux 5' --organization $ORG --sync-plan 'Weekly_Sync'
 hammer product set-sync-plan --name 'Puppet Forge' --organization $ORG --sync-plan 'Weekly_Sync'
@@ -2040,6 +2088,7 @@ echo "Associate plan to products:"
 echo "*********************************************************"
 hammer product set-sync-plan --sync-plan-id=1 --organization $ORG --name='Oracle Java for RHEL Server'
 hammer product set-sync-plan --sync-plan-id=1 --organization $ORG --name='Red Hat Enterprise Linux Server'
+hammer product set-sync-plan --sync-plan-id=1 --organization $ORG --name='Red Hat Enterprise Linux for x86_64'
 hammer product set-sync-plan --sync-plan-id=1 --organization $ORG --name='Puppet Forge'
 hammer product set-sync-plan --sync-plan-id=2 --organization $ORG --name='Extra Packages for Enterprise Linux 5'
 hammer product set-sync-plan --sync-plan-id=2 --organization $ORG --name='Extra Packages for Enterprise Linux 6'
@@ -2323,12 +2372,12 @@ echo "*********************************************************"
 echo "Create Media:"
 echo "*********************************************************"
 #RHEL 7
-hammer medium create --path=http://repos/${ORG}/Library/content/dist/rhel/server/7/7.6/x86_64/kickstart/ --organizations=$ORG --locations="$LOC" --os-family=Redhat --name="RHEL 7.6 Kickstart" --operatingsystems="RedHat 7.6"
-hammer medium create --path=http://repos/${ORG}/Library/content/dist/rhel/server/7/7.7/x86_64/kickstart/ --organizations=$ORG --locations="$LOC" --os-family=Redhat --name="RHEL 7.7 Kickstart" --operatingsystems="RedHat 7.7"
+hammer medium create --path=http://repos/${ORG}/Library/content/dist/rhel/server/7/7.6/x86_64/kickstart/ --organizations=$ORG  --os-family=Redhat --name="RHEL 7.6 Kickstart" --operatingsystems="RedHat 7.6"
+hammer medium create --path=http://repos/${ORG}/Library/content/dist/rhel/server/7/7.7/x86_64/kickstart/ --organizations=$ORG  --os-family=Redhat --name="RHEL 7.7 Kickstart" --operatingsystems="RedHat 7.7"
 
 #RHEL 8
-hammer medium create --path=http://repos/${ORG}/Library/content/dist/rhel8/8.0/x86_64/baseos/kickstart --organizations=$ORG --locations="$LOC" --os-family=Redhat --name="RHEL 8.0 Kickstart" --operatingsystems="RedHat 8.0"
-hammer medium create --path=http://repos/${ORG}/Library/content/dist/rhel8/8.1/x86_64/baseos/kickstart --organizations=$ORG --locations="$LOC" --os-family=Redhat --name="RHEL 8.1 Kickstart" --operatingsystems="RedHat 8.1"
+hammer medium create --path=http://repos/${ORG}/Library/content/dist/rhel8/8.0/x86_64/baseos/kickstart --organizations=$ORG --os-family=Redhat --name="RHEL 8.0 Kickstart" --operatingsystems="RedHat 8.0"
+hammer medium create --path=http://repos/${ORG}/Library/content/dist/rhel8/8.1/x86_64/baseos/kickstart --organizations=$ORG --os-family=Redhat --name="RHEL 8.1 Kickstart" --operatingsystems="RedHat 8.1"
 }
 #----------------------------------
 function VARSETUP2 {
@@ -2953,6 +3002,7 @@ REQUESTSYNCMGT
 #REQUEST5
 #REQUEST6
 REQUEST7
+REQUEST8
 #REQUESTJBOSS
 #REQUESTVIRTAGENT
 #REQUESTSAT64
