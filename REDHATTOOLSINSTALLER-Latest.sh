@@ -736,7 +736,7 @@ yum clean all
 rm -rf /var/cache/yuml 
 yum -q list installed rhel-system-roles &>/dev/null && echo "rhel-system-roles is installed" || time yum install rhel-system-roles -y --skip-broken
 sleep 2
-subscription-manager repos --enable=rhel-7-server-extras-rpms
+subscription-manager repos --disable=rhel-7-server-extras-rpms
 yum-configmanager --disable epel
 }
 #---END OF SAT 6.X INSTALL SCRIPT---
