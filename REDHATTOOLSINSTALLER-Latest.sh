@@ -792,7 +792,9 @@ foreman-maintain packages unlock
 systemctl enable named.service
 systemctl start named.service
 
-read -p "Please take note of you Login credentials then, Press [Enter] to continue"
+read -p "Please take note of you Login credentials 
+(you will use this to import your manifest in a moment) 
+Now, Press [Enter] to continue"
 
 #--foreman-proxy-dns-tsig-principal="foreman-proxy $(hostname)@$DOM" \
 #--foreman-proxy-dns-tsig-keytab=/etc/foreman-proxy/dns.key \
@@ -1063,6 +1065,7 @@ echo " "
 echo "*********************************************************"
 echo 'WHEN PROMPTED PLEASE ENTER YOUR SATELLITE ADMIN USERNAME AND PASSWORD'
 echo "*********************************************************"
+hammer organization create --name $ORG
 sleep 5
 chown -R admin:admin /home/admin
 source /root/.bashrc
