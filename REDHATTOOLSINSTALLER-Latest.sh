@@ -565,7 +565,7 @@ echo "INSTALLING DEPENDENCIES FOR CONTENT VIEW AUTO PUBLISH"
 echo "*********************************************************"
  yum -y install python-pip python2-pip rubygem-builder --skip-broken
  pip install --upgrade pip
-gem install bundler
+#gem install bundler
 echo " "
 echo " "
 echo " "
