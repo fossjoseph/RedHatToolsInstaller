@@ -537,7 +537,7 @@ echo " "
 echo "*********************************************************"
 echo "ENABLE Satellite 6.6 REPOS"
 echo "*********************************************************"
-subscription-manager repos --enable=rhel-7-server-rpms || exit 1
+subscription-manager repos --enable=rhel-7-server-rpms
 yum clean all 
 rm -rf /var/cache/yum
 echo " "
@@ -700,12 +700,12 @@ yum-config-manager --disable epel
 subscription-manager repos --disable=rhel-7-server-extras-rpms
 yum clean all
 rm -rf /var/cache/yum
-subscription-manager repos --enable=rhel-7-server-rpms || exit 1
-subscription-manager repos --enable=rhel-server-rhscl-7-rpms || exit 1
-subscription-manager repos --enable=rhel-7-server-optional-rpms || exit 1
-subscription-manager repos --enable=rhel-7-server-satellite-6.6-rpms || exit 1
-subscription-manager repos --enable=rhel-7-server-satellite-maintenance-6-rpms || exit 1
-subscription-manager repos --enable rhel-7-server-ansible-2.9-rpms 
+    subscription-manager repos --enable=rhel-7-server-rpms
+    subscription-manager repos --enable=rhel-server-rhscl-7-rpms
+    subscription-manager repos --enable=rhel-7-server-optional-rpms
+    subscription-manager repos --enable=rhel-7-server-satellite-6.6-rpms
+    subscription-manager repos --enable=rhel-7-server-satellite-maintenance-6-rpms
+    subscription-manager repos --enable rhel-7-server-ansible-2.9-rpms 
 yum clean all
 rm -rf /var/cache/yum
 sleep 5
@@ -2993,10 +2993,10 @@ MEDIUM
 DISASSOCIATE_TEMPLATES
 #SATUPDATE
 INSIGHTS
-CLEANUP
+#CLEANUP
 echo 'This Script has set up satellite to the point where it should be basicly 
 operational the syntax for some of the items that have been pounded out and require some updating if you plan to use.'
-SATDONE
+#SATDONE
 sleep 10
 ;;
 2) dMsgBx "UPGRADE/UPDATE THE SATELLITE 6.X" \
