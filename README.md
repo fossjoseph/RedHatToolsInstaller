@@ -49,11 +49,11 @@ I can set up a full satellite for a P.O.C in 3 to 4 hours with:
       
 **NOTE:** *You can stop/disable any service you don't want after the install.*
 
-**Running REDHATTOOLSINSTALLER-1.0-el7.sh:** 
+**Running REDHATTOOLSINSTALLER-XXXsh:** 
 
 * git clone https://github.com/ShaddGallegos/RedHatToolsInstaller.git
 * cd RedHatToolsInstaller
-* sh REDHATTOOLSINSTALLER-1.0-el7.sh
+* sh REDHATTOOLSINSTALLER-XXX.sh
 * Follow prompts to completion 
 
 ## Why this installer
