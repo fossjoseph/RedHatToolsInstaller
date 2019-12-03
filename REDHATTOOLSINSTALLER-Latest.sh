@@ -1,7 +1,8 @@
 #!/bin/bash
 #POC/Demo
-#This Script is for setting up a basic Satellite 6.6 or  
+#This Script is for setting up a basic Satellite 6.6 or Ansible Tower latest
 echo -ne "\e[8;40;170t"
+
 
 # Hammer referance to assist in modifing the script can be found at 
 # https://www.gitbook.com/book/abradshaw/getting-started-with-satellite-6-command-line/details
@@ -164,7 +165,7 @@ echo " "
 echo " "
 echo "
 
-                           P.O.C Satellite 6.X RHEL 7.X KVM or RHEL 7 Physical Host 
+                           P.O.C Satellite 6.6 ONLY, RHEL 7.X KVM, or RHEL 7 Physical Host 
                               THIS SCRIPT CONTAINS NO CONFIDENTIAL INFORMATION
 
                   This script is designed to set up a basic standalone Satellite 6.X system
@@ -1066,6 +1067,7 @@ echo "*********************************************************"
 echo 'WHEN PROMPTED PLEASE ENTER YOUR SATELLITE ADMIN USERNAME AND PASSWORD'
 echo "*********************************************************"
 hammer organization create --name $ORG
+hammer location create --name $LOC
 sleep 5
 chown -R admin:admin /home/admin
 source /root/.bashrc
@@ -1096,8 +1098,6 @@ hammer settings set --name lab_features --value true
 hammer settings set --name default_puppet_environment --value development
 hammer settings set --name ansible_verbosity --value "Level 1 (-v)"
 hammer settings set --name discovery_location --value "$LOC"
-hammer settings set --name destroy_vm_on_host_delete --value No
-hammer settings set --name remote_execution_by_default --value Yes
 mkdir -p /etc/puppet/environments/production/modules
 echo " "
 echo " "
@@ -1192,6 +1192,7 @@ FMESSAGE="PLEASE ENTER Y or N"
 COUNTDOWN=15
 OTHER7REPOSDEFAULTVALUE=n
 RHEL7DEFAULTVALUE=y
+RHEL8DEFAULTVALUE=y
 PUPPETDEFAULTVALUE=y
 
 #-------------------------------
@@ -1394,7 +1395,7 @@ hammer repository-set enable --organization "$ORG" --product 'Red Hat Enterprise
 hammer repository-set enable --organization "$ORG" --product 'Red Hat Enterprise Linux for x86_64' --basearch='x86_64' --releasever='8.1' --name 'Red Hat Enterprise Linux 8 for x86_64 - BaseOS (RPMs)'
 hammer repository-set enable --organization "$ORG" --product 'Red Hat Enterprise Linux for x86_64' --basearch='x86_64' --name 'Red Hat Satellite Tools 6.6 for RHEL 8 x86_64 (RPMs)' 
 hammer repository-set enable --organization "$ORG" --product 'Red Hat Enterprise Linux for x86_64' --basearch='x86_64' --name 'Red Hat Storage Native Client for RHEL 8 (RPMs)'
-hammer repository-set enable --organization "$ORG" --product 'Red Hat Enterprise Linux for x86_64' --basearch='x86_64' --releasever='8.1' --name 'Red Hat Enterprise Linux 8 for x86_64 - AppStream (RPMs'
+hammer repository-set enable --organization "$ORG" --product 'Red Hat Enterprise Linux for x86_64' --basearch='x86_64' --releasever='8.1' --name 'Red Hat Enterprise Linux 8 for x86_64 - AppStream (RPMs)'
 
 wget -q https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-8 -O /root/RPM-GPG-KEY-EPEL-8
 sleep 10
@@ -2023,6 +2024,12 @@ echo "TEST_RHEL_7"
 hammer lifecycle-environment create --name='TEST_RHEL_7' --prior='DEV_RHEL_7' --organization $ORG
 echo "PRODUCTION_RHEL_7"
 hammer lifecycle-environment create --name='PROD_RHEL_7' --prior='TEST_RHEL_7' --organization $ORG
+echo "DEVLOPMENT_RHEL_8"
+hammer lifecycle-environment create --name='DEV_RHEL_8' --prior='Library' --organization $ORG
+echo "TEST_RHEL_8"
+hammer lifecycle-environment create --name='TEST_RHEL_8' --prior='DEV_RHEL_8' --organization $ORG
+echo "PRODUCTION_RHEL_8"
+hammer lifecycle-environment create --name='PROD_RHEL_8' --prior='TEST_RHEL_8' --organization $ORG
 #echo "DEVLOPMENT_RHEL_6"
 #hammer lifecycle-environment create --name='DEV_RHEL_6' --prior='Library' --organization $ORG
 #echo "TEST_RHEL_6"
@@ -2445,8 +2452,8 @@ echo "*********************************************************"
 #MAKES ROOTPASSWORD ON NODES rreeddhhaatt BECAUSE THE SYSTEM REQUIRES IT TO BE 8+ CHAR (--root-pass rreeddhhaatt)
 ENVIROMENT=$(hammer --csv lifecycle-environment list |awk -F "," {'print $2'}|grep -v Name |grep -v production)
 LEL=$(hammer --csv environment list  |awk -F "," {'print $2'}|grep -v Name)
-for i in $LEL; do for j in $(hammer --csv environment list |awk -F "," {'print $2'}| awk -F "_" {'print $1'}|grep -v Name); do hammer hostgroup create --name RHEL-7.7-$j --environment $i --architecture-id $ARCHID --content-view-id $CVID --domain-id $DOMID --location-ids $LOCID --medium-id $MEDID1 --operatingsystem-id $OSID1 --organization-id=$ORGID  --partition-table-id $PARTID --puppet-ca-proxy-id $PROXYID --subnet-id $SUBNETID --root-pass=rreeddhhaatt ; done; done
-#for i in $LEL; do for j in $(hammer --csv environment list |awk -F "," {'print $2'}| awk -F "_" {'print $1'}|grep -v Name); do hammer hostgroup create --name CentOS Linux 7.6-$j --environment $i --architecture-id $ARCHID --content-view-id $CVID --domain-id $DOMID --location-ids $LOCID --medium-id $MEDID2 --operatingsystem-id $OSID2 --organization-id=$ORGID  --partition-table-id $PARTID --puppet-ca-proxy-id $PROXYID --subnet-id $SUBNETID --root-pass=redhat ; done; done
+for i in $LEL; do for j in $(hammer --csv environment list |awk -F "," {'print $2'}| awk -F "_" {'print $1'}|grep -v Name); do hammer hostgroup create --name RHEL-7.7-$j --puppet-environments $i --architecture-id $ARCHID --content-view-id $CVID --domain-id $DOMID --location-ids $LOCID --medium-id $MEDID1 --operatingsystem-id $OSID1 --organization-id=$ORGID  --partition-table-id $PARTID --puppet-ca-proxy-id $PROXYID --subnet-id $SUBNETID --root-pass=rreeddhhaatt ; done; done
+#for i in $LEL; do for j in $(hammer --csv environment list |awk -F "," {'print $2'}| awk -F "_" {'print $1'}|grep -v Name); do hammer hostgroup create --name CentOS Linux 7.6-$j --puppet-environments $i --architecture-id $ARCHID --content-view-id $CVID --domain-id $DOMID --location-ids $LOCID --medium-id $MEDID2 --operatingsystem-id $OSID2 --organization-id=$ORGID  --partition-table-id $PARTID --puppet-ca-proxy-id $PROXYID --subnet-id $SUBNETID --root-pass=redhat ; done; done
 }
 #-------------------------------
 function MODPXELINUXDEF {
