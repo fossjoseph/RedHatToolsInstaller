@@ -103,11 +103,11 @@ yum -q list installed ruby &>/dev/null && echo "ruby is installed" || yum instal
 yum install -y dconf*
 yum-config-manager --disable epel
 subscription-manager repos --disable=rhel-7-server-extras-rpms
-mkdir sat_6.6/
-touch sat_6.6/SCRIPT
+mkdir RHTI/
+touch RHTI/SCRIPT
 echo " "
 }
-ls sat_6.6/SCRIPT
+ls RHTI/SCRIPT
 if [ $? -eq 0 ]; then
     echo 'The requirements to run this script have been met, proceeding'
     sleep 5
@@ -212,10 +212,10 @@ fi
 function REGSAT {
 #-------------------------------
 subscription-manager unregister
-subscription-managER clean
+subscription-manager clean
 subscription-manager register
 subscription-manager attach --pool=`subscription-manager list --available --matches 'Red Hat Satellite Infrastructure Subscription' --pool-only`
-touch sat_6.6/REGSAT
+touch RHTI/REGSAT
 }
 
 #-------------------------------
@@ -327,7 +327,7 @@ echo 'DHCP_DNS='$(ifconfig $INTERNAL | grep "inet" | awk -F ' ' '{print $2}' |gr
 sed -i 's/DHCP_GW=100 /DHCP_GW=/g' /root/.bashrc
 sed -i 's/DNS=100 /DNS=/g' /root/.bashrc
 
-touch sat_6.6/VARIABLES1
+touch RHTI/VARIABLES1
 }
 
 YMESSAGE="Adding to /root/.bashrc vars"
@@ -771,10 +771,10 @@ satellite-installer --scenario satellite -v \
 --foreman-cli-username=$ADMIN \
 --foreman-cli-password=$ADMIN_PASSWORD \
 --foreman-initial-admin-username=$ADMIN \
---foreman-initial-admin-password=$ADMIN_PASSWORD
+--foreman-initial-admin-password=$ADMIN_PASSWORD \
 --foreman-proxy-plugin-remote-execution-ssh-install-key true \
 --foreman-initial-organization=$ORG \
---foreman-initial-location=$LOC
+--foreman-initial-location=$LOC \
 --foreman-proxy-dns true \
 --foreman-proxy-dns-managed=true \
 --foreman-proxy-dns-provider=nsupdate \
@@ -783,7 +783,7 @@ satellite-installer --scenario satellite -v \
 --foreman-proxy-dns-zone=$DOM \
 --foreman-proxy-dns-forwarders $DNS \
 --foreman-proxy-dns-reverse $DNS_REV \
---foreman-proxy-dns-listen-on both
+--foreman-proxy-dns-listen-on both \
 --foreman-proxy-bmc-listen-on both \
 --foreman-proxy-logs-listen-on both \
 --foreman-proxy-realm-listen-on both \
@@ -2966,7 +2966,7 @@ $DIALOG --infobox "
 
 #---------------------------------Menu----------------------------------------
 HNAME=$(hostname)
-TMPd=FILES/TMP
+TMPd=RHTI/
 while true
 do
 [[ -e "$TMPd" ]] || mkdir -p $TMPd
