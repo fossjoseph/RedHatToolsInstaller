@@ -3,20 +3,17 @@ REDHATTOOLSINSTALLER
 
 This code is meant to inspire!
 
-This tool was built to aid in the install Red Hat Satellite 6.4 for Proof Of Concept and Education purposes.  
+This tool was built to aid in the install Red Hat Satellite 6.5 or the latest Ansible Tower for Proof Of Concept and Education purposes.  
 
 This tool was built and tested by the team of :
 
 * Shadd Gallegos of Red Hat 
-
 * Thomas Murphy schonfeld.com
-
 * Rodrique Heron of Red Hat 
-
-
+* Kevin Holmes of Red Hat
+* Chris Tjon of Red Hat 
 
 **DISCLAIMER**
-
 ----------------------------------------------
 
 *DO NOT RUN THIS SCRIPT ON YOUR PRODUCTION SYSTEM. THIS IS FOR ONLY NEWLY BUILT OR TEST SYSTEM YOU CAN RE-PROVISION!*
@@ -27,10 +24,9 @@ This tool was built and tested by the team of :
 
 ## SYSTEM REQUIREMENTS
 
-
 **System Resources**
 
-I can set up a full satellite for a P.O.C in 4 hours with:
+I can set up a full satellite for a P.O.C in 3 to 4 hours with:
 
 * 4 CPU
 * 22 GB ram 
@@ -40,7 +36,6 @@ I can set up a full satellite for a P.O.C in 4 hours with:
     * eth1 external - connection to Red Hat CDN
 
 **OS:**
-
 * RHEL 7.6^
 
 **Provides:** 
@@ -54,11 +49,11 @@ I can set up a full satellite for a P.O.C in 4 hours with:
       
 **NOTE:** *You can stop/disable any service you don't want after the install.*
 
-**Running REDHATTOOLSINSTALLER-1.0-el7.sh:** 
+**Running REDHATTOOLSINSTALLER-XXXsh:** 
 
 * git clone https://github.com/ShaddGallegos/RedHatToolsInstaller.git
 * cd RedHatToolsInstaller
-* sh REDHATTOOLSINSTALLER-1.0-el7.sh
+* sh REDHATTOOLSINSTALLER-XXX.sh
 * Follow prompts to completion 
 
 ## Why this installer

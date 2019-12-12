@@ -1,6 +1,10 @@
 #!/bin/bash
 #POC/Demo
+<<<<<<< HEAD
 #This Script is for setting up a basic Satellite 6.6 or Ansible Tower latest
+=======
+#This Script is for setting up a basic Satellite 6.6 or  
+>>>>>>> e489dfb9a1c9be144fc7cce720b319c032520486
 echo -ne "\e[8;40;170t"
 
 
@@ -94,6 +98,7 @@ yum -q list installed lynx &>/dev/null && echo "lynx is installed" || yum instal
 yum -q list installed perl &>/dev/null && echo "perl is installed" || yum install -y perl --skip-broken
 yum -q list installed dialog &>/dev/null && echo "dialog is installed" || yum install -y dialog --skip-broken
 yum -q list installed xdialog &>/dev/null && echo "xdialog is installed" || yum localinstall -y xdialog-2.3.1-13.el7.centos.x86_64.rpm --skip-broken
+<<<<<<< HEAD
 yum -q list installed firefox &>/dev/null && echo "firefox is installed" || yum install -y firefox --skip-broken
 yum -q list installed python-deltarpm &>/dev/null && echo "python-deltarpm is installed" || yum install -y python-deltarpm --skip-broken
 yum -q list installed deltarpm &>/dev/null && echo "deltarpm is installed" || yum install -y deltarpm --skip-broken
@@ -105,6 +110,13 @@ yum-config-manager --disable epel
 subscription-manager repos --disable=rhel-7-server-extras-rpms
 mkdir sat_6.6/
 touch sat_6.6/SCRIPT
+=======
+yum -q list installed firefox &>/dev/null && echo "firefox is installed" || yum localinstall -y firefox --skip-broken
+yum install -y dconf*
+yum-config-manager --disable epel
+subscription-manager repos --disable=rhel-7-server-extras-rpms
+touch ./SCRIPT
+>>>>>>> e489dfb9a1c9be144fc7cce720b319c032520486
 echo " "
 }
 ls sat_6.6/SCRIPT
@@ -165,7 +177,11 @@ echo " "
 echo " "
 echo "
 
+<<<<<<< HEAD
                            P.O.C Satellite 6.6 ONLY, RHEL 7.X KVM, or RHEL 7 Physical Host 
+=======
+                           P.O.C Satellite 6.X RHEL 7.X KVM or RHEL 7 Physical Host 
+>>>>>>> e489dfb9a1c9be144fc7cce720b319c032520486
                               THIS SCRIPT CONTAINS NO CONFIDENTIAL INFORMATION
 
                   This script is designed to set up a basic standalone Satellite 6.X system
@@ -211,11 +227,15 @@ fi
 #-------------------------------
 function REGSAT {
 #-------------------------------
+<<<<<<< HEAD
 subscription-manager unregister
 subscription-managER clean
 subscription-manager register
 subscription-manager attach --pool=`subscription-manager list --available --matches 'Red Hat Satellite Infrastructure Subscription' --pool-only`
 touch sat_6.6/REGSAT
+=======
+subscription-manager attach --pool=`subscription-manager list --available --matches 'Red Hat Satellite Infrastructure Subscription' --pool-only`
+>>>>>>> e489dfb9a1c9be144fc7cce720b319c032520486
 }
 
 #-------------------------------
@@ -326,8 +346,11 @@ echo 'DHCP_GW='$(ip route list type unicast dev $(ip -o link | head -n 2 | tail 
 echo 'DHCP_DNS='$(ifconfig $INTERNAL | grep "inet" | awk -F ' ' '{print $2}' |grep -v f |awk -F . '{print $1"."$2"."$3"."$4}')'' >> /root/.bashrc
 sed -i 's/DHCP_GW=100 /DHCP_GW=/g' /root/.bashrc
 sed -i 's/DNS=100 /DNS=/g' /root/.bashrc
+<<<<<<< HEAD
 
 touch sat_6.6/VARIABLES1
+=======
+>>>>>>> e489dfb9a1c9be144fc7cce720b319c032520486
 }
 
 YMESSAGE="Adding to /root/.bashrc vars"
@@ -538,7 +561,16 @@ echo " "
 echo "*********************************************************"
 echo "ENABLE Satellite 6.6 REPOS"
 echo "*********************************************************"
+<<<<<<< HEAD
 subscription-manager repos --enable=rhel-7-server-rpms
+=======
+subscription-manager repos --enable=rhel-7-server-rpms || exit 1
+subscription-manager repos --enable=rhel-server-rhscl-7-rpms || exit 1
+subscription-manager repos --enable=rhel-7-server-optional-rpms || exit 1
+subscription-manager repos --enable=rhel-7-server-satellite-6.6-rpms || exit 1
+subscription-manager repos --enable=rhel-7-server-satellite-maintenance-6-rpms || exit 1
+subscription-manager repos --enable rhel-7-server-ansible-2.9-rpms || exit 1
+>>>>>>> e489dfb9a1c9be144fc7cce720b319c032520486
 yum clean all 
 rm -rf /var/cache/yum
 echo " "
@@ -556,7 +588,11 @@ yum-config-manager --enable epel
 subscription-manager repos --enable=rhel-7-server-extras-rpms
 yum clean all ; rm -rf /var/cache/yum
 sleep 5
+<<<<<<< HEAD
 yum install -y screen syslinux python-pip python3-pip rubygems yum-utils vim gcc gcc-c++ git rh-node*-npm make automake kernel-devel ruby-devel libvirt-client bind dhcp tftp libvirt augeas ruby --skip-broken
+=======
+yum install -y screen syslinux yum-utils vim gcc gcc-c++ git rh-nodejs8-npm make automake kernel-devel ruby-devel libvirt-client bind dhcp tftp libvirt augeas --skip-broken
+>>>>>>> e489dfb9a1c9be144fc7cce720b319c032520486
 sleep 5
 echo " "
 echo " "
@@ -564,19 +600,31 @@ echo " "
 echo "*********************************************************"
 echo "INSTALLING DEPENDENCIES FOR CONTENT VIEW AUTO PUBLISH"
 echo "*********************************************************"
+<<<<<<< HEAD
  yum -y install python-pip python2-pip rubygem-builder --skip-broken
  pip install --upgrade pip
 #gem install bundler
+=======
+sudo yum -y install python-pip python2-pip rubygem-builder --skip-broken
+sudo pip install --upgrade pip
+>>>>>>> e489dfb9a1c9be144fc7cce720b319c032520486
 echo " "
 echo " "
 echo " "
 echo "*********************************************************"
 echo "UPGRADING OS"
 echo "*********************************************************"
+<<<<<<< HEAD
  yum-config-manager --disable epel
  subscription-manager repos --disable=rhel-7-server-extras-rpms
  yum clean all ; rm -rf /var/cache/yum
  yum upgrade -y; yum update -y
+=======
+sudo yum-config-manager --disable epel
+sudo subscription-manager repos --disable=rhel-7-server-extras-rpms
+sudo yum clean all ; rm -rf /var/cache/yum
+sudo yum upgrade -y; yum update -y
+>>>>>>> e489dfb9a1c9be144fc7cce720b319c032520486
 }
 #----------------------------------
 function GENERALSETUP {
@@ -605,8 +653,13 @@ echo " "
 echo "*********************************************************"
 echo "SETTING UP FOREMAN-PROXY"
 echo "*********************************************************"
+<<<<<<< HEAD
 useradd foreman-proxy -U -d /usr/share/foreman-proxy/ 
 sleep 2
+=======
+useradd foreman-proxy -m /usr/share/foreman-proxy/ 
+usermod -L foreman-proxy
+>>>>>>> e489dfb9a1c9be144fc7cce720b319c032520486
 mkdir -p /usr/share/foreman-proxy/.ssh
 sleep 2
 sudo -u foreman-proxy ssh-keygen -f /usr/share/foreman-proxy/.ssh/id_rsa_foreman_proxy -N ''
@@ -702,6 +755,7 @@ echo "*********************************************************"
 yum-config-manager --disable epel
 subscription-manager repos --disable=rhel-7-server-extras-rpms
 yum clean all
+<<<<<<< HEAD
 rm -rf /var/cache/yum
     subscription-manager repos --enable=rhel-7-server-rpms
     subscription-manager repos --enable=rhel-server-rhscl-7-rpms
@@ -711,6 +765,17 @@ rm -rf /var/cache/yum
     subscription-manager repos --enable rhel-7-server-ansible-2.9-rpms 
 yum clean all
 rm -rf /var/cache/yum
+=======
+rm -rf /var/cache/yum
+subscription-manager repos --enable=rhel-7-server-rpms || exit 1
+subscription-manager repos --enable=rhel-server-rhscl-7-rpms || exit 1
+subscription-manager repos --enable=rhel-7-server-optional-rpms || exit 1
+subscription-manager repos --enable=rhel-7-server-satellite-6.6-rpms || exit 1
+subscription-manager repos --enable=rhel-7-server-satellite-maintenance-6-rpms || exit 1
+subscription-manager repos --enable rhel-7-server-ansible-2.9-rpms 
+yum clean all
+rm -rf /var/cache/yum
+>>>>>>> e489dfb9a1c9be144fc7cce720b319c032520486
 sleep 5
 echo " "
 echo " "
@@ -727,7 +792,14 @@ echo "INSTALLING PUPPET"
 yum -q list installed puppetserver &>/dev/null && echo "puppetserver is installed" || time yum install puppetserver -y --skip-broken
 yum -q list installed puppet-agent-oauth &>/dev/null && echo "puppet-agent-oauth is installed" || time yum install puppet-agent-oauth -y --skip-broken
 yum -q list installed puppet-agent &>/dev/null && echo "puppet-agent is installed" || time yum install puppet-agent -y --skip-broken
+<<<<<<< HEAD
 yum -q list installed rh-mongodb34-syspaths &>/dev/null && echo "rh-mongodb34-syspaths is installed" || time yum install rh-mongodb34-syspaths -y --skip-broken
+=======
+yum -q list installed rhel-system-roles &>/dev/null && echo "rhel-system-roles is installed" || time yum install rhel-system-roles -y --skip-broken
+yum -q list installed rh-mongodb34-syspaths &>/dev/null && echo "rh-mongodb34-syspaths is installed" || time yum install rh-mongodb34-syspaths -y --skip-broken
+
+
+>>>>>>> e489dfb9a1c9be144fc7cce720b319c032520486
 echo " "
 echo " "
 echo " "
@@ -736,9 +808,12 @@ subscription-manager repos --enable=rhel-7-server-extras-rpms
 yum clean all
 rm -rf /var/cache/yuml 
 yum -q list installed rhel-system-roles &>/dev/null && echo "rhel-system-roles is installed" || time yum install rhel-system-roles -y --skip-broken
+<<<<<<< HEAD
 sleep 2
 subscription-manager repos --disable=rhel-7-server-extras-rpms
 yum-configmanager --disable epel
+=======
+>>>>>>> e489dfb9a1c9be144fc7cce720b319c032520486
 }
 #---END OF SAT 6.X INSTALL SCRIPT---
 
@@ -767,11 +842,16 @@ yum clean all
 rm -rf /var/cache/yum
 sleep 5
 satellite-installer --scenario satellite -v \
+<<<<<<< HEAD
 --no-lock-package-versions \
 --foreman-cli-username=$ADMIN \
 --foreman-cli-password=$ADMIN_PASSWORD \
 --foreman-initial-admin-username=$ADMIN \
 --foreman-initial-admin-password=$ADMIN_PASSWORD
+=======
+--foreman-admin-password=$ADMIN_PASSWORD \
+--foreman-admin-username=$ADMIN \
+>>>>>>> e489dfb9a1c9be144fc7cce720b319c032520486
 --foreman-proxy-plugin-remote-execution-ssh-install-key true \
 --foreman-initial-organization=$ORG \
 --foreman-initial-location=$LOC
@@ -783,6 +863,7 @@ satellite-installer --scenario satellite -v \
 --foreman-proxy-dns-zone=$DOM \
 --foreman-proxy-dns-forwarders $DNS \
 --foreman-proxy-dns-reverse $DNS_REV \
+<<<<<<< HEAD
 --foreman-proxy-dns-listen-on both
 --foreman-proxy-bmc-listen-on both \
 --foreman-proxy-logs-listen-on both \
@@ -796,6 +877,13 @@ systemctl start named.service
 read -p "Please take note of you Login credentials 
 (you will use this to import your manifest in a moment) 
 Now, Press [Enter] to continue"
+=======
+--foreman-proxy-dns-listen-on both \
+--foreman-proxy-bmc-listen-on both \
+--foreman-proxy-logs-listen-on both \
+--foreman-proxy-realm-listen-on both \
+--foreman-proxy-templates-listen-on both
+>>>>>>> e489dfb9a1c9be144fc7cce720b319c032520486
 
 #--foreman-proxy-dns-tsig-principal="foreman-proxy $(hostname)@$DOM" \
 #--foreman-proxy-dns-tsig-keytab=/etc/foreman-proxy/dns.key \
@@ -814,7 +902,10 @@ echo "*********************************************************"
 yum clean all
 rm -rf /var/cache/yum
 sleep 5
+<<<<<<< HEAD
 foreman-maintain packages unlock
+=======
+>>>>>>> e489dfb9a1c9be144fc7cce720b319c032520486
 satellite-installer --scenario satellite -v \
 --no-lock-package-versions \
 --foreman-proxy-dhcp true \
@@ -824,9 +915,12 @@ satellite-installer --scenario satellite -v \
 --foreman-proxy-dhcp-gateway=$DHCP_GW \
 --foreman-proxy-dhcp-nameservers=$DHCP_DNS \
 --foreman-proxy-dhcp-listen-on both
+<<<<<<< HEAD
 
 systemctl enable dhcpd.service
 systemctl start dhcpd.service
+=======
+>>>>>>> e489dfb9a1c9be144fc7cce720b319c032520486
 }
 #--------------------------------------
 function CONFSATTFTP {
@@ -842,17 +936,24 @@ echo "*********************************************************"
 yum clean all
 rm -rf /var/cache/yum
 sleep 5
+<<<<<<< HEAD
 foreman-maintain packages unlock
 yum -q list installed foreman-discovery* &>/dev/null && echo "foreman-discovery-image is installed" || yum install -y foreman-discovery-image* --skip-broken
+=======
+yum -q list installed foreman-discovery-image &>/dev/null && echo "foreman-discovery-image is installed" || yum install -y foreman-discovery-image* --skip-broken
+>>>>>>> e489dfb9a1c9be144fc7cce720b319c032520486
 yum -q list installed rubygem-smart_proxy_discovery &>/dev/null && echo "rubygem-smart_proxy_discovery is installed" || yum install -y rubygem-smart_proxy_discovery* --skip-broken 
 satellite-installer --scenario satellite -v \
 --no-lock-package-versions \
 --foreman-proxy-tftp true \
 --foreman-proxy-tftp-listen-on both \
 --foreman-proxy-tftp-servername="$(hostname)"
+<<<<<<< HEAD
 
 systemctl start tftp.service
 systemctl enable tftp.service
+=======
+>>>>>>> e489dfb9a1c9be144fc7cce720b319c032520486
 }
 #--------------------------------------
 function CONFSATPLUGINS {
@@ -865,7 +966,11 @@ echo " "
 echo "*********************************************************"
 echo "CONFIGURING ALL SATELLITE PLUGINS"
 echo "*********************************************************"
+<<<<<<< HEAD
 foreman-maintain packages unlock
+=======
+
+>>>>>>> e489dfb9a1c9be144fc7cce720b319c032520486
 subscription-manager repos --enable=rhel-7-server-rpms
 subscription-manager repos --enable=rhel-server-rhscl-7-rpms
 subscription-manager repos --enable=rhel-7-server-optional-rpms
@@ -877,8 +982,12 @@ subscription-manager repos --enable=rhel-7-server-extras-rpms
 yum clean all 
 rm -rf /var/cache/yum
 sleep 5
+<<<<<<< HEAD
 foreman-maintain packages unlock
 yum groupinstall -y 'Red Hat Satellite' --skip-broken
+=======
+yum groupinstall -y 'Red Hat Satellite'
+>>>>>>> e489dfb9a1c9be144fc7cce720b319c032520486
 sleep 5
 yum -q list installed puppet-foreman_scap_client &>/dev/null && echo "puppet-foreman_scap_client is installed" || yum install -y puppet-foreman_scap_client* --skip-broken
 yum -q list installed tfm-rubygem-foreman_discovery &>/dev/null && echo "tfm-rubygem-foreman_discovery is installed" || yum install -y tfm-rubygem-foreman_discovery* --skip-broken
@@ -886,7 +995,11 @@ yum -q list installed foreman-discovery-image &>/dev/null && echo "foreman-disco
 yum -q list installed rubygem-smart_proxy_discovery &>/dev/null && echo "rubygem-smart_proxy_discovery is installed" || yum install -y rubygem-smart_proxy_discovery* --skip-broken
 yum -q list installed rubygem-smart_proxy_discovery_image &>/dev/null && echo "rubygem-smart_proxy_discovery_image y is installed" || yum install -y rubygem-smart_proxy_discovery_image --skip-broken
 yum -q list installed tfm-rubygem-hammer_cli_foreman_discovery &>/dev/null && echo "tfm-rubygem-hammer_cli_foreman_discovery is installed" || yum install -y tfm-rubygem-hammer_cli_foreman_discovery --skip-broken
+<<<<<<< HEAD
 yum -q list installed OpenScap_client &>/dev/null && echo "OpenScap is installed" || yum install -y openscap-* scap-* --skip-broken
+=======
+yum -q list installed foreman_scap_client &>/dev/null && echo "foreman_scap_client is installed" || yum install -y foreman_scap_client --skip-broken
+>>>>>>> e489dfb9a1c9be144fc7cce720b319c032520486
 
 source /root/.bashrc
 foreman-maintain packages unlock
@@ -901,6 +1014,7 @@ satellite-installer --scenario satellite -v \
 --enable-foreman-compute-ovirt \
 --enable-foreman-compute-rackspace \
 --enable-foreman-compute-vmware \
+<<<<<<< HEAD
 --enable-foreman-plugin-ansible \
 --enable-foreman-plugin-bootdisk \
 --enable-foreman-plugin-discovery \
@@ -920,6 +1034,10 @@ satellite-installer --scenario satellite -v \
 --enable-foreman-proxy-plugin-remote-execution-ssh \
 --enable-katello \
 --enable-puppet 
+=======
+--enable-foreman-plugin-bootdisk \
+--enable-foreman-plugin-ansible
+>>>>>>> e489dfb9a1c9be144fc7cce720b319c032520486
 }
 
 #--------------------------------------
@@ -927,7 +1045,10 @@ function CONFSATDEB {
 #--------------------------------------
 source /root/.bashrc
 echo -ne "\e[8;40;170t"
+<<<<<<< HEAD
 foreman-maintain packages unlock
+=======
+>>>>>>> e489dfb9a1c9be144fc7cce720b319c032520486
 echo " "
 echo " "
 echo " "
@@ -940,7 +1061,10 @@ echo " "
 echo "*********************************************************"
 echo "ENABLE DEB"
 echo "*********************************************************"
+<<<<<<< HEAD
 foreman-maintain packages unlock
+=======
+>>>>>>> e489dfb9a1c9be144fc7cce720b319c032520486
 #yum install https://yum.theforeman.org/releases/latest/el7/x86_64/foreman-release.rpm
 #satellite-installer -v  --katello-enable-deb true
 #foreman-installer -v --foreman-proxy-content-enable-deb  --katello-enable-deb
@@ -1098,6 +1222,11 @@ hammer settings set --name lab_features --value true
 hammer settings set --name default_puppet_environment --value development
 hammer settings set --name ansible_verbosity --value "Level 1 (-v)"
 hammer settings set --name discovery_location --value "$LOC"
+<<<<<<< HEAD
+=======
+hammer settings set --name destroy_vm_on_host_delete --value No
+hammer settings set --name remote_execution_by_default --value Yes
+>>>>>>> e489dfb9a1c9be144fc7cce720b319c032520486
 mkdir -p /etc/puppet/environments/production/modules
 echo " "
 echo " "
@@ -1339,7 +1468,11 @@ INPUT=${INPUT:-$RHEL7DEFAULTVALUE}
 if  [ "$INPUT" = "y" -o "$INPUT" = "Y" ] ;then
 echo -e "\n$YMESSAGE\n"
 hammer repository-set enable --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='7.7' --name 'Red Hat Enterprise Linux 7 Server (Kickstart)' 
+<<<<<<< HEAD
 #hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 7 Server Kickstart x86_64 7.7' 2>/dev/null
+=======
+hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 7 Server Kickstart x86_64 7.7' 2>/dev/null
+>>>>>>> e489dfb9a1c9be144fc7cce720b319c032520486
 hammer repository-set enable --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Enterprise Linux 7 Server (RPMs)'
 #time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 7 Server RPMs x86_64 7Server' 2>/dev/null
 hammer repository-set enable --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Enterprise Linux 7 Server - Supplementary (RPMs)'
@@ -1347,9 +1480,15 @@ hammer repository-set enable --organization "$ORG" --product 'Red Hat Enterprise
 hammer repository-set enable --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Enterprise Linux 7 Server - Optional (RPMs)'
 #time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 7 Server - Optional RPMs x86_64 7Server' 2>/dev/null
 hammer repository-set enable --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --name 'Red Hat Enterprise Linux 7 Server - Extras (RPMs)'
+<<<<<<< HEAD
 #time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 7 Server - Extras RPMs x86_64' 2>/dev/null
 hammer repository-set enable --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --name 'Red Hat Satellite Tools 6.6 (for RHEL 7 Server) (RPMs)'
 #time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Satellite Tools 6.6 for RHEL 7 Server RPMs x86_64'
+=======
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 7 Server - Extras RPMs x86_64' 2>/dev/null
+hammer repository-set enable --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --name 'Red Hat Satellite Tools 6.6 (for RHEL 7 Server) (RPMs)'
+time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Satellite Tools 6.6 for RHEL 7 Server RPMs x86_64'
+>>>>>>> e489dfb9a1c9be144fc7cce720b319c032520486
 hammer repository-set enable --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Enterprise Linux 7 Server - RH Common (RPMs)'
 #time hammer repository synchronize --organization "$ORG" --product 'Red Hat Enterprise Linux Server' --name 'Red Hat Enterprise Linux 7 Server - RH Common RPMs x86_64 7Server' 2>/dev/null
 hammer repository-set enable --organization "$ORG" --product 'Red Hat Software Collections (for RHEL Server)' --basearch='x86_64' --releasever='7Server' --name 'Red Hat Software Collections RPMs for Red Hat Enterprise Linux 7 Server'
@@ -2024,12 +2163,15 @@ echo "TEST_RHEL_7"
 hammer lifecycle-environment create --name='TEST_RHEL_7' --prior='DEV_RHEL_7' --organization $ORG
 echo "PRODUCTION_RHEL_7"
 hammer lifecycle-environment create --name='PROD_RHEL_7' --prior='TEST_RHEL_7' --organization $ORG
+<<<<<<< HEAD
 echo "DEVLOPMENT_RHEL_8"
 hammer lifecycle-environment create --name='DEV_RHEL_8' --prior='Library' --organization $ORG
 echo "TEST_RHEL_8"
 hammer lifecycle-environment create --name='TEST_RHEL_8' --prior='DEV_RHEL_8' --organization $ORG
 echo "PRODUCTION_RHEL_8"
 hammer lifecycle-environment create --name='PROD_RHEL_8' --prior='TEST_RHEL_8' --organization $ORG
+=======
+>>>>>>> e489dfb9a1c9be144fc7cce720b319c032520486
 #echo "DEVLOPMENT_RHEL_6"
 #hammer lifecycle-environment create --name='DEV_RHEL_6' --prior='Library' --organization $ORG
 #echo "TEST_RHEL_6"
@@ -2379,12 +2521,21 @@ echo "*********************************************************"
 echo "Create Media:"
 echo "*********************************************************"
 #RHEL 7
+<<<<<<< HEAD
 hammer medium create --path=http://repos/${ORG}/Library/content/dist/rhel/server/7/7.6/x86_64/kickstart/ --organizations=$ORG  --os-family=Redhat --name="RHEL 7.6 Kickstart" --operatingsystems="RedHat 7.6"
 hammer medium create --path=http://repos/${ORG}/Library/content/dist/rhel/server/7/7.7/x86_64/kickstart/ --organizations=$ORG  --os-family=Redhat --name="RHEL 7.7 Kickstart" --operatingsystems="RedHat 7.7"
 
 #RHEL 8
 hammer medium create --path=http://repos/${ORG}/Library/content/dist/rhel8/8.0/x86_64/baseos/kickstart --organizations=$ORG --os-family=Redhat --name="RHEL 8.0 Kickstart" --operatingsystems="RedHat 8.0"
 hammer medium create --path=http://repos/${ORG}/Library/content/dist/rhel8/8.1/x86_64/baseos/kickstart --organizations=$ORG --os-family=Redhat --name="RHEL 8.1 Kickstart" --operatingsystems="RedHat 8.1"
+=======
+hammer medium create --path=http://repos/${ORG}/Library/content/dist/rhel/server/7/7.6/x86_64/kickstart/ --organizations=$ORG --locations="$LOC" --os-family=Redhat --name="RHEL 7.6 Kickstart" --operatingsystems="RedHat 7.6"
+hammer medium create --path=http://repos/${ORG}/Library/content/dist/rhel/server/7/7.7/x86_64/kickstart/ --organizations=$ORG --locations="$LOC" --os-family=Redhat --name="RHEL 7.7 Kickstart" --operatingsystems="RedHat 7.7"
+
+#RHEL 8
+hammer medium create --path=http://repos/${ORG}/Library/content/dist/rhel8/8.0/x86_64/baseos/kickstart --organizations=$ORG --locations="$LOC" --os-family=Redhat --name="RHEL 8.0 Kickstart" --operatingsystems="RedHat 8.0"
+hammer medium create --path=http://repos/${ORG}/Library/content/dist/rhel8/8.1/x86_64/baseos/kickstart --organizations=$ORG --locations="$LOC" --os-family=Redhat --name="RHEL 8.1 Kickstart" --operatingsystems="RedHat 8.1"
+>>>>>>> e489dfb9a1c9be144fc7cce720b319c032520486
 }
 #----------------------------------
 function VARSETUP2 {
@@ -2452,8 +2603,13 @@ echo "*********************************************************"
 #MAKES ROOTPASSWORD ON NODES rreeddhhaatt BECAUSE THE SYSTEM REQUIRES IT TO BE 8+ CHAR (--root-pass rreeddhhaatt)
 ENVIROMENT=$(hammer --csv lifecycle-environment list |awk -F "," {'print $2'}|grep -v Name |grep -v production)
 LEL=$(hammer --csv environment list  |awk -F "," {'print $2'}|grep -v Name)
+<<<<<<< HEAD
 for i in $LEL; do for j in $(hammer --csv environment list |awk -F "," {'print $2'}| awk -F "_" {'print $1'}|grep -v Name); do hammer hostgroup create --name RHEL-7.7-$j --puppet-environments $i --architecture-id $ARCHID --content-view-id $CVID --domain-id $DOMID --location-ids $LOCID --medium-id $MEDID1 --operatingsystem-id $OSID1 --organization-id=$ORGID  --partition-table-id $PARTID --puppet-ca-proxy-id $PROXYID --subnet-id $SUBNETID --root-pass=rreeddhhaatt ; done; done
 #for i in $LEL; do for j in $(hammer --csv environment list |awk -F "," {'print $2'}| awk -F "_" {'print $1'}|grep -v Name); do hammer hostgroup create --name CentOS Linux 7.6-$j --puppet-environments $i --architecture-id $ARCHID --content-view-id $CVID --domain-id $DOMID --location-ids $LOCID --medium-id $MEDID2 --operatingsystem-id $OSID2 --organization-id=$ORGID  --partition-table-id $PARTID --puppet-ca-proxy-id $PROXYID --subnet-id $SUBNETID --root-pass=redhat ; done; done
+=======
+for i in $LEL; do for j in $(hammer --csv environment list |awk -F "," {'print $2'}| awk -F "_" {'print $1'}|grep -v Name); do hammer hostgroup create --name RHEL-7.7-$j --environment $i --architecture-id $ARCHID --content-view-id $CVID --domain-id $DOMID --location-ids $LOCID --medium-id $MEDID1 --operatingsystem-id $OSID1 --organization-id=$ORGID  --partition-table-id $PARTID --puppet-ca-proxy-id $PROXYID --subnet-id $SUBNETID --root-pass=rreeddhhaatt ; done; done
+#for i in $LEL; do for j in $(hammer --csv environment list |awk -F "," {'print $2'}| awk -F "_" {'print $1'}|grep -v Name); do hammer hostgroup create --name CentOS Linux 7.6-$j --environment $i --architecture-id $ARCHID --content-view-id $CVID --domain-id $DOMID --location-ids $LOCID --medium-id $MEDID2 --operatingsystem-id $OSID2 --organization-id=$ORGID  --partition-table-id $PARTID --puppet-ca-proxy-id $PROXYID --subnet-id $SUBNETID --root-pass=redhat ; done; done
+>>>>>>> e489dfb9a1c9be144fc7cce720b319c032520486
 }
 #-------------------------------
 function MODPXELINUXDEF {
@@ -2725,11 +2881,19 @@ yum --noplugins -q list installed python2-pip &>/dev/null && echo "python2-pip" 
 yum-config-manager --disable epel 
 echo '************************************'
 echo 'Expanding Ansible Tower and installing '
+<<<<<<< HEAD
 echo '************************************'
 wget https://releases.ansible.com/ansible-tower/setup-bundle/ansible-tower-setup-bundle-latest.el8.tar.gz
 echo '************************************'
 echo 'Expanding Ansible Tower and installing '
 echo '************************************'
+=======
+echo '************************************'
+wget https://releases.ansible.com/ansible-tower/setup-bundle/ansible-tower-setup-bundle-latest.el8.tar.gz
+echo '************************************'
+echo 'Expanding Ansible Tower and installing '
+echo '************************************'
+>>>>>>> e489dfb9a1c9be144fc7cce720b319c032520486
 tar -zxvf ansible-tower-*.tar.gz
 cd ansible-tower*
 sed -i 's/admin_password="''"/admin_password="'redhat'"/g' inventory
@@ -2832,8 +2996,13 @@ yum --noplugins -q list installed ansible &>/dev/null && echo "ansible is instal
 yum --noplugins -q list installed wget &>/dev/null && echo "wget is installed" || yum install -y wget --skip-broken --noplugins
 yum --noplugins -q list installed bash-completion-extras &>/dev/null && echo "bash-completion-extras" || yum install -y bash-completion-extras --skip-broken --noplugins
 yum --noplugins -q list installed python3-pip &>/dev/null && echo "python3-pip" || yum install -y python3-pip --skip-broken --noplugins
+<<<<<<< HEAD
 echo " "
 echo " "
+=======
+echo " "
+echo " "
+>>>>>>> e489dfb9a1c9be144fc7cce720b319c032520486
 yum-config-manager --disable epel
 echo '************************************'
 echo 'Expanding Ansible Tower and installing '
@@ -3003,7 +3172,7 @@ CONFSATCACHE
 CHECKDHCP
 DISABLEEXTRAS
 HAMMERCONF
-CONFIG2
+#CONFIG2
 STOPSPAMMINGVARLOG
 REQUESTSYNCMGT
 #REQUEST5
@@ -3054,10 +3223,17 @@ MEDIUM
 DISASSOCIATE_TEMPLATES
 #SATUPDATE
 INSIGHTS
+<<<<<<< HEAD
 #CLEANUP
 echo 'This Script has set up satellite to the point where it should be basicly 
 operational the syntax for some of the items that have been pounded out and require some updating if you plan to use.'
 #SATDONE
+=======
+CLEANUP
+echo 'This Script has set up satellite to the point where it should be basicly 
+operational the syntax for some of the items that have been pounded out and require some updating if you plan to use.'
+SATDONE
+>>>>>>> e489dfb9a1c9be144fc7cce720b319c032520486
 sleep 10
 ;;
 2) dMsgBx "UPGRADE/UPDATE THE SATELLITE 6.X" \
