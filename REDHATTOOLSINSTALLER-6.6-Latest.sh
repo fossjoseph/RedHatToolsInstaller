@@ -728,6 +728,8 @@ yum -q list installed puppetserver &>/dev/null && echo "puppetserver is installe
 yum -q list installed puppet-agent-oauth &>/dev/null && echo "puppet-agent-oauth is installed" || time yum install puppet-agent-oauth -y --skip-broken
 yum -q list installed puppet-agent &>/dev/null && echo "puppet-agent is installed" || time yum install puppet-agent -y --skip-broken
 yum -q list installed rh-mongodb34-syspaths &>/dev/null && echo "rh-mongodb34-syspaths is installed" || time yum install rh-mongodb34-syspaths -y --skip-broken
+yum -q list installed fio &>/dev/null && echo "fio is installed" || time yum install fio -y --skip-broken
+
 echo " "
 echo " "
 echo " "
@@ -766,6 +768,8 @@ echo " "
 yum clean all
 rm -rf /var/cache/yum
 sleep 5
+foreman-maintain packages unlock
+
 satellite-installer --scenario satellite -v \
 --no-lock-package-versions \
 --foreman-cli-username=$ADMIN \
