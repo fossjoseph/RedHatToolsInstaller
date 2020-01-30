@@ -9,7 +9,7 @@ echo -ne "\e[8;40;170t"
 
 
 reset
-wget -q --tries=10 --timeout=20 --spider http://google.com
+wget -q --tries=10 --timeout=20 --spider https://google.com
 if [[ $? -eq 0 ]]; then
         echo "Online: Continuing to Install"
 else
