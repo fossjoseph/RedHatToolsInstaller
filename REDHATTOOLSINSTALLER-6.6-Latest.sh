@@ -730,7 +730,6 @@ yum -q list installed puppet-agent &>/dev/null && echo "puppet-agent is installe
 yum -q list installed rh-mongodb34-syspaths &>/dev/null && echo "rh-mongodb34-syspaths is installed" || time yum install rh-mongodb34-syspaths -y --skip-broken
 yum -q list installed fio &>/dev/null && echo "fio is installed" || time yum install fio -y --skip-broken
 
-=======
 echo " "
 echo " "
 echo " "
@@ -771,7 +770,7 @@ rm -rf /var/cache/yum
 sleep 5
 foreman-maintain packages unlock
 
-=======
+
 satellite-installer --scenario satellite -v \
 --no-lock-package-versions \
 --foreman-cli-username=$ADMIN \
